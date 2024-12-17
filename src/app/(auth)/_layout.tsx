@@ -11,7 +11,12 @@ const Layout = () => {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="sign-up" />
+      <Stack.Screen
+        name="sign-up"
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen name="reset-password" options={{ presentation: 'modal' }} />
     </Stack>
   );

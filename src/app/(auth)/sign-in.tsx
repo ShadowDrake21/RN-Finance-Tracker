@@ -10,6 +10,7 @@ import { Link, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '@/constants/colors';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import SocialButton from '@/components/SocialButton';
 
 const Page = () => {
   const router = useRouter();
@@ -28,10 +29,10 @@ const Page = () => {
       }}
     >
       <View style={{ marginBottom: 50, gap: 15 }}>
-        <Text style={{ fontWeight: '800', fontSize: 36, letterSpacing: 0.4 }}>
+        <Text style={{ fontWeight: '800', fontSize: 34, letterSpacing: 0.4 }}>
           Sign In and Start Saving
         </Text>
-        <Text style={{ fontWeight: '600', fontSize: 24, letterSpacing: 0.5 }}>
+        <Text style={{ fontWeight: '600', fontSize: 22, letterSpacing: 0.5 }}>
           Good to see you! Your financial goals are just a step away.
         </Text>
       </View>
@@ -87,14 +88,8 @@ const Page = () => {
         <View style={styles.separator} />
       </View>
       <View style={{ gap: 15, marginBottom: 40 }}>
-        <TouchableOpacity style={styles.socialBtn}>
-          <Text style={styles.socialText}>Sign In with Google</Text>
-          <AntDesign name="google" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialBtn}>
-          <Text style={styles.socialText}>Sign In with Apple</Text>
-          <AntDesign name="apple1" size={24} color="black" />
-        </TouchableOpacity>
+        <SocialButton icon="google" label="Sign In with " />
+        <SocialButton icon="apple1" label="Sign In with " />
       </View>
 
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 5 }}>
