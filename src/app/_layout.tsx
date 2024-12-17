@@ -1,6 +1,16 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import React from 'react';
 import { Stack } from 'expo-router/stack';
+import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
+import { tokenCache } from '@/cache';
+
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+
+if (!publishableKey) {
+  throw new Error(
+    'Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env'
+  );
+}
 
 const RootLayout = () => {
   return (
@@ -15,6 +25,12 @@ const RootLayout = () => {
   );
 };
 
-export default RootLayout;
+const RootLayoutNav = () => (
+  <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+    <ClerkLoaded>
+      <RootLayout />
+    </ClerkLoaded>
+  </ClerkProvider>
+);
 
-const styles = StyleSheet.create({});
+export default RootLayoutNav;
