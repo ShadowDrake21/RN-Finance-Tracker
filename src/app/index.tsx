@@ -1,5 +1,6 @@
 import {
   AccessibilityInfo,
+  ActivityIndicator,
   Button,
   FlatList,
   Platform,
@@ -50,80 +51,29 @@ const onboardingItems: OnboardingItem[] = [
   },
 ];
 
-//https://github.com/meliorence/react-native-snap-carousel/blob/master/doc/PAGINATION.md#usage
-
 const Page = () => {
   const router = useRouter();
   let carousel: Carousel | null = null;
   const { bottom } = useSafeAreaInsets();
   const [isLastItem, setIsLastItem] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const skipToAuth = () => {
-    router.replace('(auth)/sign-in');
+    setIsLoading(true);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      router.replace('(auth)/sign-in');
+    }, 300);
   };
 
-  // return (
-  //   <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.main }}>
-  //     <Carousel
-  //       contentContainerStyle={{ backgroundColor: COLORS.main }}
-  //       renderNext={({ scrollToNext }): JSX.Element => (
-  //         <TouchableOpacity
-  //           accessibilityRole="button"
-  //           onPress={scrollToNext}
-  //           testID="custom-next"
-  //           style={{ position: 'absolute', bottom: 35, right: 50 }}
-  //         >
-  //           <Text style={styles.buttonText}>Next</Text>
-  //         </TouchableOpacity>
-  //       )}
-  //       renderControls={}
-  //       renderPrev={({ scrollToPrev }): JSX.Element => (
-  //         <TouchableOpacity
-  //           accessibilityRole="button"
-  //           onPress={skipToAuth}
-  //           testID="custom-prev"
-  //           style={{ position: 'absolute', bottom: 35, left: 50 }}
-  //         >
-  //           <Text style={styles.buttonText}>Prev</Text>
-  //         </TouchableOpacity>
-  //       )}
-  //       dotsContainerStyle={{
-  //         position: 'absolute',
-  //         bottom: 35,
-  //         left: 0,
-  //         right: 0,
-  //         display: 'flex',
-  //         flexDirection: 'row',
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //         gap: 20,
-  //       }}
-  //       activeDotStyle={{
-  //         backgroundColor: '#00b77a',
-  //         width: 13,
-  //         height: 13,
-  //         borderRadius: 50,
-  //       }}
-  //       dotStyle={{
-  //         backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  //         width: 13,
-  //         height: 13,
-  //         borderRadius: 50,
-  //       }}
-  //       controlsTextStyle={{ fontSize: 50, color: '#eace15' }}
-  //     >
-  //       <View style={styles.slide1}>
-  //         <Text style={styles.text}>1</Text>
-  //       </View>
-  //       <View style={styles.slide2}>
-  //         <Text style={styles.text}>2</Text>
-  //       </View>
-  //       <View style={styles.slide3}>
-  //         <Text style={styles.text}>3</Text>
-  //       </View>
-  //     </Carousel>
-  //   </SafeAreaView>
-  // );
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { paddingBottom: bottom }]}>
@@ -151,7 +101,9 @@ const Page = () => {
                   alignSelf: 'center',
                 }}
               >
-                <Text style={styles.controlBtn}>Get Started!</Text>
+                <Text style={[styles.controlBtn, { color: COLORS.primary }]}>
+                  Get Started!
+                </Text>
               </TouchableOpacity>
             );
           } else {
@@ -187,7 +139,14 @@ const Page = () => {
       </Carousel>
       <View style={[styles.controlsContainer, { bottom: bottom }]}>
         <TouchableOpacity
-          onPress={() => carousel && carousel.scrollToPrev()}
+          onPress={() => {
+            if (carousel && !isLastItem) {
+              carousel.scrollToIndex({
+                index: onboardingItems.length - 1,
+                animated: true,
+              });
+            }
+          }}
           style={isLastItem ? { opacity: 0 } : {}}
         >
           <Text style={styles.controlBtn}>Skip</Text>
