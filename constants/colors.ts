@@ -4,4 +4,5 @@ export const COLORS = {
   text: '#000',
   placeholder: '#999',
   border: '#a9a9a9',
+  disabled: '#ccccccff',
 };

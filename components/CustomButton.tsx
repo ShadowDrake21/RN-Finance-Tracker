@@ -5,12 +5,18 @@ import { COLORS } from '@/constants/colors';
 const CustomButton = ({
   onPress,
   text,
+  disabled = false,
 }: {
   onPress: () => void;
   text: string;
+  disabled?: boolean;
 }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.button}>
+    <TouchableOpacity
+      onPress={disabled ? undefined : onPress}
+      style={[styles.button, disabled && { backgroundColor: COLORS.disabled }]}
+      disabled={disabled}
+    >
       <Text style={styles.buttonText}>{text}</Text>
     </TouchableOpacity>
   );

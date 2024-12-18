@@ -1,4 +1,5 @@
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -59,10 +60,11 @@ const Page = () => {
       // Set 'pendingVerification' to true to display second form
       // and capture OTP code
       setPendingVerification(true);
-    } catch (err) {
+    } catch (err: any) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error(JSON.stringify(err, null, 2));
+      Alert.alert('Whoops!', err.message, [{ text: 'OK, got it' }]);
     }
   };
 
@@ -85,13 +87,23 @@ const Page = () => {
         // If the status is not complete, check why. User may need to
         // complete further steps.
         console.error(JSON.stringify(signUpAttempt, null, 2));
+        Alert.alert('Whoops!', 'Something went wrong!', [
+          { text: 'OK, got it' },
+        ]);
       }
-    } catch (err) {
+    } catch (err: any) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
-      console.error(JSON.stringify(err, null, 2));
+      Alert.alert('Whoops!', err.message, [{ text: 'OK, got it' }]);
     }
   };
+
+  const checkDisabled = () =>
+    !name ||
+    !email ||
+    !password ||
+    !confirmPassword ||
+    password !== confirmPassword;
 
   return (
     <ScrollView
@@ -162,6 +174,7 @@ const Page = () => {
               placeholderTextColor={COLORS.placeholder}
               onChangeText={setName}
               autoCapitalize="words"
+              value={name}
             />
             <TextInput
               placeholder="Email"
@@ -169,6 +182,7 @@ const Page = () => {
               placeholderTextColor={COLORS.placeholder}
               autoCapitalize="none"
               onChangeText={setEmail}
+              value={email}
             />
             <TextInput
               placeholder="Password"
@@ -176,6 +190,7 @@ const Page = () => {
               placeholderTextColor={COLORS.placeholder}
               secureTextEntry={true}
               onChangeText={setPassword}
+              value={password}
             />
             <TextInput
               placeholder="Confirm password"
@@ -183,8 +198,13 @@ const Page = () => {
               placeholderTextColor={COLORS.placeholder}
               secureTextEntry={true}
               onChangeText={setConfirmPassword}
+              value={confirmPassword}
             />
-            <CustomButton onPress={onSignUp} text="Sign Up" />
+            <CustomButton
+              onPress={onSignUp}
+              text="Sign Up"
+              disabled={checkDisabled() || !isLoaded || pendingVerification}
+            />
           </KeyboardAvoidingView>
 
           <View style={styles.separatorContainer}>
