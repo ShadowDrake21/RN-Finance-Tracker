@@ -4,13 +4,14 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { IconProps } from '@expo/vector-icons/build/createIconSet';
 
 type SocialButtonProps = {
+  onPress: () => Promise<void>;
   icon: keyof typeof AntDesign.glyphMap;
   label: string;
 };
 
-const SocialButton = ({ icon, label }: SocialButtonProps) => {
+const SocialButton = ({ onPress, icon, label }: SocialButtonProps) => {
   return (
-    <TouchableOpacity style={styles.socialBtn}>
+    <TouchableOpacity style={styles.socialBtn} onPress={onPress}>
       <Text style={styles.socialText}>{label}</Text>
       <AntDesign name={icon} size={24} color="black" />
     </TouchableOpacity>

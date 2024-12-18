@@ -12,7 +12,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -23,6 +23,7 @@ import animation1 from '@/assets/animations/onboarding/Animation-1.lottie';
 import animation2 from '@/assets/animations/onboarding/Animation-2.lottie';
 import animation3 from '@/assets/animations/onboarding/Animation-3.lottie';
 import Carousel, { defaultStyles } from 'pinar';
+import { useAuth } from '@clerk/clerk-expo';
 
 type OnboardingItem = {
   animationPath: string;
@@ -66,6 +67,12 @@ const Page = () => {
       router.replace('(auth)/sign-in');
     }, 300);
   };
+
+  const { isSignedIn } = useAuth();
+
+  if (isSignedIn) {
+    return <Redirect href="/(tabs)/dashboard" />;
+  }
 
   if (isLoading) {
     return (

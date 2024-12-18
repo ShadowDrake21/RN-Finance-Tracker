@@ -13,6 +13,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import SocialButton from '@/components/SocialButton';
 import CustomButton from '@/components/CustomButton';
 import { useSignIn } from '@clerk/clerk-expo';
+import { STYLES } from '@/constants/styles';
 
 const Page = () => {
   const router = useRouter();
@@ -51,10 +52,8 @@ const Page = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginBottom: 50, gap: 15 }}>
-        <Text style={{ fontWeight: '800', fontSize: 34, letterSpacing: 0.4 }}>
-          Sign In and Start Saving
-        </Text>
-        <Text style={{ fontWeight: '600', fontSize: 22, letterSpacing: 0.5 }}>
+        <Text style={STYLES.authTitle}>Sign In and Start Saving</Text>
+        <Text style={STYLES.authSubtitle}>
           Good to see you! Your financial goals are just a step away.
         </Text>
       </View>
