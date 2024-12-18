@@ -1,4 +1,6 @@
 import {
+  ActivityIndicator,
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -14,40 +16,63 @@ import SocialButton from '@/components/SocialButton';
 import CustomButton from '@/components/CustomButton';
 import { useSignIn } from '@clerk/clerk-expo';
 import { STYLES } from '@/constants/styles';
+import { Controller, useForm } from 'react-hook-form';
+import CustomTextInput from '@/components/CustomTextInput';
+import FormError from '@/components/FormError';
+import { callToast } from '@/utils/toasts.utils';
+import { useSocialAuth } from '@/utils/auth.utils';
 
 const Page = () => {
   const router = useRouter();
-
   const { signIn, setActive, isLoaded } = useSignIn();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const [loading, setLoading] = useState(false);
 
   const onSignIn = useCallback(async () => {
     if (!isLoaded) return;
 
-    // Start the sign-in process using the email and password provided
     try {
+      const { email, password } = getValues();
       const signInAttempt = await signIn.create({
         identifier: email,
         password,
       });
 
-      // If sign-in process is complete, set the created session as active
-      // and redirect the user
       if (signInAttempt.status === 'complete') {
         await setActive({ session: signInAttempt.createdSessionId });
+        console.log('User is signed in');
+
         router.replace('/(tabs)/dashboard');
       } else {
-        // If the status isn't complete, check why. User might need to
-        // complete further steps.
-        console.error(JSON.stringify(signInAttempt, null, 2));
+        callToast({
+          type: 'error',
+          text1: 'Something went wrong',
+          text2: 'Try again, maybe that will work!',
+        });
       }
-    } catch (err) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
-      console.error(JSON.stringify(err, null, 2));
+    } catch (err: any) {
+      Alert.alert('Whoops!', err.message, [{ text: 'OK, got it' }]);
     }
-  }, [isLoaded, email, password]);
+  }, [isLoaded, getValues]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -58,21 +83,55 @@ const Page = () => {
         </Text>
       </View>
       <View style={{ gap: 15, marginBottom: 20 }}>
-        <TextInput
-          autoFocus
-          placeholder="Email"
-          style={styles.input}
-          placeholderTextColor={COLORS.placeholder}
-          autoCapitalize="none"
-          onChangeText={setEmail}
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <CustomTextInput
+              placeholder="Email"
+              onChangeText={onChange}
+              value={value}
+              onBlur={onBlur}
+            />
+          )}
+          name="email"
         />
-        <TextInput
-          placeholder="Password"
-          style={styles.input}
-          placeholderTextColor={COLORS.placeholder}
-          secureTextEntry={true}
-          onChangeText={setPassword}
+        {errors.email && (
+          <>
+            {errors.email.type === 'required' && (
+              <FormError>Email is required.</FormError>
+            )}
+            {errors.email.type === 'pattern' && (
+              <FormError>This is not a valid email address.</FormError>
+            )}
+          </>
+        )}
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <CustomTextInput
+              placeholder="Password"
+              onChangeText={onChange}
+              value={value}
+              onBlur={onBlur}
+              secureTextEntry={true}
+            />
+          )}
+          name="password"
         />
+        {errors.password && (
+          <>
+            {errors.password.type === 'required' && (
+              <FormError>Password is required.</FormError>
+            )}
+          </>
+        )}
       </View>
       <Link href={'/reset-password'} style={{ marginBottom: 30 }} asChild>
         <Text style={{ fontWeight: '600', alignSelf: 'flex-end' }}>
@@ -80,7 +139,7 @@ const Page = () => {
         </Text>
       </Link>
 
-      <CustomButton onPress={onSignIn} text="Sign In" />
+      <CustomButton onPress={handleSubmit(onSignIn)} text="Sign In" />
 
       <View style={styles.separatorContainer}>
         <View style={styles.separator} />
@@ -88,8 +147,18 @@ const Page = () => {
         <View style={styles.separator} />
       </View>
       <View style={{ gap: 15, marginBottom: 40 }}>
-        <SocialButton icon="google" label="Sign In with " />
-        <SocialButton icon="apple1" label="Sign In with " />
+        <SocialButton
+          icon="google"
+          label="Sign In with "
+          type="google"
+          setLoading={setLoading}
+        />
+        <SocialButton
+          icon="apple1"
+          label="Sign In with "
+          type="apple"
+          setLoading={setLoading}
+        />
       </View>
 
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 5 }}>

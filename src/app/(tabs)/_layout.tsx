@@ -1,10 +1,19 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { Redirect, Tabs } from 'expo-router';
-import { useUser } from '@clerk/clerk-expo';
+import { useAuth } from '@clerk/clerk-expo';
+import { COLORS } from '@/constants/colors';
 
 const Layout = () => {
-  const { isSignedIn } = useUser();
+  const { isSignedIn, isLoaded } = useAuth();
+
+  if (!isLoaded) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
 
   if (!isSignedIn) {
     return <Redirect href={'/(auth)/sign-in'} />;
@@ -21,5 +30,3 @@ const Layout = () => {
 };
 
 export default Layout;
-
-const styles = StyleSheet.create({});

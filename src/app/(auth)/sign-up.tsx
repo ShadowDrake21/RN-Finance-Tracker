@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -32,13 +33,7 @@ const Page = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [pendingVerification, setPendingVerification] = useState(false);
   const [code, setCode] = useState('');
-  const { startOAuthFlow: googleOAuth } = useOAuth({
-    strategy: 'oauth_google',
-  });
-  const { startOAuthFlow: appleOAuth } = useOAuth({
-    strategy: 'oauth_apple',
-  });
-
+  const [loading, setLoading] = useState(false);
   const {
     control,
     handleSubmit,
@@ -100,26 +95,13 @@ const Page = () => {
     }
   };
 
-  const onSocialAuth = React.useCallback(async (type: 'google' | 'apple') => {
-    try {
-      const { createdSessionId, setActive } =
-        type === 'google' ? await googleOAuth() : await appleOAuth();
-
-      // If sign in was successful, set the active session
-      if (createdSessionId) {
-        setActive!({ session: createdSessionId });
-        router.replace('/(tabs)/dashboard');
-      } else {
-        Alert.alert('Whoops!', 'Something went wrong! Try once again!', [
-          { text: 'OK, got it' },
-        ]);
-      }
-    } catch (err) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
-      console.error(JSON.stringify(err, null, 2));
-    }
-  }, []);
+  if (loading) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -317,12 +299,14 @@ const Page = () => {
             <SocialButton
               icon="google"
               label="Sign Up with "
-              onPress={() => onSocialAuth('google')}
+              type="google"
+              setLoading={setLoading}
             />
             <SocialButton
               icon="apple1"
               label="Sign Up with "
-              onPress={() => onSocialAuth('apple')}
+              type="apple"
+              setLoading={setLoading}
             />
           </View>
 

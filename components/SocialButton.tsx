@@ -1,18 +1,46 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { IconProps } from '@expo/vector-icons/build/createIconSet';
+import { useOAuth } from '@clerk/clerk-expo';
+import { useRouter } from 'expo-router';
+import { callToast } from '@/utils/toasts.utils';
+import { useSocialAuth } from '@/utils/auth.utils';
+import { COLORS } from '@/constants/colors';
 
 type SocialButtonProps = {
-  onPress: () => Promise<void>;
+  type: 'google' | 'apple';
   icon: keyof typeof AntDesign.glyphMap;
   label: string;
+  style?: object;
+  textStyle?: object;
+  setLoading: (a: boolean) => void;
 };
 
-const SocialButton = ({ onPress, icon, label }: SocialButtonProps) => {
+const SocialButton = ({
+  type,
+  icon,
+  label,
+  style,
+  textStyle,
+  setLoading,
+}: SocialButtonProps) => {
+  const router = useRouter();
+  const { onSocialAuth } = useSocialAuth();
+
   return (
-    <TouchableOpacity style={styles.socialBtn} onPress={onPress}>
-      <Text style={styles.socialText}>{label}</Text>
+    <TouchableOpacity
+      style={[styles.socialBtn, style]}
+      onPress={() => onSocialAuth({ type, setLoading })}
+      accessibilityLabel={`Sign in with ${label}`}
+    >
+      <Text style={[styles.socialText, textStyle]}>{label}</Text>
       <AntDesign name={icon} size={24} color="black" />
     </TouchableOpacity>
   );
