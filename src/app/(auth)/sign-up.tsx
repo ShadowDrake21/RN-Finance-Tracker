@@ -20,6 +20,7 @@ import { useForm, Controller } from 'react-hook-form';
 import CustomTextInput from '@/components/CustomTextInput';
 import FormError from '@/components/FormError';
 import { STYLES } from '@/constants/styles';
+import Loader from '@/components/Loader';
 
 interface IFormInput {
   name: string;
@@ -51,6 +52,7 @@ const Page = () => {
   const onSignUp = async () => {
     if (!isLoaded) return;
 
+    setLoading(true);
     try {
       const { name, email, password } = getValues();
       !!name.split(' ')[1]
@@ -69,6 +71,7 @@ const Page = () => {
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
 
       setPendingVerification(true);
+      setLoading(false);
     } catch (err: any) {
       Alert.alert('Whoops!', err.message, [{ text: 'OK, got it' }]);
     }
@@ -77,6 +80,7 @@ const Page = () => {
   const onVerifyPress = async () => {
     if (!isLoaded) return;
 
+    setLoading(true);
     try {
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
         code,
@@ -90,17 +94,15 @@ const Page = () => {
           { text: 'OK, got it' },
         ]);
       }
+
+      setLoading(false);
     } catch (err: any) {
       Alert.alert('Whoops!', err.message, [{ text: 'OK, got it' }]);
     }
   };
 
   if (loading) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
+    return <Loader />;
   }
 
   return (
@@ -144,7 +146,7 @@ const Page = () => {
             keyboardType="number-pad"
             onChangeText={setCode}
           />
-          <CustomButton text="Verify" onPress={onVerifyPress} />
+          <CustomButton onPress={onVerifyPress}>Verify</CustomButton>
         </>
       ) : (
         <>
@@ -204,6 +206,7 @@ const Page = () => {
                   onChangeText={onChange}
                   value={value}
                   onBlur={onBlur}
+                  autoCapitalize="none"
                 />
               )}
               name="email"
@@ -287,7 +290,9 @@ const Page = () => {
               </>
             )}
 
-            <CustomButton onPress={handleSubmit(onSignUp)} text="Sign Up" />
+            <CustomButton onPress={handleSubmit(onSignUp)}>
+              Sign Up
+            </CustomButton>
           </KeyboardAvoidingView>
 
           <View style={styles.separatorContainer}>

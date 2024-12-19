@@ -21,6 +21,8 @@ import CustomTextInput from '@/components/CustomTextInput';
 import FormError from '@/components/FormError';
 import { callToast } from '@/utils/toasts.utils';
 import { useSocialAuth } from '@/utils/auth.utils';
+import Loader from '@/components/Loader';
+import { EMAIL_REGEX } from '@/utils/forms.utils';
 
 const Page = () => {
   const router = useRouter();
@@ -43,6 +45,7 @@ const Page = () => {
     if (!isLoaded) return;
 
     try {
+      setLoading(true);
       const { email, password } = getValues();
       const signInAttempt = await signIn.create({
         identifier: email,
@@ -52,7 +55,6 @@ const Page = () => {
       if (signInAttempt.status === 'complete') {
         await setActive({ session: signInAttempt.createdSessionId });
         console.log('User is signed in');
-
         router.replace('/(tabs)/dashboard');
       } else {
         callToast({
@@ -63,15 +65,13 @@ const Page = () => {
       }
     } catch (err: any) {
       Alert.alert('Whoops!', err.message, [{ text: 'OK, got it' }]);
+    } finally {
+      setLoading(false);
     }
   }, [isLoaded, getValues]);
 
   if (loading) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
+    return <Loader />;
   }
 
   return (
@@ -87,7 +87,7 @@ const Page = () => {
           control={control}
           rules={{
             required: true,
-            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            pattern: EMAIL_REGEX,
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <CustomTextInput
@@ -95,6 +95,7 @@ const Page = () => {
               onChangeText={onChange}
               value={value}
               onBlur={onBlur}
+              autoCapitalize="none"
             />
           )}
           name="email"
@@ -133,13 +134,13 @@ const Page = () => {
           </>
         )}
       </View>
-      <Link href={'/reset-password'} style={{ marginBottom: 30 }} asChild>
+      <Link href={'/(reset-password)'} style={{ marginBottom: 30 }} asChild>
         <Text style={{ fontWeight: '600', alignSelf: 'flex-end' }}>
           Forgot Password?
         </Text>
       </Link>
 
-      <CustomButton onPress={handleSubmit(onSignIn)} text="Sign In" />
+      <CustomButton onPress={handleSubmit(onSignIn)}>Sign In</CustomButton>
 
       <View style={styles.separatorContainer}>
         <View style={styles.separator} />

@@ -1,14 +1,14 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { COLORS } from '@/constants/colors';
 
 const CustomButton = ({
   onPress,
-  text,
+  children,
   disabled = false,
 }: {
   onPress: () => void;
-  text: string;
+  children: PropsWithChildren<string>;
   disabled?: boolean;
 }) => {
   return (
@@ -17,7 +17,7 @@ const CustomButton = ({
       style={[styles.button, disabled && { backgroundColor: COLORS.disabled }]}
       disabled={disabled}
     >
-      <Text style={styles.buttonText}>{text}</Text>
+      <Text style={styles.buttonText}>{children}</Text>
     </TouchableOpacity>
   );
 };
