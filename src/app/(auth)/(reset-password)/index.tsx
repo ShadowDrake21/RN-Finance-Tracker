@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import LottieView from 'lottie-react-native';
 import { STYLES } from '@/constants/styles';
@@ -27,9 +27,12 @@ const Page = () => {
   });
 
   const { isSignedIn } = useAuth();
-  const { isLoaded, signIn, setActive } = useSignIn();
-  const [successfulCreation, setSuccessfulCreation] = useState(false);
+  const { isLoaded, signIn } = useSignIn();
   const [error, setError] = useState('');
+
+  if (!isLoaded) {
+    return <View />;
+  }
 
   const create = async () => {
     await signIn
@@ -38,13 +41,14 @@ const Page = () => {
         identifier: getValues().email,
       })
       .then((_) => {
-        setSuccessfulCreation(true);
         setError('');
         router.push('/verify-email');
       })
       .catch((err) => {
-        console.error('error', err.errors[0].longMessage);
         setError(err.errors[0].longMessage);
+        Alert.alert('You have encountered an error!', error, [
+          { text: 'OK', style: 'destructive' },
+        ]);
       });
   };
 
@@ -53,20 +57,11 @@ const Page = () => {
   };
 
   if (isSignedIn) {
-    router.push('/');
+    router.push('/(tabs)/dashboard');
   }
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        gap: 20,
-        alignItems: 'center',
-        paddingBottom: bottom,
-        paddingHorizontal: 20,
-      }}
-    >
+    <View style={[styles.container, { paddingBottom: bottom }]}>
       <LottieView
         source={require('@/assets/animations/lock.lottie')}
         autoPlay
@@ -111,4 +106,12 @@ const Page = () => {
 
 export default Page;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    gap: 20,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+});

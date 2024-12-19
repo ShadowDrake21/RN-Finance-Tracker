@@ -25,7 +25,6 @@ export const useSocialAuth = () => {
         const { createdSessionId, setActive } =
           type === 'google' ? await googleOAuth() : await appleOAuth();
 
-        // If sign in was successful, set the active session
         if (createdSessionId) {
           setLoading(true);
           await setActive!({ session: createdSessionId });

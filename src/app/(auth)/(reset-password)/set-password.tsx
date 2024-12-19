@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import { useSignIn } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
@@ -6,7 +6,6 @@ import CustomButton from '@/components/CustomButton';
 import CustomTextInput from '@/components/CustomTextInput';
 import FormError from '@/components/FormError';
 import { STYLES } from '@/constants/styles';
-import { EMAIL_REGEX } from '@/utils/forms.utils';
 import LottieView from 'lottie-react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,7 +14,7 @@ import { callToast } from '@/utils/toasts.utils';
 
 const Page = () => {
   const router = useRouter();
-  const { isLoaded, signIn, setActive } = useSignIn();
+  const { signIn, setActive } = useSignIn();
   const { bottom } = useSafeAreaInsets();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -45,15 +44,21 @@ const Page = () => {
               text2: 'You can now sign in with new password.',
             });
           });
-
           setError('');
         } else {
-          console.log(result);
+          setError('Password reset failed');
+          callToast({
+            type: 'error',
+            text1: error,
+            text2: 'Please try again or contact support if the issue persists.',
+          });
         }
       })
       .catch((err) => {
-        console.error('error', err.errors[0].longMessage);
         setError(err.errors[0].longMessage);
+        Alert.alert('You have encountered an error!', error, [
+          { text: 'OK', style: 'destructive' },
+        ]);
       });
   };
 

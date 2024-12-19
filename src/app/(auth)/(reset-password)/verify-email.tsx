@@ -1,24 +1,33 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import { useSignIn } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import CustomButton from '@/components/CustomButton';
-import CustomTextInput from '@/components/CustomTextInput';
-import FormError from '@/components/FormError';
 import { STYLES } from '@/constants/styles';
-import { EMAIL_REGEX } from '@/utils/forms.utils';
 import LottieView from 'lottie-react-native';
-import { Controller } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  CodeField,
+  Cursor,
+  useBlurOnFulfill,
+  useClearByFocusCell,
+} from 'react-native-confirmation-code-field';
+import { COLORS } from '@/constants/colors';
+import { callToast } from '@/utils/toasts.utils';
+
+const CELL_COUNT = 6;
 
 const Page = () => {
   const router = useRouter();
-  const { isLoaded, signIn, setActive } = useSignIn();
+  const { signIn } = useSignIn();
   const { bottom } = useSafeAreaInsets();
-  const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
-  const [secondFactor, setSecondFactor] = useState(false);
   const [error, setError] = useState('');
+  const ref = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
+  const [props, getCellOnLayoutHandler] = useClearByFocusCell({
+    value: code,
+    setValue: setCode,
+  });
 
   const verify = async () => {
     await signIn
@@ -27,22 +36,23 @@ const Page = () => {
         code,
       })
       .then((result) => {
-        // Check if 2FA is required
-        if (result.status === 'needs_second_factor') {
-          setSecondFactor(true);
-          setError('');
-        } else if (result.status === 'needs_new_password') {
-          // Set the active session to
-          // the newly created session (user is now signed in)
+        if (result.status === 'needs_new_password') {
           router.replace('/set-password');
           setError('');
         } else {
-          console.log(result);
+          setError('Code verification failed. Please try again.');
+          callToast({
+            type: 'error',
+            text1: 'Code verification failed',
+            text2: 'Please try again or contact support if the issue persists.',
+          });
         }
       })
       .catch((err) => {
-        console.error('error', err.errors[0].longMessage);
         setError(err.errors[0].longMessage);
+        Alert.alert('You have encountered an error!', error, [
+          { text: 'OK', style: 'destructive' },
+        ]);
       });
   };
 
@@ -51,16 +61,7 @@ const Page = () => {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        gap: 20,
-        alignItems: 'center',
-        paddingBottom: bottom,
-        paddingHorizontal: 20,
-      }}
-    >
+    <View style={[styles.container, { paddingBottom: bottom }]}>
       <LottieView
         source={require('@/assets/animations/letter.lottie')}
         autoPlay
@@ -71,14 +72,26 @@ const Page = () => {
       <Text style={[STYLES.authSubtitle, { textAlign: 'center' }]}>
         Please enter your email address to recieve verification code.
       </Text>
-      <CustomTextInput
-        placeholder="Verification Code"
-        onChangeText={setCode}
+      <CodeField
+        ref={ref}
+        {...props}
         value={code}
-        propStyles={{ width: '100%' }}
-        autoCapitalize="none"
+        onChangeText={setCode}
+        cellCount={CELL_COUNT}
+        rootStyle={styles.codeFieldRoot}
         keyboardType="number-pad"
         textContentType="oneTimeCode"
+        autoComplete={'one-time-code'}
+        testID="my-code-input"
+        renderCell={({ index, symbol, isFocused }) => (
+          <Text
+            key={index}
+            style={[styles.cell, isFocused && styles.focusCell]}
+            onLayout={getCellOnLayoutHandler(index)}
+          >
+            {symbol || (isFocused ? <Cursor /> : null)}
+          </Text>
+        )}
       />
 
       <CustomButton onPress={onVerify}>Verify</CustomButton>
@@ -88,4 +101,32 @@ const Page = () => {
 
 export default Page;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    gap: 20,
+    alignItems: 'center',
+
+    paddingHorizontal: 20,
+  },
+  codeFieldRoot: {
+    marginTop: 20,
+    justifyContent: 'space-between',
+    width: '100%',
+    gap: 5,
+  },
+  cell: {
+    width: 60,
+    height: 60,
+    lineHeight: 48,
+    fontSize: 34,
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: '#00000030',
+    textAlign: 'center',
+  },
+  focusCell: {
+    borderColor: COLORS.primary,
+  },
+});

@@ -7,10 +7,6 @@ import { COLORS } from '@/constants/colors';
 const Layout = () => {
   const { isSignedIn, isLoaded } = useAuth();
 
-  useEffect(() => {
-    console.error('isSignedIn dashboard layout', isSignedIn);
-  }, [isSignedIn]);
-
   if (!isLoaded) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
