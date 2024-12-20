@@ -7,6 +7,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Foundation from '@expo/vector-icons/Foundation';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import CreateTabBar from '@/components/CreateTabBar';
+import { BlurView } from 'expo-blur';
 
 const Layout = () => {
   const { isSignedIn, isLoaded } = useAuth();
@@ -28,6 +29,7 @@ const Layout = () => {
       screenOptions={{
         tabBarActiveTintColor: COLORS.primary,
         tabBarStyle: {
+          position: 'absolute',
           height: 90,
           flexDirection: 'row',
           paddingTop: 15,
@@ -35,6 +37,9 @@ const Layout = () => {
         tabBarItemStyle: {
           justifyContent: 'center',
           alignItems: 'center',
+        },
+        tabBarBackground: () => {
+          return <BlurView intensity={80} style={{ flex: 1 }} />;
         },
       }}
     >
@@ -81,6 +86,7 @@ const Layout = () => {
             <MaterialIcons name="manage-accounts" size={size} color={color} />
           ),
           tabBarLabel: 'Profile',
+          animation: 'fade',
         }}
       />
     </Tabs>

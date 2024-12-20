@@ -19,20 +19,11 @@ export default CreateTabBar;
 const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
-    width: 50,
-    height: 50,
-    borderRadius: 25, // Half of width and height to make it a circle
+    width: 60,
+    height: 60,
+    borderRadius: 30, // Half of width and height to make it a circle
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.29,
-    shadowRadius: 4.65,
-
-    elevation: 7,
   },
 });
