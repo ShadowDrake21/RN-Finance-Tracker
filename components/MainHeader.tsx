@@ -35,30 +35,9 @@ const MainHeader = ({
   setWallet,
 }: MainHeaderProps) => {
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingTop: top + 10,
-        paddingBottom: 20,
-        paddingHorizontal: 25,
-      }}
-    >
+    <View style={[styles.container, { paddingTop: top + 10 }]}>
       <Link href="/profile" asChild>
-        <TouchableOpacity
-          style={{
-            shadowColor: '#000',
-            shadowOffset: {
-              width: 1,
-              height: 2,
-            },
-            shadowOpacity: 0.6,
-            shadowRadius: 2,
-
-            elevation: 6,
-          }}
-        >
+        <TouchableOpacity style={styles.userBtn}>
           <Image
             source={require('@/assets/images/user-mockup.png')}
             style={{
@@ -131,4 +110,23 @@ const MainHeader = ({
 
 export default MainHeader;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
+    paddingBottom: 20,
+    paddingHorizontal: 25,
+  },
+  userBtn: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 1,
+      height: 2,
+    },
+    shadowOpacity: 0.6,
+    shadowRadius: 2,
+    elevation: 6,
+  },
+});

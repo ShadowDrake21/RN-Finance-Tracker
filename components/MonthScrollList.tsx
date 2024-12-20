@@ -23,7 +23,9 @@ const MonthScrollList = ({
       (month) => month.toLowerCase() === selectedMonth.toLowerCase()
     );
     if (index !== -1 && flatListRef.current) {
-      flatListRef.current.scrollToIndex({ index, animated: true });
+      setTimeout(() => {
+        flatListRef.current?.scrollToIndex({ index, animated: true });
+      }, 1000); // Adjust the delay as needed
     }
   }, [selectedMonth, data]);
 
