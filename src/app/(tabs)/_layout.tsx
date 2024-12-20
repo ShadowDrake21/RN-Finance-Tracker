@@ -6,6 +6,7 @@ import { COLORS } from '@/constants/colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Foundation from '@expo/vector-icons/Foundation';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import CreateTabBar from '@/components/CreateTabBar';
 
 const Layout = () => {
   const { isSignedIn, isLoaded } = useAuth();
@@ -26,6 +27,15 @@ const Layout = () => {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: COLORS.primary,
+        tabBarStyle: {
+          height: 90,
+          flexDirection: 'row',
+          paddingTop: 15,
+        },
+        tabBarItemStyle: {
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
       }}
     >
       <Tabs.Screen
@@ -50,8 +60,9 @@ const Layout = () => {
         name="(expenses)"
         options={{
           headerShown: false,
-
-          tabBarLabel: 'Expenses',
+          tabBarLabel: '',
+          tabBarIcon: () => <CreateTabBar />,
+          tabBarIconStyle: { top: '25%' },
         }}
       />
       <Tabs.Screen
