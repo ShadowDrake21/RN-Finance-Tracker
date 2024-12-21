@@ -2,40 +2,47 @@ import {
   FlatList,
   Image,
   ImageBackground,
-  Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { Link, Tabs } from 'expo-router';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import * as DropdownMenu from 'zeego/dropdown-menu';
-import Entypo from '@expo/vector-icons/Entypo';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { BlurView } from 'expo-blur';
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Tabs, useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
 import MainHeader from '@/components/MainHeader';
 import MonthScrollList from '@/components/MonthScrollList';
 import { formatCurrency } from 'react-native-format-currency';
 import { COLORS } from '@/constants/colors';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import LinearGradient from 'react-native-linear-gradient';
+import MoneyDashboardInfo from '@/components/MoneyDashboardInfo';
+import { dummyBalanceData, IDayBalance } from '@/dummy/dummy-balance-data';
+import { compareDashboardDates } from '@/utils/date.utils';
+import { dummyMonthData } from '@/dummy/dummy-month-data';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import DashboardActivityItem from '@/components/DashboardActivityItem';
 
 const Page = () => {
+  const router = useRouter();
   const { top } = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
 
+  const bottomSheetRef = useRef<BottomSheet>(null);
   const [wallet, setWallet] = useState('Wallet 1');
-  const [selectedMonth, setSelectedMonth] = useState('Dec 2024');
+  const [selectedMonthId, setSelectedMonthId] = useState('11-2024');
   const [rawCurrentBalance, setRawCurrentBalance] = useState(13456.56);
   const [formattedCurrentBalance, setFormattedCurrentBalance] = useState('');
+  const [visibleData, setVisibleData] = useState<IDayBalance[]>([]);
+  const [page, setPage] = useState(0);
+  const [lastIndex, setLastIndex] = useState(0);
 
   useEffect(() => {
     const [valueFormattedWithSymbol] = formatCurrency({
@@ -43,7 +50,35 @@ const Page = () => {
       code: 'PLN',
     });
     setFormattedCurrentBalance(valueFormattedWithSymbol);
-  }, []);
+
+    console.log(selectedMonthId);
+
+    if (visibleData.length > 0 || page !== 0 || lastIndex !== 0) {
+      setVisibleData([]);
+      setPage(0);
+      setLastIndex(0);
+    }
+  }, [selectedMonthId]);
+
+  useEffect(() => {
+    const filtered: IDayBalance[] = [];
+    for (let i = lastIndex; i < dummyBalanceData.length; i++) {
+      if (compareDashboardDates(selectedMonthId, dummyBalanceData[i].date)) {
+        filtered.push(dummyBalanceData[i]);
+        if (filtered.length === 5) {
+          console.log('lastIndex', i + 1);
+          setLastIndex(i + 1);
+          break;
+        }
+      }
+    }
+
+    setVisibleData((prevData) => [...prevData, ...filtered]);
+  }, [selectedMonthId, page]);
+
+  const handleLoadMore = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -72,100 +107,37 @@ const Page = () => {
           />
           <View style={{ paddingTop: headerHeight }}>
             <MonthScrollList
-              data={[
-                'Apr 2024',
-                'May 2024',
-                'Jun 2024',
-                'Jul 2024',
-                'Aug 2024',
-                'Sept 2024',
-                'Oct 2024',
-                'Nov 2024',
-                'Dec 2024',
-              ]}
-              selectedMonth={selectedMonth}
-              setSelectedMonth={setSelectedMonth}
+              data={dummyMonthData}
+              selectedId={selectedMonthId}
+              setSelectedId={setSelectedMonthId}
             />
           </View>
-          <View
-            style={{
-              width: '100%',
-              paddingVertical: 20,
-              paddingHorizontal: 10,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 16,
-                textTransform: 'uppercase',
-                fontWeight: '600',
-                color: '#210e1b',
-                paddingBottom: 5,
-              }}
-            >
-              Current balance
-            </Text>
-            <Text
-              style={{
-                fontSize: 34,
-                fontWeight: '800',
-                color: COLORS.text,
-                paddingBottom: 20,
-              }}
-            >
-              {formattedCurrentBalance}
-            </Text>
-            <View>
-              <Text
-                style={{
-                  textTransform: 'capitalize',
-                  fontSize: 18,
-                  fontWeight: '600',
-                  color: '#210e1b',
-                  textAlign: 'center',
-                  paddingBottom: 10,
-                }}
-              >
-                In {selectedMonth}:
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                  paddingHorizontal: 20,
-                }}
-              >
-                <View style={{ flexDirection: 'row', gap: 5 }}>
-                  <AntDesign name="arrowup" size={24} color="black" />
+          <MoneyDashboardInfo
+            selectedMonthId={selectedMonthId}
+            formattedCurrentBalance={formattedCurrentBalance}
+          />
 
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontWeight: '700',
-                      alignSelf: 'center',
-                    }}
-                  >
-                    34.555,90 zł
-                  </Text>
-                </View>
-                <View style={{ flexDirection: 'row', gap: 5 }}>
-                  <AntDesign name="arrowdown" size={24} color="black" />
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontWeight: '700',
-                      alignSelf: 'center',
-                    }}
-                  >
-                    - 10.456,00 zł
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
+          <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
+            <BottomSheet
+              ref={bottomSheetRef}
+              snapPoints={[600, '85%']}
+              index={1}
+              handleComponent={null}
+            >
+              <BottomSheetView style={styles.contentContainer}>
+                <FlatList
+                  data={visibleData}
+                  style={{ width: '100%' }}
+                  initialNumToRender={2}
+                  maxToRenderPerBatch={5}
+                  keyExtractor={(item) => item.date.toString()}
+                  onEndReached={handleLoadMore}
+                  onEndReachedThreshold={0.5}
+                  renderItem={({ item }) => <DashboardActivityItem {...item} />}
+                />
+              </BottomSheetView>
+            </BottomSheet>
+          </GestureHandlerRootView>
         </LinearGradient>
       </ImageBackground>
     </View>
@@ -174,4 +146,13 @@ const Page = () => {
 
 export default Page;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
+    padding: 24,
+    alignItems: 'center',
+  },
+});

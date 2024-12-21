@@ -1,33 +1,31 @@
 import {
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import React, { useEffect } from 'react';
+import { MonthScrollItem, MonthScrollListProps } from '@/types';
 
 const MonthScrollList = ({
   data,
-  selectedMonth,
-  setSelectedMonth,
-}: {
-  data: string[];
-  selectedMonth: string;
-  setSelectedMonth: (month: string) => void;
-}) => {
-  const flatListRef = React.useRef<FlatList<string>>(null);
+  selectedId,
+  setSelectedId,
+}: MonthScrollListProps) => {
+  const flatListRef = React.useRef<FlatList<MonthScrollItem>>(null);
 
   useEffect(() => {
     const index = data.findIndex(
-      (month) => month.toLowerCase() === selectedMonth.toLowerCase()
+      (month) => month.id.toLowerCase() === selectedId.toLowerCase()
     );
     if (index !== -1 && flatListRef.current) {
       setTimeout(() => {
         flatListRef.current?.scrollToIndex({ index, animated: true });
       }, 1000); // Adjust the delay as needed
     }
-  }, [selectedMonth, data]);
+  }, [selectedId, data]);
 
   return (
     <FlatList
@@ -39,12 +37,11 @@ const MonthScrollList = ({
       onScrollToIndexFailed={(info) => {
         console.warn('Scroll to index failed', info);
       }}
-      keyExtractor={(item) => item}
       contentContainerStyle={{ paddingHorizontal: 20 }}
-      renderItem={({ item }) => (
-        <TouchableOpacity
+      renderItem={({ item: { id, text } }) => (
+        <Pressable
           style={[
-            item.toLowerCase() === selectedMonth.toLowerCase()
+            id.toLowerCase() === selectedId.toLowerCase()
               ? { backgroundColor: '#2c8f8b' }
               : {},
             {
@@ -53,19 +50,23 @@ const MonthScrollList = ({
               borderRadius: 20,
             },
           ]}
-          onPress={() => setSelectedMonth(item)}
+          onPress={() => {
+            console.log('selectedId', selectedId);
+
+            setSelectedId(id);
+          }}
         >
           <Text
             style={[
-              item.toLowerCase() === selectedMonth.toLowerCase() && {
+              id.toLowerCase() === selectedId.toLowerCase() && {
                 color: '#fff',
               },
               { fontWeight: '600' },
             ]}
           >
-            {item.toUpperCase()}
+            {text.toUpperCase()}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       )}
     />
   );

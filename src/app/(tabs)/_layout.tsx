@@ -27,7 +27,8 @@ const Layout = () => {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.tabBarTintInactive,
+        tabBarActiveTintColor: COLORS.tabBarTintActive,
         tabBarStyle: {
           position: 'absolute',
           height: 90,
@@ -66,7 +67,7 @@ const Layout = () => {
         options={{
           headerShown: false,
           tabBarLabel: '',
-          tabBarIcon: () => <CreateTabBar />,
+          tabBarIcon: ({ focused }) => <CreateTabBar isActive={focused} />,
           tabBarIconStyle: { top: '25%' },
         }}
       />

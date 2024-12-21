@@ -6,4 +6,6 @@ export const COLORS = {
   placeholder: '#999',
   border: '#a9a9a9',
   disabled: '#ccccccff',
+  tabBarTintActive: '#06f7a7',
+  tabBarTintInactive: '#195106',
 };
