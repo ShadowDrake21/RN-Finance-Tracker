@@ -1,41 +1,29 @@
 import {
   FlatList,
-  Image,
   ImageBackground,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Tabs, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
 import MainHeader from '@/components/MainHeader';
 import MonthScrollList from '@/components/MonthScrollList';
 import { formatCurrency } from 'react-native-format-currency';
-import { COLORS } from '@/constants/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import MoneyDashboardInfo from '@/components/MoneyDashboardInfo';
-import { dummyBalanceData } from '@/dummy/dummy-balance-data';
-import { compareDashboardDates } from '@/utils/date.utils';
 import { dummyMonthData } from '@/dummy/dummy-month-data';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import DashboardActivityItem from '@/components/DashboardActivityItem';
 import * as SQLite from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
-import migrations from '@/drizzle/migrations';
 import { financeTable } from '@/db/schema';
 import { eq, sql } from 'drizzle-orm';
+import { IFinanceGroup } from '@/types';
+import uuid from 'react-native-uuid';
 
 const expo = SQLite.openDatabaseSync('db.db');
 const db = drizzle(expo);
@@ -50,13 +38,12 @@ const Page = () => {
   const [selectedMonthId, setSelectedMonthId] = useState('12-2024');
   const [rawCurrentBalance, setRawCurrentBalance] = useState(13456.56);
   const [formattedCurrentBalance, setFormattedCurrentBalance] = useState('');
-  // const [visibleData, setVisibleData] = useState<IDayBalance[]>([]);
   const [page, setPage] = useState(0);
-  const [lastIndex, setLastIndex] = useState(0);
-  const { success, error } = useMigrations(db, migrations);
   const [items, setItems] = useState<
     (typeof financeTable.$inferSelect)[] | null
   >(null);
+
+  const [groups, setGroups] = useState<IFinanceGroup[]>([]);
 
   useEffect(() => {
     const [valueFormattedWithSymbol] = formatCurrency({
@@ -69,88 +56,73 @@ const Page = () => {
   }, [rawCurrentBalance, selectedMonthId]);
 
   useEffect(() => {
-    // setVisibleData([]);
     setPage(0);
-    setLastIndex(0);
-    console.warn(
-      'resetting data',
-      new Date('2024-4-28').getMonth(),
-      new Date('2024-12-28').getFullYear()
-    );
+    setGroups([]);
+    fetchFinances();
+    console.warn('resetting data');
   }, [selectedMonthId]);
-
-  // const filterData = () => {
-  //   console.log('filtering data');
-
-  //   console.log('lastIndex', lastIndex);
-
-  //   for (let i = lastIndex; i < dummyBalanceData.length; i++) {
-  //     console.log(
-  //       'comparing',
-  //       selectedMonthId,
-  //       dummyBalanceData[i].date,
-  //       compareDashboardDates(selectedMonthId, dummyBalanceData[i].date)
-  //     );
-
-  //     if (compareDashboardDates(selectedMonthId, dummyBalanceData[i].date)) {
-  //       filtered.push(dummyBalanceData[i]);
-  //       if (filtered.length === 5) {
-  //         console.log('lastIndex', i + 1);
-  //         setLastIndex(i + 1);
-  //         break;
-  //       }
-
-  //       if (i === dummyBalanceData.length - 1) {
-  //         setLastIndex(i + 1);
-  //       }
-  //     }
-  //   }
-
-  //   setVisibleData((prevData) => [...prevData, ...filtered]);
-  // };
-
-  // useEffect(() => {
-  //   filterData();
-  // }, [selectedMonthId, page]);
 
   const handleLoadMore = () => {
     setPage((prevPage) => prevPage + 1);
+    fetchFinances();
   };
 
-  useEffect(() => {
-    if (!success) return;
-    (async () => {
-      const finances = await db
-        .select()
-        .from(financeTable)
-        .where(
-          eq(
-            sql`strftime('%Y-%m', ${financeTable.date})`,
-            selectedMonthId.split('-').reverse().join('-')
-          )
-        );
-      setItems(finances);
-      console.warn(
-        'finances',
-        finances,
-        selectedMonthId.split('-').reverse().join('-')
-      );
-    })();
-  }, [success, selectedMonthId]);
-  if (error) {
-    return (
-      <View>
-        <Text>Migration error: {error.message}</Text>
-      </View>
-    );
-  }
-  if (!success) {
-    return (
-      <View>
-        <Text>Migration is in progress...</Text>
-      </View>
-    );
-  }
+  const groupFinancesByDate = (
+    finances: (typeof financeTable.$inferSelect)[]
+  ): IFinanceGroup[] => {
+    console.log('groupFinancesByDate', finances);
+
+    const grouped = finances.reduce((acc, curr) => {
+      const date = new Date(curr.date);
+      const key = `${date.getDate()}-${
+        date.getMonth() + 1
+      }-${date.getFullYear()}`;
+      if (!acc[key]) {
+        acc[key] = {
+          date: key,
+          total: 0,
+          items: [],
+        };
+      }
+      acc[key].total += curr.price;
+      acc[key].items.push({
+        id: curr.id,
+        name: curr.name,
+        description: curr.description!,
+        price: curr.price,
+        iconType: curr.iconType,
+      });
+      return acc;
+    }, {} as Record<string, IFinanceGroup>);
+
+    return Object.values(grouped);
+  };
+
+  const fetchFinances = async () => {
+    console.log('set groups', page, selectedMonthId);
+
+    const finances = await db
+      .select()
+      .from(financeTable)
+      .where(
+        eq(
+          sql`strftime('%Y-%m', ${financeTable.date})`,
+          selectedMonthId.split('-').reverse().join('-')
+        )
+      )
+      .offset(page * 10)
+      .limit(10);
+    setItems(finances);
+
+    setGroups((existingGroups) => [
+      ...existingGroups,
+      ...groupFinancesByDate(finances),
+    ]);
+    console.warn('group', groups);
+  };
+
+  useEffect(() => {}, [selectedMonthId, page]);
+
   if (items === null || items.length === 0) {
     return (
       <View>
@@ -204,16 +176,16 @@ const Page = () => {
               handleComponent={null}
             >
               <BottomSheetView style={styles.contentContainer}>
-                {/* <FlatList
-                  data={[visibleData]}
+                <FlatList
+                  data={groups}
                   style={{ width: '100%' }}
                   initialNumToRender={2}
                   maxToRenderPerBatch={5}
-                  keyExtractor={(item) => item.date.toString()}
+                  keyExtractor={() => uuid.v4()}
                   onEndReached={handleLoadMore}
                   onEndReachedThreshold={0.5}
                   renderItem={({ item }) => <DashboardActivityItem {...item} />}
-                /> */}
+                />
                 <Text>Hi!</Text>
               </BottomSheetView>
             </BottomSheet>

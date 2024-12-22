@@ -8,3 +8,15 @@ export type MonthScrollListProps = {
   selectedId: string;
   setSelectedId: (month: string) => void;
 };
+
+export interface IFinanceGroup {
+  date: string;
+  total: number;
+  items: {
+    id: number;
+    name: string;
+    description?: string;
+    price: number;
+    iconType: string;
+  }[];
+}
