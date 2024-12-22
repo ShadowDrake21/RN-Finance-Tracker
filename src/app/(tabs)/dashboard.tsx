@@ -35,6 +35,7 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import migrations from '@/drizzle/migrations';
 import { financeTable } from '@/db/schema';
+import { eq, sql } from 'drizzle-orm';
 
 const expo = SQLite.openDatabaseSync('db.db');
 const db = drizzle(expo);
@@ -46,7 +47,7 @@ const Page = () => {
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [wallet, setWallet] = useState('Wallet 1');
-  const [selectedMonthId, setSelectedMonthId] = useState('11-2024');
+  const [selectedMonthId, setSelectedMonthId] = useState('12-2024');
   const [rawCurrentBalance, setRawCurrentBalance] = useState(13456.56);
   const [formattedCurrentBalance, setFormattedCurrentBalance] = useState('');
   // const [visibleData, setVisibleData] = useState<IDayBalance[]>([]);
@@ -71,7 +72,11 @@ const Page = () => {
     // setVisibleData([]);
     setPage(0);
     setLastIndex(0);
-    console.warn('resetting data');
+    console.warn(
+      'resetting data',
+      new Date('2024-4-28').getMonth(),
+      new Date('2024-12-28').getFullYear()
+    );
   }, [selectedMonthId]);
 
   // const filterData = () => {
@@ -115,11 +120,23 @@ const Page = () => {
   useEffect(() => {
     if (!success) return;
     (async () => {
-      const finances = await db.select().from(financeTable);
+      const finances = await db
+        .select()
+        .from(financeTable)
+        .where(
+          eq(
+            sql`strftime('%Y-%m', ${financeTable.date})`,
+            selectedMonthId.split('-').reverse().join('-')
+          )
+        );
       setItems(finances);
-      console.warn('finances', finances);
+      console.warn(
+        'finances',
+        finances,
+        selectedMonthId.split('-').reverse().join('-')
+      );
     })();
-  }, [success]);
+  }, [success, selectedMonthId]);
   if (error) {
     return (
       <View>
