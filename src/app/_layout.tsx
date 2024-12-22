@@ -1,10 +1,9 @@
 import { StyleSheet } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Stack } from 'expo-router/stack';
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
 import { tokenCache } from '@/cache';
 import Toast from 'react-native-toast-message';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 

@@ -4,6 +4,7 @@ import {
   ImageBackground,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {
@@ -23,12 +24,20 @@ import { formatCurrency } from 'react-native-format-currency';
 import { COLORS } from '@/constants/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import MoneyDashboardInfo from '@/components/MoneyDashboardInfo';
-import { dummyBalanceData, IDayBalance } from '@/dummy/dummy-balance-data';
+import { dummyBalanceData } from '@/dummy/dummy-balance-data';
 import { compareDashboardDates } from '@/utils/date.utils';
 import { dummyMonthData } from '@/dummy/dummy-month-data';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import DashboardActivityItem from '@/components/DashboardActivityItem';
+import * as SQLite from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
+import migrations from '@/drizzle/migrations';
+import { financeTable } from '@/db/schema';
+
+const expo = SQLite.openDatabaseSync('db.db');
+const db = drizzle(expo);
 
 const Page = () => {
   const router = useRouter();
@@ -40,9 +49,13 @@ const Page = () => {
   const [selectedMonthId, setSelectedMonthId] = useState('11-2024');
   const [rawCurrentBalance, setRawCurrentBalance] = useState(13456.56);
   const [formattedCurrentBalance, setFormattedCurrentBalance] = useState('');
-  const [visibleData, setVisibleData] = useState<IDayBalance[]>([]);
+  // const [visibleData, setVisibleData] = useState<IDayBalance[]>([]);
   const [page, setPage] = useState(0);
   const [lastIndex, setLastIndex] = useState(0);
+  const { success, error } = useMigrations(db, migrations);
+  const [items, setItems] = useState<
+    (typeof financeTable.$inferSelect)[] | null
+  >(null);
 
   useEffect(() => {
     const [valueFormattedWithSymbol] = formatCurrency({
@@ -51,34 +64,83 @@ const Page = () => {
     });
     setFormattedCurrentBalance(valueFormattedWithSymbol);
 
-    console.log(selectedMonthId);
-
-    if (visibleData.length > 0 || page !== 0 || lastIndex !== 0) {
-      setVisibleData([]);
-      setPage(0);
-      setLastIndex(0);
-    }
-  }, [selectedMonthId]);
+    console.log('selected month', selectedMonthId);
+  }, [rawCurrentBalance, selectedMonthId]);
 
   useEffect(() => {
-    const filtered: IDayBalance[] = [];
-    for (let i = lastIndex; i < dummyBalanceData.length; i++) {
-      if (compareDashboardDates(selectedMonthId, dummyBalanceData[i].date)) {
-        filtered.push(dummyBalanceData[i]);
-        if (filtered.length === 5) {
-          console.log('lastIndex', i + 1);
-          setLastIndex(i + 1);
-          break;
-        }
-      }
-    }
+    // setVisibleData([]);
+    setPage(0);
+    setLastIndex(0);
+    console.warn('resetting data');
+  }, [selectedMonthId]);
 
-    setVisibleData((prevData) => [...prevData, ...filtered]);
-  }, [selectedMonthId, page]);
+  // const filterData = () => {
+  //   console.log('filtering data');
+
+  //   console.log('lastIndex', lastIndex);
+
+  //   for (let i = lastIndex; i < dummyBalanceData.length; i++) {
+  //     console.log(
+  //       'comparing',
+  //       selectedMonthId,
+  //       dummyBalanceData[i].date,
+  //       compareDashboardDates(selectedMonthId, dummyBalanceData[i].date)
+  //     );
+
+  //     if (compareDashboardDates(selectedMonthId, dummyBalanceData[i].date)) {
+  //       filtered.push(dummyBalanceData[i]);
+  //       if (filtered.length === 5) {
+  //         console.log('lastIndex', i + 1);
+  //         setLastIndex(i + 1);
+  //         break;
+  //       }
+
+  //       if (i === dummyBalanceData.length - 1) {
+  //         setLastIndex(i + 1);
+  //       }
+  //     }
+  //   }
+
+  //   setVisibleData((prevData) => [...prevData, ...filtered]);
+  // };
+
+  // useEffect(() => {
+  //   filterData();
+  // }, [selectedMonthId, page]);
 
   const handleLoadMore = () => {
     setPage((prevPage) => prevPage + 1);
   };
+
+  useEffect(() => {
+    if (!success) return;
+    (async () => {
+      const finances = await db.select().from(financeTable);
+      setItems(finances);
+      console.warn('finances', finances);
+    })();
+  }, [success]);
+  if (error) {
+    return (
+      <View>
+        <Text>Migration error: {error.message}</Text>
+      </View>
+    );
+  }
+  if (!success) {
+    return (
+      <View>
+        <Text>Migration is in progress...</Text>
+      </View>
+    );
+  }
+  if (items === null || items.length === 0) {
+    return (
+      <View>
+        <Text>Empty</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -125,8 +187,8 @@ const Page = () => {
               handleComponent={null}
             >
               <BottomSheetView style={styles.contentContainer}>
-                <FlatList
-                  data={visibleData}
+                {/* <FlatList
+                  data={[visibleData]}
                   style={{ width: '100%' }}
                   initialNumToRender={2}
                   maxToRenderPerBatch={5}
@@ -134,7 +196,8 @@ const Page = () => {
                   onEndReached={handleLoadMore}
                   onEndReachedThreshold={0.5}
                   renderItem={({ item }) => <DashboardActivityItem {...item} />}
-                />
+                /> */}
+                <Text>Hi!</Text>
               </BottomSheetView>
             </BottomSheet>
           </GestureHandlerRootView>
