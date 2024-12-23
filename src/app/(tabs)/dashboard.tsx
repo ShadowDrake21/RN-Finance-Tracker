@@ -6,7 +6,7 @@ import {
   View,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
 import MainHeader from '@/components/MainHeader';
@@ -23,14 +23,19 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { financeTable } from '@/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { IFinanceGroup } from '@/types';
-import uuid from 'react-native-uuid';
+import { uniqueGroups } from '@/utils/finance-groups.utils';
+import { useFetchFinances } from '@/hooks/fetch-finances.hook';
 
 const expo = SQLite.openDatabaseSync('db.db');
 const db = drizzle(expo);
 
+const renderItem = ({ item }: { item: IFinanceGroup }) => {
+  return <DashboardActivityItem {...item} />;
+};
+
 const Page = () => {
-  const router = useRouter();
-  const { top } = useSafeAreaInsets();
+  const flatListRef = useRef<FlatList<IFinanceGroup>>(null);
+  const { top, bottom } = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -38,12 +43,12 @@ const Page = () => {
   const [selectedMonthId, setSelectedMonthId] = useState('12-2024');
   const [rawCurrentBalance, setRawCurrentBalance] = useState(13456.56);
   const [formattedCurrentBalance, setFormattedCurrentBalance] = useState('');
-  const [page, setPage] = useState(0);
-  const [items, setItems] = useState<
-    (typeof financeTable.$inferSelect)[] | null
-  >(null);
 
-  const [groups, setGroups] = useState<IFinanceGroup[]>([]);
+  const { groups, handleLoadMore } = useFetchFinances(selectedMonthId);
+
+  useEffect(() => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+  }, [selectedMonthId]);
 
   useEffect(() => {
     const [valueFormattedWithSymbol] = formatCurrency({
@@ -51,85 +56,15 @@ const Page = () => {
       code: 'PLN',
     });
     setFormattedCurrentBalance(valueFormattedWithSymbol);
+  }, [rawCurrentBalance]);
 
-    console.log('selected month', selectedMonthId);
-  }, [rawCurrentBalance, selectedMonthId]);
-
-  useEffect(() => {
-    setPage(0);
-    setGroups([]);
-    fetchFinances();
-    console.warn('resetting data');
-  }, [selectedMonthId]);
-
-  const handleLoadMore = () => {
-    setPage((prevPage) => prevPage + 1);
-    fetchFinances();
-  };
-
-  const groupFinancesByDate = (
-    finances: (typeof financeTable.$inferSelect)[]
-  ): IFinanceGroup[] => {
-    console.log('groupFinancesByDate', finances);
-
-    const grouped = finances.reduce((acc, curr) => {
-      const date = new Date(curr.date);
-      const key = `${date.getDate()}-${
-        date.getMonth() + 1
-      }-${date.getFullYear()}`;
-      if (!acc[key]) {
-        acc[key] = {
-          date: key,
-          total: 0,
-          items: [],
-        };
-      }
-      acc[key].total += curr.price;
-      acc[key].items.push({
-        id: curr.id,
-        name: curr.name,
-        description: curr.description!,
-        price: curr.price,
-        iconType: curr.iconType,
-      });
-      return acc;
-    }, {} as Record<string, IFinanceGroup>);
-
-    return Object.values(grouped);
-  };
-
-  const fetchFinances = async () => {
-    console.log('set groups', page, selectedMonthId);
-
-    const finances = await db
-      .select()
-      .from(financeTable)
-      .where(
-        eq(
-          sql`strftime('%Y-%m', ${financeTable.date})`,
-          selectedMonthId.split('-').reverse().join('-')
-        )
-      )
-      .offset(page * 10)
-      .limit(10);
-    setItems(finances);
-
-    setGroups((existingGroups) => [
-      ...existingGroups,
-      ...groupFinancesByDate(finances),
-    ]);
-    console.warn('group', groups);
-  };
-
-  useEffect(() => {}, [selectedMonthId, page]);
-
-  if (items === null || items.length === 0) {
-    return (
-      <View>
-        <Text>Empty</Text>
-      </View>
-    );
-  }
+  // if (items.length === 0) {
+  //   return (
+  //     <View>
+  //       <Text>Empty</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <View style={{ flex: 1 }}>
@@ -179,14 +114,14 @@ const Page = () => {
                 <FlatList
                   data={groups}
                   style={{ width: '100%' }}
+                  contentContainerStyle={{ paddingBottom: bottom + 200 }}
                   initialNumToRender={2}
                   maxToRenderPerBatch={5}
-                  keyExtractor={() => uuid.v4()}
+                  keyExtractor={(item) => item.date}
                   onEndReached={handleLoadMore}
-                  onEndReachedThreshold={0.5}
-                  renderItem={({ item }) => <DashboardActivityItem {...item} />}
+                  onEndReachedThreshold={0.3}
+                  renderItem={renderItem}
                 />
-                <Text>Hi!</Text>
               </BottomSheetView>
             </BottomSheet>
           </GestureHandlerRootView>

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { callToast } from './toasts.utils';
+import { callToast } from '../utils/toasts.utils';
 import { Alert } from 'react-native';
 import { useOAuth } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';

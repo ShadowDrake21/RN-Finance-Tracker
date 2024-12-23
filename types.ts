@@ -20,3 +20,11 @@ export interface IFinanceGroup {
     iconType: string;
   }[];
 }
+
+export interface IFinanceItem {
+  id: number;
+  name: string;
+  description?: string;
+  price: number;
+  iconType: string;
+}

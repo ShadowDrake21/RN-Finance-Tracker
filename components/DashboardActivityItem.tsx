@@ -1,45 +1,45 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import React, { memo, useEffect } from 'react';
-import { IDayBalance } from '@/dummy/dummy-balance-data';
 import { COLORS } from '@/constants/colors';
 import ShoppingIcon from '@/assets/activities-icons/png/shopping.png';
+import { IFinanceGroup } from '@/types';
 
-const DashboardActivityItem = (item: IDayBalance) => {
+const DashboardActivityItem = memo((group: IFinanceGroup) => {
   useEffect(() => {
-    console.log('render', item.date);
+    console.log('render', group.date);
   }, []);
   return (
     <View>
       <View>
-        <Text>{item.date}</Text>
-        <Text>{item.bilans}</Text>
+        <Text>{group.date}</Text>
+        <Text>{group.total}</Text>
       </View>
       <View>
-        {item.items.map((activity, index) => (
+        {group.items.map((item, index) => (
           <View key={index}>
             <View>
               <Image source={ShoppingIcon} style={{ width: 50, height: 50 }} />
               <View>
-                <Text>{activity.name}</Text>
-                <Text>{activity.description}</Text>
+                <Text>{item.name}</Text>
+                <Text>{item.description}</Text>
               </View>
             </View>
             <Text
               style={
-                activity.price > 0
+                item.price > 0
                   ? { color: COLORS.tabBarTintActive }
                   : { color: 'red' }
               }
             >
-              {activity.price}
+              {item.price}
             </Text>
           </View>
         ))}
       </View>
     </View>
   );
-};
+});
 
-export default memo(DashboardActivityItem);
+export default DashboardActivityItem;
 
 const styles = StyleSheet.create({});
