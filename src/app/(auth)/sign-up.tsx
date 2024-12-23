@@ -107,12 +107,12 @@ const Page = () => {
 
   return (
     <ScrollView
-      style={{ backgroundColor: COLORS.main }}
+      style={{ backgroundColor: COLORS.lightGray }}
       contentContainerStyle={{
         flex: 1,
         paddingHorizontal: 25,
         justifyContent: 'center',
-        backgroundColor: COLORS.main,
+        backgroundColor: COLORS.lightGray,
       }}
     >
       {pendingVerification ? (
@@ -142,7 +142,7 @@ const Page = () => {
             autoFocus
             placeholder="Enter your verification code"
             propStyles={{ marginBottom: 20 }}
-            placeholderTextColor={COLORS.placeholder}
+            placeholderTextColor={COLORS.gray}
             keyboardType="number-pad"
             onChangeText={setCode}
           />

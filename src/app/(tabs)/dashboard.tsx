@@ -5,7 +5,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -17,7 +17,7 @@ import MoneyDashboardInfo from '@/components/MoneyDashboardInfo';
 import { dummyMonthData } from '@/dummy/dummy-month-data';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import DashboardActivityItem from '@/components/DashboardActivityItem';
+import FinanceItem from '@/components/FinanceItem';
 import * as SQLite from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { financeTable } from '@/db/schema';
@@ -26,11 +26,8 @@ import { IFinanceGroup } from '@/types';
 import { uniqueGroups } from '@/utils/finance-groups.utils';
 import { useFetchFinances } from '@/hooks/fetch-finances.hook';
 
-const expo = SQLite.openDatabaseSync('db.db');
-const db = drizzle(expo);
-
 const renderItem = ({ item }: { item: IFinanceGroup }) => {
-  return <DashboardActivityItem {...item} />;
+  return <FinanceItem {...item} />;
 };
 
 const Page = () => {
@@ -43,6 +40,7 @@ const Page = () => {
   const [selectedMonthId, setSelectedMonthId] = useState('12-2024');
   const [rawCurrentBalance, setRawCurrentBalance] = useState(13456.56);
   const [formattedCurrentBalance, setFormattedCurrentBalance] = useState('');
+  const [bottomSheetPadding, setBottomSheetPadding] = useState(0);
 
   const { groups, handleLoadMore } = useFetchFinances(selectedMonthId);
 
@@ -57,14 +55,6 @@ const Page = () => {
     });
     setFormattedCurrentBalance(valueFormattedWithSymbol);
   }, [rawCurrentBalance]);
-
-  // if (items.length === 0) {
-  //   return (
-  //     <View>
-  //       <Text>Empty</Text>
-  //     </View>
-  //   );
-  // }
 
   return (
     <View style={{ flex: 1 }}>
@@ -106,20 +96,29 @@ const Page = () => {
           <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
             <BottomSheet
               ref={bottomSheetRef}
-              snapPoints={[600, '85%']}
-              index={1}
-              handleComponent={null}
+              snapPoints={[575, '85%']}
+              index={0}
+              handleStyle={{ paddingTop: 10, paddingBottom: 0 }}
+              containerStyle={{ paddingBottom: 75 }}
+              style={styles.container}
             >
               <BottomSheetView style={styles.contentContainer}>
                 <FlatList
                   data={groups}
-                  style={{ width: '100%' }}
-                  contentContainerStyle={{ paddingBottom: bottom + 200 }}
-                  initialNumToRender={2}
+                  style={{ width: '100%', height: '100%' }}
+                  contentContainerStyle={{
+                    gap: 10,
+                    paddingBottom: 75,
+                  }}
+                  initialNumToRender={5}
                   maxToRenderPerBatch={5}
+                  showsVerticalScrollIndicator={false}
                   keyExtractor={(item) => item.date}
-                  onEndReached={handleLoadMore}
-                  onEndReachedThreshold={0.3}
+                  onEndReached={() => {
+                    handleLoadMore();
+                    bottomSheetRef.current?.expand();
+                  }}
+                  onEndReachedThreshold={0.5}
                   renderItem={renderItem}
                 />
               </BottomSheetView>
