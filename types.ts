@@ -21,7 +21,7 @@ export interface IFinanceGroup {
   }[];
 }
 
-export interface IFinanceItem {
+export interface IFinanceItemAction {
   id: number;
   name: string;
   description?: string;

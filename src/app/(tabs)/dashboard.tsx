@@ -1,4 +1,5 @@
 import {
+  Animated,
   FlatList,
   ImageBackground,
   StyleSheet,
@@ -15,7 +16,10 @@ import { formatCurrency } from 'react-native-format-currency';
 import LinearGradient from 'react-native-linear-gradient';
 import MoneyDashboardInfo from '@/components/MoneyDashboardInfo';
 import { dummyMonthData } from '@/dummy/dummy-month-data';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {
+  GestureHandlerRootView,
+  RectButton,
+} from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import FinanceItem from '@/components/FinanceItem';
 import * as SQLite from 'expo-sqlite';
@@ -25,10 +29,7 @@ import { eq, sql } from 'drizzle-orm';
 import { IFinanceGroup } from '@/types';
 import { uniqueGroups } from '@/utils/finance-groups.utils';
 import { useFetchFinances } from '@/hooks/fetch-finances.hook';
-
-const renderItem = ({ item }: { item: IFinanceGroup }) => {
-  return <FinanceItem {...item} />;
-};
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 const Page = () => {
   const flatListRef = useRef<FlatList<IFinanceGroup>>(null);
@@ -119,7 +120,7 @@ const Page = () => {
                     bottomSheetRef.current?.expand();
                   }}
                   onEndReachedThreshold={0.5}
-                  renderItem={renderItem}
+                  renderItem={({ item }) => <FinanceItem {...item} />}
                 />
               </BottomSheetView>
             </BottomSheet>
