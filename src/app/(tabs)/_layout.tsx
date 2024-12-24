@@ -1,11 +1,32 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { Tabs } from 'expo-router';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Redirect, Tabs } from 'expo-router';
+import { useAuth } from '@clerk/clerk-expo';
+import { COLORS } from '@/constants/colors';
 
 const Layout = () => {
-  return <Tabs></Tabs>;
+  const { isSignedIn, isLoaded } = useAuth();
+
+  if (!isLoaded) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href={'/(auth)/sign-in'} />;
+  }
+
+  return (
+    <Tabs>
+      <Tabs.Screen name="dashboard" />
+      <Tabs.Screen name="(expenses)" />
+      <Tabs.Screen name="visual-representation" />
+      <Tabs.Screen name="settings" />
+    </Tabs>
+  );
 };
 
 export default Layout;
-
-const styles = StyleSheet.create({});
