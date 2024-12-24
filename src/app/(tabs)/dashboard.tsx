@@ -33,7 +33,7 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 const Page = () => {
   const flatListRef = useRef<FlatList<IFinanceGroup>>(null);
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -41,7 +41,6 @@ const Page = () => {
   const [selectedMonthId, setSelectedMonthId] = useState('12-2024');
   const [rawCurrentBalance, setRawCurrentBalance] = useState(13456.56);
   const [formattedCurrentBalance, setFormattedCurrentBalance] = useState('');
-  const [bottomSheetPadding, setBottomSheetPadding] = useState(0);
 
   const { groups, handleLoadMore } = useFetchFinances(selectedMonthId);
 

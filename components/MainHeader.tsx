@@ -1,25 +1,17 @@
 import {
-  FlatList,
   Image,
-  ImageBackground,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
-import { Link, Tabs } from 'expo-router';
+import React from 'react';
+import { Link, useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as DropdownMenu from 'zeego/dropdown-menu';
 import Entypo from '@expo/vector-icons/Entypo';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { BlurView } from 'expo-blur';
-import { useHeaderHeight } from '@react-navigation/elements';
 
 type MainHeaderProps = {
   top: number;
@@ -34,6 +26,7 @@ const MainHeader = ({
   wallet,
   setWallet,
 }: MainHeaderProps) => {
+  const router = useRouter();
   return (
     <View style={[styles.container, { paddingTop: top + 10 }]}>
       <Link href="/profile" asChild>
@@ -48,7 +41,7 @@ const MainHeader = ({
           />
         </TouchableOpacity>
       </Link>
-      <Pressable onPress={() => console.log('notification')}>
+      <Pressable onPress={() => router.push('/notifications')}>
         <Ionicons
           name="notifications-outline"
           size={30}
@@ -94,14 +87,14 @@ const MainHeader = ({
           <DropdownMenu.Arrow />
         </DropdownMenu.Content>
       </DropdownMenu.Root>
-      <Pressable onPress={() => console.log('calendar')}>
+      <Pressable onPress={() => router.push('/calendar')}>
         <MaterialIcons
           name="calendar-today"
           size={30}
           color={headerTintColor}
         />
       </Pressable>
-      <Pressable onPress={() => console.log('search')}>
+      <Pressable onPress={() => router.push('/search')}>
         <Ionicons name="search" size={30} color={headerTintColor} />
       </Pressable>
     </View>

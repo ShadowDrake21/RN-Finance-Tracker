@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  Button,
+  LogBox,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, { useEffect } from 'react';
 import { Stack } from 'expo-router/stack';
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
@@ -8,6 +15,9 @@ import * as SQLite from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import migrations from '@/drizzle/migrations';
+import { useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { COLORS } from '@/constants/colors';
 
 const expo = SQLite.openDatabaseSync('db.db');
 const db = drizzle(expo);
@@ -19,7 +29,10 @@ if (!publishableKey) {
   );
 }
 
+LogBox.ignoreLogs(['Warning: ExpandableCalendar:']);
+
 const RootLayout = () => {
+  const router = useRouter();
   const { success, error } = useMigrations(db, migrations);
 
   if (error) {
@@ -46,6 +59,39 @@ const RootLayout = () => {
       />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="month-info/[id]" />
+      <Stack.Screen
+        name="notifications"
+        options={{
+          presentation: 'modal',
+          headerRight: () => (
+            <TouchableOpacity onPress={() => router.dismiss()}>
+              <Ionicons name="close" size={24} color={COLORS.primary} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="search"
+        options={{
+          presentation: 'fullScreenModal',
+          headerLeft: ({ tintColor }) => (
+            <TouchableOpacity onPress={() => router.dismiss()}>
+              <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="calendar"
+        options={{
+          presentation: 'fullScreenModal',
+          headerLeft: ({ tintColor }) => (
+            <TouchableOpacity onPress={() => router.dismiss()}>
+              <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
     </Stack>
   );
 };

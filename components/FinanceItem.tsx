@@ -16,9 +16,6 @@ const AnimatedTouchableOpacity =
   Reanimated.createAnimatedComponent(TouchableOpacity);
 
 const FinanceItem = memo((group: IFinanceGroup) => {
-  useEffect(() => {
-    console.log('render', group.date);
-  }, []);
   const formattedTotal = formatCurrency({
     amount: group.total,
     code: 'PLN',
