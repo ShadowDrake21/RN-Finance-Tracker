@@ -65,9 +65,11 @@ const RootLayout = () => {
           presentation: 'modal',
           headerRight: () => (
             <TouchableOpacity onPress={() => router.dismiss()}>
-              <Ionicons name="close" size={24} color={COLORS.primary} />
+              <Ionicons name="close" size={24} color="black" />
             </TouchableOpacity>
           ),
+          title: 'Notifications',
+          headerShadowVisible: false,
         }}
       />
       <Stack.Screen
@@ -79,15 +81,27 @@ const RootLayout = () => {
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
             </TouchableOpacity>
           ),
+          headerSearchBarOptions: {
+            autoFocus: true,
+            placeholder: 'Shopping...',
+          },
+          headerLargeTitle: true,
+          title: 'Where is my money?',
         }}
       />
       <Stack.Screen
         name="calendar"
         options={{
           presentation: 'fullScreenModal',
-          headerLeft: ({ tintColor }) => (
-            <TouchableOpacity onPress={() => router.dismiss()}>
-              <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
+          // headerShown: false,
+          title: 'Search by date',
+          headerShadowVisible: false,
+          headerLeft: ({ label }) => (
+            <TouchableOpacity
+              onPress={() => router.dismiss()}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}
+            >
+              <Ionicons name="chevron-back" size={24} color="black" />
             </TouchableOpacity>
           ),
         }}

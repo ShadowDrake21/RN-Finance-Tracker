@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { memo, useEffect } from 'react';
 import { COLORS } from '@/constants/colors';
-import { IFinanceGroup, IFinanceItemAction } from '@/types';
+import { IFinanceGroup, IFinanceItemAction } from '@/types/types';
 import { format, parse } from 'date-fns';
 import { formatCurrency } from 'react-native-format-currency';
 import { FINANCE_ICONS } from '@/constants/icons';

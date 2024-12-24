@@ -26,7 +26,7 @@ import * as SQLite from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { financeTable } from '@/db/schema';
 import { eq, sql } from 'drizzle-orm';
-import { IFinanceGroup } from '@/types';
+import { IFinanceGroup } from '@/types/types';
 import { uniqueGroups } from '@/utils/finance-groups.utils';
 import { useFetchFinances } from '@/hooks/fetch-finances.hook';
 import Swipeable from 'react-native-gesture-handler/Swipeable';

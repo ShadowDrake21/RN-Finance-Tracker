@@ -3,7 +3,7 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { financeTable } from '@/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { uniqueGroups } from '@/utils/finance-groups.utils';
-import { IFinanceGroup } from '@/types';
+import { IFinanceGroup } from '@/types/types';
 import * as SQLite from 'expo-sqlite';
 
 const expo = SQLite.openDatabaseSync('db.db');

@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import React, { useEffect } from 'react';
-import { MonthScrollItem, MonthScrollListProps } from '@/types';
+import { MonthScrollItem, MonthScrollListProps } from '@/types/types';
 
 const MonthScrollList = ({
   data,

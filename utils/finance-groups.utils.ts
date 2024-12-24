@@ -1,4 +1,4 @@
-import { IFinanceGroup } from '@/types';
+import { IFinanceGroup } from '@/types/types';
 
 export const uniqueGroups = (grouped: IFinanceGroup[]) => {
   return Object.values(grouped).reduce((acc, group) => {

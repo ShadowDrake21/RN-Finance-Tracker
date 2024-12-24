@@ -28,3 +28,8 @@ export interface IFinanceItemAction {
   price: number;
   iconType: string;
 }
+
+export type SwitchItemType = {
+  label: string;
+  value: string;
+};
