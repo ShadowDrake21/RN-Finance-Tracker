@@ -38,3 +38,5 @@ yarn-error.*
 
 /android
 /ios
+assets/images/user-mockup.png
+/dummy

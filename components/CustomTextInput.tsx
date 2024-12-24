@@ -16,7 +16,7 @@ const CustomTextInput = ({
   return (
     <TextInput
       style={[styles.input, propStyles]}
-      placeholderTextColor={COLORS.placeholder}
+      placeholderTextColor={COLORS.gray}
       {...props}
     />
   );

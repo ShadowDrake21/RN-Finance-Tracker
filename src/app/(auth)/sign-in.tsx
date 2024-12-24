@@ -20,7 +20,7 @@ import { Controller, useForm } from 'react-hook-form';
 import CustomTextInput from '@/components/CustomTextInput';
 import FormError from '@/components/FormError';
 import { callToast } from '@/utils/toasts.utils';
-import { useSocialAuth } from '@/utils/auth.utils';
+import { useSocialAuth } from '@/hooks/auth.hook';
 import Loader from '@/components/Loader';
 import { EMAIL_REGEX } from '@/utils/forms.utils';
 

@@ -11,7 +11,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useOAuth } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import { callToast } from '@/utils/toasts.utils';
-import { useSocialAuth } from '@/utils/auth.utils';
+import { useSocialAuth } from '@/hooks/auth.hook';
 import { COLORS } from '@/constants/colors';
 
 type SocialButtonProps = {
