@@ -21,13 +21,9 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
-import { SwitchItemType } from '@/types/types';
 import CustomSwitch from '@/components/CustomSwitch';
-
-const switchSelectorOptions: SwitchItemType[] = [
-  { label: 'Week', value: 'week' },
-  { label: 'Extendable', value: 'extendable' },
-];
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const Page = () => {
   const { top } = useSafeAreaInsets();
@@ -44,8 +40,8 @@ const Page = () => {
         options={{
           headerRight: () => (
             <CustomSwitch
-              options={switchSelectorOptions}
-              setValue={setWeekView}
+              value={weekView}
+              onPress={() => setWeekView(!weekView)}
             />
           ),
         }}

@@ -29,7 +29,15 @@ export interface IFinanceItemAction {
   iconType: string;
 }
 
-export type SwitchItemType = {
-  label: string;
-  value: string;
+export type SwitchItemProps = {
+  disabled?: boolean;
+  activeText: string;
+  inActiveText: string;
+  circleSize: number;
+  barHeight: number;
+  circleBorderWidth: number;
+  backgroundActive: string;
+  backgroundInactive: string;
+  circleActiveColor: string;
+  circleInActiveColor: string;
 };
