@@ -6,24 +6,28 @@ import {
   ExpandableCalendar,
   WeekCalendar,
 } from 'react-native-calendars';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
 import CustomSwitch from '@/components/CustomSwitch';
 import AgendaItem from '@/components/AgendaItem';
-import { agendaItems } from '@/dummy/agendaItems';
-import { useFetchFinances } from '@/hooks/fetch-finances.hook';
 import { useFetchFinancesByDate } from '@/hooks/fetch-finances-by-date.hook';
+import { COLORS } from '@/constants/colors';
+import CustomActivityIndicator from '@/components/CustomActivityIndicator';
 
 const Page = () => {
-  const { top } = useSafeAreaInsets();
   const [selected, setSelected] = useState(
-    // new Date().toISOString().split('T')[0].slice(0, 7)
     new Date().toISOString().split('T')[0]
   );
   const [weekView, setWeekView] = useState(false);
 
   const { items, loading, total } = useFetchFinancesByDate(selected);
 
+  // TODO: component responsible for only one task
+
+  // TODO: use context
+
+  // TODO: single responsibility principle
+
+  // TODO: flash list
   useEffect(() => {
     // console.log(items);
   }, [items]);
@@ -46,47 +50,34 @@ const Page = () => {
       />
       <CalendarProvider
         date={new Date().toISOString().split('T')[0]}
-        // onDateChanged={onDateChanged}
         onDateChanged={setSelected}
         showTodayButton
-        // disabledOpacity={0.6}
-        // theme={todayBtnTheme.current}
-        // todayBottomMargin={16}
         style={{
-          // shadowColor: 'black',
-          // shadowOpacity: 0.3,
-          // shadowRadius: 5,
-          // shadowOffset: { width: 0, height: 3 },
           borderBottomWidth: 1,
           borderBottomColor: 'black',
         }}
       >
         {weekView ? (
-          <WeekCalendar
-            // testID={testIDs.weekCalendar.CONTAINER}
-            firstDay={1}
-            // markedDates={marked.current}
-            allowShadow={false}
-          />
+          <WeekCalendar firstDay={1} allowShadow={false} />
         ) : (
           <ExpandableCalendar allowShadow={false} />
         )}
         {loading ? (
-          <ActivityIndicator
-            style={{ marginTop: 20 }}
-            size="large"
-            color="black"
-          />
+          <CustomActivityIndicator size="large" style={{ marginTop: 20 }} />
         ) : (
           <>
             {total && <Text>{total}</Text>}
-            {items && (
+            {items ? (
               <AgendaList
                 sections={[{ title: items[0]?.date, data: items }]}
                 renderItem={renderItem}
                 sectionStyle={styles.section}
                 scrollToNextEvent
               />
+            ) : (
+              <View>
+                <Text>No notes on income/outcome</Text>
+              </View>
             )}
           </>
         )}

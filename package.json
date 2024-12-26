@@ -50,7 +50,8 @@
     "react-native-toast-message": "^2.2.1",
     "react-native-uuid": "^2.0.3",
     "victory-chart": "^37.3.4",
-    "zeego": "^2.0.4"
+    "zeego": "^2.0.4",
+    "@shopify/flash-list": "1.7.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

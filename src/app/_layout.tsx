@@ -1,12 +1,5 @@
-import {
-  Button,
-  LogBox,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, { useEffect } from 'react';
+import { LogBox, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
 import { Stack } from 'expo-router/stack';
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
 import { tokenCache } from '@/cache';
@@ -76,7 +69,7 @@ const RootLayout = () => {
         name="search"
         options={{
           presentation: 'fullScreenModal',
-          headerLeft: ({ tintColor }) => (
+          headerLeft: () => (
             <TouchableOpacity onPress={() => router.dismiss()}>
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
             </TouchableOpacity>
@@ -93,10 +86,9 @@ const RootLayout = () => {
         name="calendar"
         options={{
           presentation: 'fullScreenModal',
-          // headerShown: false,
           title: 'Search by date',
           headerShadowVisible: false,
-          headerLeft: ({ label }) => (
+          headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.dismiss()}
               style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}

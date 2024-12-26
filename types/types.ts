@@ -1,3 +1,9 @@
+export type OnboardingItem = {
+  animationPath: string;
+  title: string;
+  description: string;
+};
+
 export type MonthScrollItem = {
   id: string;
   text: string;

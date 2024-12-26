@@ -12,6 +12,7 @@ const db = drizzle(expo);
 export const useFetchFinances = (selectedMonthId: string) => {
   const pageRef = useRef(0);
   const [groups, setGroups] = useState<IFinanceGroup[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     pageRef.current = 0;
@@ -20,6 +21,7 @@ export const useFetchFinances = (selectedMonthId: string) => {
   }, [selectedMonthId]);
 
   const fetchFinances = async () => {
+    setLoading(true);
     const finances = await db
       .select()
       .from(financeTable)
@@ -38,6 +40,8 @@ export const useFetchFinances = (selectedMonthId: string) => {
         ...groupFinancesByDate(finances, existingGroups),
       ]),
     ]);
+
+    setLoading(false);
   };
 
   const handleLoadMore = () => {
@@ -82,5 +86,5 @@ export const useFetchFinances = (selectedMonthId: string) => {
     return Object.values(grouped);
   };
 
-  return { groups, handleLoadMore };
+  return { groups, handleLoadMore, loading };
 };

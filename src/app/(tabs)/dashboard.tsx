@@ -1,12 +1,5 @@
-import {
-  Animated,
-  FlatList,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { FlatList, ImageBackground, StyleSheet, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -16,20 +9,14 @@ import { formatCurrency } from 'react-native-format-currency';
 import LinearGradient from 'react-native-linear-gradient';
 import MoneyDashboardInfo from '@/components/MoneyDashboardInfo';
 import { dummyMonthData } from '@/dummy/dummy-month-data';
-import {
-  GestureHandlerRootView,
-  RectButton,
-} from 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import FinanceItem from '@/components/FinanceItem';
-import * as SQLite from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { financeTable } from '@/db/schema';
-import { eq, sql } from 'drizzle-orm';
 import { IFinanceGroup } from '@/types/types';
-import { uniqueGroups } from '@/utils/finance-groups.utils';
 import { useFetchFinances } from '@/hooks/fetch-finances.hook';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { FlashList } from '@shopify/flash-list';
+import CustomActivityIndicator from '@/components/CustomActivityIndicator';
+import DashboardBottomSheet from '@/components/DashboardBottomSheet';
 
 const Page = () => {
   const flatListRef = useRef<FlatList<IFinanceGroup>>(null);
@@ -42,7 +29,7 @@ const Page = () => {
   const [rawCurrentBalance, setRawCurrentBalance] = useState(13456.56);
   const [formattedCurrentBalance, setFormattedCurrentBalance] = useState('');
 
-  const { groups, handleLoadMore } = useFetchFinances(selectedMonthId);
+  const { groups, handleLoadMore, loading } = useFetchFinances(selectedMonthId);
 
   useEffect(() => {
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
@@ -56,6 +43,11 @@ const Page = () => {
     setFormattedCurrentBalance(valueFormattedWithSymbol);
   }, [rawCurrentBalance]);
 
+  const liniarGradientColors: string[] = [
+    'rgba(255,255,255,0.6)',
+    'rgba(0,0,0,0.4)',
+  ];
+
   return (
     <View style={{ flex: 1 }}>
       <ImageBackground
@@ -63,10 +55,7 @@ const Page = () => {
         source={require('@/assets/images/dashboard-bg.png')}
         style={{ flex: 1 }}
       >
-        <LinearGradient
-          colors={['rgba(255,255,255,0.6)', 'rgba(0,0,0,0.4)']}
-          style={{ flex: 1 }}
-        >
+        <LinearGradient colors={liniarGradientColors} style={{ flex: 1 }}>
           <Tabs.Screen
             options={{
               headerTransparent: true,
@@ -94,36 +83,48 @@ const Page = () => {
           />
 
           <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
+            <DashboardBottomSheet
+              selectedMonthId={selectedMonthId}
+              bottomSheetRef={bottomSheetRef}
+            />
+          </GestureHandlerRootView>
+
+          {/* <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
             <BottomSheet
               ref={bottomSheetRef}
-              snapPoints={[575, '85%']}
-              index={0}
+              snapPoints={['60%', '85%']}
+              index={1}
               handleStyle={{ paddingTop: 10, paddingBottom: 0 }}
               containerStyle={{ paddingBottom: 75 }}
               style={styles.container}
             >
               <BottomSheetView style={styles.contentContainer}>
-                <FlatList
-                  data={groups}
-                  style={{ width: '100%', height: '100%' }}
-                  contentContainerStyle={{
-                    gap: 10,
-                    paddingBottom: 75,
-                  }}
-                  initialNumToRender={5}
-                  maxToRenderPerBatch={5}
-                  showsVerticalScrollIndicator={false}
-                  keyExtractor={(item) => item.date}
-                  onEndReached={() => {
-                    handleLoadMore();
-                    bottomSheetRef.current?.expand();
-                  }}
-                  onEndReachedThreshold={0.5}
-                  renderItem={({ item }) => <FinanceItem {...item} />}
-                />
+                <View style={{ flex: 1, width: '100%' }}>
+                  {loading && (
+                    <CustomActivityIndicator
+                      size="large"
+                      style={{ marginVertical: 20 }}
+                    />
+                  )}
+                  <FlashList
+                    estimatedItemSize={100}
+                    data={groups}
+                    contentContainerStyle={{
+                      paddingBottom: 75,
+                    }}
+                    showsVerticalScrollIndicator={false}
+                    keyExtractor={(item) => item.date}
+                    onEndReached={() => {
+                      handleLoadMore();
+                      bottomSheetRef.current?.expand();
+                    }}
+                    onEndReachedThreshold={0.5}
+                    renderItem={({ item }) => <FinanceItem {...item} />}
+                  />
+                </View>
               </BottomSheetView>
             </BottomSheet>
-          </GestureHandlerRootView>
+          </GestureHandlerRootView> */}
         </LinearGradient>
       </ImageBackground>
     </View>
