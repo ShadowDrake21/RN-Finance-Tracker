@@ -51,7 +51,7 @@ const MonthScrollList = ({
             },
           ]}
           onPress={() => {
-            console.log('selectedId', selectedId);
+            console.log('selectedId monthscrolllist', id);
 
             setSelectedId(id);
           }}

@@ -1,42 +1,41 @@
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  StyleSheet,
-  Text,
-  TextStyle,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, { useCallback, useLayoutEffect, useState } from 'react';
-import {
-  Calendar,
-  CalendarList,
-  Agenda,
-  DateData,
   AgendaList,
   CalendarProvider,
   ExpandableCalendar,
   WeekCalendar,
 } from 'react-native-calendars';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
-import { SwitchItemType } from '@/types/types';
 import CustomSwitch from '@/components/CustomSwitch';
-
-const switchSelectorOptions: SwitchItemType[] = [
-  { label: 'Week', value: 'week' },
-  { label: 'Extendable', value: 'extendable' },
-];
+import AgendaItem from '@/components/AgendaItem';
+import { useFetchFinancesByDate } from '@/hooks/fetch-finances-by-date.hook';
+import { COLORS } from '@/constants/colors';
+import CustomActivityIndicator from '@/components/CustomActivityIndicator';
+import { formatCurrency } from 'react-native-format-currency';
 
 const Page = () => {
-  const { top } = useSafeAreaInsets();
-  const [selected, setSelected] = useState('');
+  const [selected, setSelected] = useState(
+    new Date().toISOString().split('T')[0]
+  );
   const [weekView, setWeekView] = useState(false);
 
-  // const renderItem = useCallback(({ item }: any) => {
-  //   return <AgendaItem item={item} />;
-  // }, []);
+  const { items, loading, total } = useFetchFinancesByDate(selected);
+
+  // TODO: component responsible for only one task
+
+  // TODO: use context
+
+  // TODO: single responsibility principle
+
+  // TODO: flash list
+  useEffect(() => {
+    // console.log(items);
+  }, [items]);
+
+  const renderItem = useCallback(({ item }: any) => {
+    return <AgendaItem {...item} />;
+  }, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -44,50 +43,72 @@ const Page = () => {
         options={{
           headerRight: () => (
             <CustomSwitch
-              options={switchSelectorOptions}
-              setValue={setWeekView}
+              value={weekView}
+              onPress={() => setWeekView(!weekView)}
             />
           ),
         }}
       />
       <CalendarProvider
         date={new Date().toISOString().split('T')[0]}
-        // onDateChanged={onDateChanged}
-        // onMonthChange={onMonthChange}
+        onDateChanged={setSelected}
         showTodayButton
-        // disabledOpacity={0.6}
-        // theme={todayBtnTheme.current}
-        // todayBottomMargin={16}
         style={{
-          // shadowColor: 'black',
-          // shadowOpacity: 0.3,
-          // shadowRadius: 5,
-          // shadowOffset: { width: 0, height: 3 },
           borderBottomWidth: 1,
           borderBottomColor: 'black',
         }}
       >
         {weekView ? (
-          <WeekCalendar
-            // testID={testIDs.weekCalendar.CONTAINER}
-            firstDay={1}
-            // markedDates={marked.current}
-            allowShadow={false}
-          />
+          <WeekCalendar firstDay={1} allowShadow={false} />
         ) : (
           <ExpandableCalendar allowShadow={false} />
         )}
-        <AgendaList
-          sections={[]}
-          renderItem={() => (
-            <View>
-              <Text>something</Text>
-            </View>
-          )}
-          // scrollToNextEvent
-          sectionStyle={styles.section}
-          // dayFormat={'yyyy-MM-d'}
-        />
+        {loading ? (
+          <CustomActivityIndicator size="large" style={{ marginTop: 20 }} />
+        ) : (
+          <>
+            {items.length > 0 ? (
+              <AgendaList
+                sections={[{ title: items[0]?.date, data: items }]}
+                renderItem={renderItem}
+                sectionStyle={styles.section}
+                scrollToNextEvent
+                ListFooterComponent={
+                  <Text
+                    style={{
+                      alignSelf: 'flex-end',
+                      fontSize: 16,
+                      paddingHorizontal: 20,
+                      fontWeight: '700',
+                    }}
+                  >
+                    Total:{' '}
+                    <Text
+                      style={[
+                        total > 0
+                          ? { color: COLORS.tabBarTintActive }
+                          : { color: 'red' },
+                      ]}
+                    >
+                      {
+                        formatCurrency({
+                          amount: total,
+                          code: 'PLN',
+                        })[0]
+                      }
+                    </Text>
+                  </Text>
+                }
+              />
+            ) : (
+              <View style={{ paddingTop: 50 }}>
+                <Text style={{ fontWeight: '700', alignSelf: 'center' }}>
+                  No notes on income/outcome
+                </Text>
+              </View>
+            )}
+          </>
+        )}
       </CalendarProvider>
     </View>
   );

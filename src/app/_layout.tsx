@@ -1,12 +1,5 @@
-import {
-  Button,
-  LogBox,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, { useEffect } from 'react';
+import { LogBox, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
 import { Stack } from 'expo-router/stack';
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
 import { tokenCache } from '@/cache';
@@ -18,10 +11,18 @@ import migrations from '@/drizzle/migrations';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS } from '@/constants/colors';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 const expo = SQLite.openDatabaseSync('db.db');
 const db = drizzle(expo);
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
 
 if (!publishableKey) {
   throw new Error(
@@ -33,22 +34,6 @@ LogBox.ignoreLogs(['Warning: ExpandableCalendar:']);
 
 const RootLayout = () => {
   const router = useRouter();
-  const { success, error } = useMigrations(db, migrations);
-
-  if (error) {
-    return (
-      <View>
-        <Text>Migration error: {error.message}</Text>
-      </View>
-    );
-  }
-  if (!success) {
-    return (
-      <View>
-        <Text>Migration is in progress...</Text>
-      </View>
-    );
-  }
 
   return (
     <Stack>
@@ -76,7 +61,7 @@ const RootLayout = () => {
         name="search"
         options={{
           presentation: 'fullScreenModal',
-          headerLeft: ({ tintColor }) => (
+          headerLeft: () => (
             <TouchableOpacity onPress={() => router.dismiss()}>
               <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
             </TouchableOpacity>
@@ -93,10 +78,9 @@ const RootLayout = () => {
         name="calendar"
         options={{
           presentation: 'fullScreenModal',
-          // headerShown: false,
           title: 'Search by date',
           headerShadowVisible: false,
-          headerLeft: ({ label }) => (
+          headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.dismiss()}
               style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}
@@ -110,13 +94,31 @@ const RootLayout = () => {
   );
 };
 
-const RootLayoutNav = () => (
-  <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-    <ClerkLoaded>
-      <RootLayout />
-      <Toast />
-    </ClerkLoaded>
-  </ClerkProvider>
-);
+const RootLayoutNav = () => {
+  const { success, error } = useMigrations(db, migrations);
+
+  useEffect(() => {
+    if (success) {
+      SplashScreen.hide();
+    }
+  }, [success]);
+
+  if (error) {
+    return (
+      <View>
+        <Text>Migration error: {error.message}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <ClerkLoaded>
+        <RootLayout />
+        <Toast />
+      </ClerkLoaded>
+    </ClerkProvider>
+  );
+};
 
 export default RootLayoutNav;

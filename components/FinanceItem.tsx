@@ -79,7 +79,7 @@ function swipeableAction(
   );
 }
 
-const FinanceItemAction = (item: IFinanceItemAction) => {
+export const FinanceItemAction = (item: IFinanceItemAction) => {
   return (
     <GestureHandlerRootView>
       <ReanimatedSwipeable
@@ -116,11 +116,12 @@ const FinanceItemAction = (item: IFinanceItemAction) => {
             </View>
           </View>
           <Text
-            style={
+            style={[
+              { fontWeight: '500' },
               item.price > 0
                 ? { color: COLORS.tabBarTintActive }
-                : { color: 'red' }
-            }
+                : { color: 'red' },
+            ]}
           >
             {item.price > 0 && '+'}{' '}
             {
