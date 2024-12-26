@@ -1,12 +1,7 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import { Redirect, Stack, useRouter } from 'expo-router';
-import { useAuth } from '@clerk/clerk-expo';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { COLORS } from '@/constants/colors';
+import { Stack } from 'expo-router';
 
 const Layout = () => {
-  const router = useRouter();
   return (
     <Stack>
       <Stack.Screen
@@ -33,5 +28,3 @@ const Layout = () => {
 };
 
 export default Layout;
-
-const styles = StyleSheet.create({});

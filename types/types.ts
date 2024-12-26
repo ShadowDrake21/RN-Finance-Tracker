@@ -4,6 +4,11 @@ export type OnboardingItem = {
   description: string;
 };
 
+export type SignInFormType = {
+  email: string;
+  password: string;
+};
+
 export type MonthScrollItem = {
   id: string;
   text: string;

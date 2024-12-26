@@ -23,6 +23,7 @@ import { callToast } from '@/utils/toasts.utils';
 import { useSocialAuth } from '@/hooks/auth.hook';
 import Loader from '@/components/Loader';
 import { EMAIL_REGEX } from '@/utils/forms.utils';
+import SignInForm from '@/components/sign-in/SignInForm';
 
 const Page = () => {
   const router = useRouter();
@@ -82,58 +83,7 @@ const Page = () => {
           Good to see you! Your financial goals are just a step away.
         </Text>
       </View>
-      <View style={{ gap: 15, marginBottom: 20 }}>
-        <Controller
-          control={control}
-          rules={{
-            required: true,
-            pattern: EMAIL_REGEX,
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              placeholder="Email"
-              onChangeText={onChange}
-              value={value}
-              onBlur={onBlur}
-              autoCapitalize="none"
-            />
-          )}
-          name="email"
-        />
-        {errors.email && (
-          <>
-            {errors.email.type === 'required' && (
-              <FormError>Email is required.</FormError>
-            )}
-            {errors.email.type === 'pattern' && (
-              <FormError>This is not a valid email address.</FormError>
-            )}
-          </>
-        )}
-        <Controller
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <CustomTextInput
-              placeholder="Password"
-              onChangeText={onChange}
-              value={value}
-              onBlur={onBlur}
-              secureTextEntry={true}
-            />
-          )}
-          name="password"
-        />
-        {errors.password && (
-          <>
-            {errors.password.type === 'required' && (
-              <FormError>Password is required.</FormError>
-            )}
-          </>
-        )}
-      </View>
+      <SignInForm control={control} errors={errors} />
       <Link href={'/(reset-password)'} style={{ marginBottom: 30 }} asChild>
         <Text style={{ fontWeight: '600', alignSelf: 'flex-end' }}>
           Forgot Password?
@@ -183,7 +133,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 25,
     justifyContent: 'center',
-    backgroundColor: COLORS.main,
+    backgroundColor: COLORS.lightGray,
   },
   input: {
     padding: 15,
