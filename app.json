@@ -9,7 +9,7 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash-screen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -44,6 +44,17 @@
             "customBuildFlags": [
               "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
             ]
+          }
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "enableFullScreenImage_legacy": "true",
+          "resizeMode": "cover",
+          "image": "./assets/splash-screen.png",
+          "dark": {
+            "backgroundColor": "#000000"
           }
         }
       ]

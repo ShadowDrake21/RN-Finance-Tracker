@@ -13,6 +13,7 @@ import LottieView from 'lottie-react-native';
 import Carousel from 'pinar';
 import { useAuth } from '@clerk/clerk-expo';
 import { onboardingItems } from '@/static/onboarding.static';
+import CustomActivityIndicator from '@/components/CustomActivityIndicator';
 
 const Page = () => {
   const router = useRouter();
@@ -39,7 +40,7 @@ const Page = () => {
   if (isLoading) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <CustomActivityIndicator size="large" />
       </View>
     );
   }
