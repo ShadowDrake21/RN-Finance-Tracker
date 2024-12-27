@@ -11,4 +11,11 @@ export const STYLES: StyleProp<any> = {
     fontSize: 22,
     letterSpacing: 0.5,
   },
+  authKeyboardAvoidingView: {
+    flex: 1,
+    justifyContent: 'center',
+    gap: 20,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
 };

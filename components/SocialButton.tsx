@@ -31,7 +31,6 @@ const SocialButton = ({
   textStyle,
   setLoading,
 }: SocialButtonProps) => {
-  const router = useRouter();
   const { onSocialAuth } = useSocialAuth();
 
   return (

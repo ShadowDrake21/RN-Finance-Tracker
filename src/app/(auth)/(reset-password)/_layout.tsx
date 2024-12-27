@@ -1,11 +1,12 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable } from 'react-native';
 import React from 'react';
-import { router, Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { COLORS } from '@/constants/colors';
 import { DefaultTheme } from '@react-navigation/native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 const Page = () => {
+  const router = useRouter();
   return (
     <Stack
       screenOptions={{
@@ -44,5 +45,3 @@ const Page = () => {
 };
 
 export default Page;
-
-const styles = StyleSheet.create({});

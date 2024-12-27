@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import { useSignIn } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
@@ -11,6 +11,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Loader from '@/components/Loader';
 import { callToast } from '@/utils/toasts.utils';
+import CustomKeyboardAvoidingView from '@/components/CustomKeyboardAvoidingView';
 
 const Page = () => {
   const router = useRouter();
@@ -72,21 +73,15 @@ const Page = () => {
     return <Loader />;
   }
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        gap: 20,
-        alignItems: 'center',
-        paddingBottom: bottom,
-        paddingHorizontal: 20,
-      }}
+    <CustomKeyboardAvoidingView
+      offset={100}
+      style={[STYLES.authKeyboardAvoidingView, { paddingBottom: bottom }]}
     >
       <LottieView
-        source={require('@/assets/animations/password.lottie')}
+        source={require('@/assets/animations/password2.lottie')}
         autoPlay
         loop
-        style={{ width: 300, height: 300 }}
+        style={{ width: 200, height: 130 }}
       />
       <Text style={[STYLES.authSubtitle, { textAlign: 'center' }]}>
         Please enter your email address to recieve verification code.
@@ -155,10 +150,8 @@ const Page = () => {
       )}
 
       <CustomButton onPress={handleSubmit(onSavePassword)}>Save</CustomButton>
-    </View>
+    </CustomKeyboardAvoidingView>
   );
 };
 
 export default Page;
-
-const styles = StyleSheet.create({});

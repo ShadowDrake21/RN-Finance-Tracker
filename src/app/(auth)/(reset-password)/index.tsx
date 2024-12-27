@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import LottieView from 'lottie-react-native';
 import { STYLES } from '@/constants/styles';
@@ -11,6 +11,7 @@ import FormError from '@/components/FormError';
 import { useRouter } from 'expo-router';
 import { useSignIn } from '@clerk/clerk-expo';
 import { useAuth } from '@clerk/clerk-react';
+import CustomKeyboardAvoidingView from '@/components/CustomKeyboardAvoidingView';
 
 const Page = () => {
   const router = useRouter();
@@ -29,6 +30,8 @@ const Page = () => {
   const { isSignedIn } = useAuth();
   const { isLoaded, signIn } = useSignIn();
   const [error, setError] = useState('');
+  let allowedAttempts = 3;
+  const [madeAttempts, setMadeAttempts] = useState(0);
 
   if (!isLoaded) {
     return <View />;
@@ -45,10 +48,24 @@ const Page = () => {
         router.push('/verify-email');
       })
       .catch((err) => {
-        setError(err.errors[0].longMessage);
-        Alert.alert('You have encountered an error!', error, [
-          { text: 'OK', style: 'destructive' },
-        ]);
+        setMadeAttempts((prev) => ++prev);
+
+        if (madeAttempts < allowedAttempts) {
+          const errorMessage = err.errors[0].message;
+          setError(errorMessage);
+
+          Alert.alert('You have encountered an error!', errorMessage, [
+            { text: 'OK', style: 'destructive' },
+          ]);
+        } else {
+          Alert.alert(
+            'Too many attempts!',
+            'You have tried to verify the email too many times. Try later!',
+            [{ text: 'OK', style: 'destructive' }]
+          );
+
+          setTimeout(() => router.replace('/sign-in'), 500);
+        }
       });
   };
 
@@ -61,7 +78,10 @@ const Page = () => {
   }
 
   return (
-    <View style={[styles.container, { paddingBottom: bottom }]}>
+    <CustomKeyboardAvoidingView
+      offset={90}
+      style={[STYLES.authKeyboardAvoidingView, { paddingBottom: bottom }]}
+    >
       <LottieView
         source={require('@/assets/animations/lock.lottie')}
         autoPlay
@@ -100,18 +120,8 @@ const Page = () => {
         </View>
       )}
       <CustomButton onPress={handleSubmit(onSendCode)}>Send</CustomButton>
-    </View>
+    </CustomKeyboardAvoidingView>
   );
 };
 
 export default Page;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    gap: 20,
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-});

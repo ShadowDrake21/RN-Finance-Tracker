@@ -9,6 +9,13 @@ export type SignInFormType = {
   password: string;
 };
 
+export type SignUpFormType = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 export type MonthScrollItem = {
   id: string;
   text: string;

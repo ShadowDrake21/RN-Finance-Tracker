@@ -1,7 +1,8 @@
 import React from 'react';
 import { Stack } from 'expo-router';
+import { VerificationProvider } from '@/contexts/VerificationContext';
 
-const Layout = () => {
+const AuthLayout = () => {
   return (
     <Stack>
       <Stack.Screen
@@ -27,4 +28,12 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+const AuthLayoutNav = () => {
+  return (
+    <VerificationProvider>
+      <AuthLayout />
+    </VerificationProvider>
+  );
+};
+
+export default AuthLayoutNav;
