@@ -1,29 +1,17 @@
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useState } from 'react';
 import { Link, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '@/constants/colors';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import SocialButton from '@/components/SocialButton';
 import CustomButton from '@/components/CustomButton';
 import { useSignIn } from '@clerk/clerk-expo';
 import { STYLES } from '@/constants/styles';
-import { Controller, useForm } from 'react-hook-form';
-import CustomTextInput from '@/components/CustomTextInput';
-import FormError from '@/components/FormError';
+import { useForm } from 'react-hook-form';
 import { callToast } from '@/utils/toasts.utils';
-import { useSocialAuth } from '@/hooks/auth.hook';
 import Loader from '@/components/Loader';
-import { EMAIL_REGEX } from '@/utils/forms.utils';
 import SignInForm from '@/components/sign-in/SignInForm';
+import { CustomAlert } from '@/utils/helpers.utils';
 
 const Page = () => {
   const router = useRouter();
@@ -65,7 +53,9 @@ const Page = () => {
         });
       }
     } catch (err: any) {
-      Alert.alert('Whoops!', err.message, [{ text: 'OK, got it' }]);
+      CustomAlert({
+        message: err.message,
+      });
     } finally {
       setLoading(false);
     }

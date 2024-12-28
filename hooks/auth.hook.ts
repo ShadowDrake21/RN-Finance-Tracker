@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { callToast } from '../utils/toasts.utils';
-import { Alert } from 'react-native';
 import { useOAuth } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
+import { CustomAlert } from '@/utils/helpers.utils';
 
 export const useSocialAuth = () => {
   const router = useRouter();
@@ -38,7 +38,9 @@ export const useSocialAuth = () => {
           });
         }
       } catch (err: any) {
-        Alert.alert('Whoops!', err.message, [{ text: 'OK, got it' }]);
+        CustomAlert({
+          message: err.message,
+        });
       }
     },
     [googleOAuth, appleOAuth, router]

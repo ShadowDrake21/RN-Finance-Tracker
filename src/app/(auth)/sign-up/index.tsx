@@ -1,5 +1,4 @@
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -18,6 +17,7 @@ import Loader from '@/components/Loader';
 import SignUpForm from '@/components/sign-up/SignUpForm';
 import { SignUpFormType } from '@/types/types';
 import CustomKeyboardAvoidingView from '@/components/CustomKeyboardAvoidingView';
+import { CustomAlert } from '@/utils/helpers.utils';
 
 const Page = () => {
   const router = useRouter();
@@ -60,7 +60,9 @@ const Page = () => {
 
       router.push('/sign-up/verify-email');
     } catch (err: any) {
-      Alert.alert('Whoops!', err.message, [{ text: 'OK, got it' }]);
+      CustomAlert({
+        message: err.message,
+      });
     } finally {
       setLoading(false);
     }

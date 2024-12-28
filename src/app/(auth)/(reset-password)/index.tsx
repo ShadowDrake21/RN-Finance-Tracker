@@ -1,4 +1,4 @@
-import { Alert, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import React, { useState } from 'react';
 import LottieView from 'lottie-react-native';
 import { STYLES } from '@/constants/styles';
@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router';
 import { useSignIn } from '@clerk/clerk-expo';
 import { useAuth } from '@clerk/clerk-react';
 import CustomKeyboardAvoidingView from '@/components/CustomKeyboardAvoidingView';
+import { CustomAlert } from '@/utils/helpers.utils';
 
 const Page = () => {
   const router = useRouter();
@@ -54,15 +55,16 @@ const Page = () => {
           const errorMessage = err.errors[0].message;
           setError(errorMessage);
 
-          Alert.alert('You have encountered an error!', errorMessage, [
-            { text: 'OK', style: 'destructive' },
-          ]);
+          CustomAlert({
+            title: 'You have encountered an error!',
+            message: errorMessage,
+          });
         } else {
-          Alert.alert(
-            'Too many attempts!',
-            'You have tried to verify the email too many times. Try later!',
-            [{ text: 'OK', style: 'destructive' }]
-          );
+          CustomAlert({
+            title: 'Too many attempts!',
+            message:
+              'You have tried to verify the email too many times. Try later!',
+          });
 
           setTimeout(() => router.replace('/sign-in'), 500);
         }

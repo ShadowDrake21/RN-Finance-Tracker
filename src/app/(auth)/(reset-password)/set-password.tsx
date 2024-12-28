@@ -1,4 +1,4 @@
-import { Alert, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import React, { useState } from 'react';
 import { useSignIn } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Loader from '@/components/Loader';
 import { callToast } from '@/utils/toasts.utils';
 import CustomKeyboardAvoidingView from '@/components/CustomKeyboardAvoidingView';
+import { CustomAlert } from '@/utils/helpers.utils';
 
 const Page = () => {
   const router = useRouter();
@@ -57,9 +58,11 @@ const Page = () => {
       })
       .catch((err) => {
         setError(err.errors[0].longMessage);
-        Alert.alert('You have encountered an error!', error, [
-          { text: 'OK', style: 'destructive' },
-        ]);
+
+        CustomAlert({
+          title: 'You have encountered an error!',
+          message: error,
+        });
       });
   };
 

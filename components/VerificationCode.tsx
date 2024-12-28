@@ -1,5 +1,5 @@
 import { StyleSheet, Text } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   CodeField,
   Cursor,
@@ -35,6 +35,14 @@ const VerificationCode = ({
     value,
     setValue,
   });
+
+  useEffect(() => {
+    if (type === 'reset') {
+      setResetCode('');
+    } else {
+      setCode('');
+    }
+  }, []);
 
   return (
     <CustomKeyboardAvoidingView

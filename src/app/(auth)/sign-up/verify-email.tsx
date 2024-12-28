@@ -1,10 +1,10 @@
-import { Alert } from 'react-native';
 import React, { useState } from 'react';
 import { useVerification } from '@/contexts/VerificationContext';
 import { useSignUp } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import VerificationCode from '@/components/VerificationCode';
 import Loader from '@/components/Loader';
+import { CustomAlert } from '@/utils/helpers.utils';
 
 const Page = () => {
   const router = useRouter();
@@ -28,19 +28,18 @@ const Page = () => {
         await setActive({ session: signUpAttempt.createdSessionId });
         router.replace('/(tabs)/dashboard');
       } else {
-        Alert.alert('Whoops!', 'Something went wrong!', [
-          { text: 'OK, got it' },
-        ]);
+        CustomAlert({
+          message: 'Something went wrong!',
+        });
       }
     } catch (err: any) {
-      Alert.alert('Whoops!', err.message, [
-        { text: 'OK, got it', style: 'destructive' },
-      ]);
+      CustomAlert({
+        message: err.message,
+      });
 
       if (err.toString().includes('Too many failed attempts')) {
         router.replace('/sign-in');
       }
-      console.log('incorrect code', err.message);
     } finally {
       setLoading(false);
     }
