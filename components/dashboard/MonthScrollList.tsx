@@ -23,7 +23,7 @@ const MonthScrollList = ({
     if (index !== -1 && flatListRef.current) {
       setTimeout(() => {
         flatListRef.current?.scrollToIndex({ index, animated: true });
-      }, 1000); // Adjust the delay as needed
+      }, 1000);
     }
   }, [selectedId, data]);
 
@@ -50,11 +50,7 @@ const MonthScrollList = ({
               borderRadius: 20,
             },
           ]}
-          onPress={() => {
-            console.log('selectedId monthscrolllist', id);
-
-            setSelectedId(id);
-          }}
+          onPress={() => setSelectedId(id)}
         >
           <Text
             style={[

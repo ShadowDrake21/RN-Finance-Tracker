@@ -1,12 +1,12 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Redirect, Tabs } from 'expo-router';
 import { useAuth } from '@clerk/clerk-expo';
 import { COLORS } from '@/constants/colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Foundation from '@expo/vector-icons/Foundation';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import CreateTabBar from '@/components/CreateTabBar';
+import CreateTabBar from '@/components/ui/CreateTabBar';
 import { BlurView } from 'expo-blur';
 
 const Layout = () => {
@@ -29,16 +29,8 @@ const Layout = () => {
       screenOptions={{
         tabBarInactiveTintColor: COLORS.tabBarTintInactive,
         tabBarActiveTintColor: COLORS.tabBarTintActive,
-        tabBarStyle: {
-          position: 'absolute',
-          height: 90,
-          flexDirection: 'row',
-          paddingTop: 15,
-        },
-        tabBarItemStyle: {
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
+        tabBarStyle: styles.tabBar,
+        tabBarItemStyle: styles.tabBarItem,
         tabBarBackground: () => {
           return <BlurView intensity={80} style={{ flex: 1 }} />;
         },
@@ -95,3 +87,16 @@ const Layout = () => {
 };
 
 export default Layout;
+
+const styles = StyleSheet.create({
+  tabBar: {
+    position: 'absolute',
+    height: 90,
+    flexDirection: 'row',
+    paddingTop: 15,
+  },
+  tabBarItem: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

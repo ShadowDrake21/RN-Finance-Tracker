@@ -1,5 +1,5 @@
 import { LogBox, Text, TouchableOpacity, View } from 'react-native';
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Stack } from 'expo-router/stack';
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
 import { tokenCache } from '@/cache';

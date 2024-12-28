@@ -1,16 +1,6 @@
-import { COLORS } from '@/constants/colors';
-import { FINANCE_ICONS } from '@/constants/icons';
-import React, { useCallback } from 'react';
-import {
-  StyleSheet,
-  Alert,
-  View,
-  Text,
-  TouchableOpacity,
-  Button,
-  Image,
-} from 'react-native';
-import { FinanceItemAction } from './FinanceItem';
+import React from 'react';
+import { StyleSheet, View, Text } from 'react-native';
+import { FinanceItemAction } from '../shared/FinanceItem';
 import { IFinanceItemAction } from '@/types/types';
 
 const AgendaItem = (item: IFinanceItemAction) => {

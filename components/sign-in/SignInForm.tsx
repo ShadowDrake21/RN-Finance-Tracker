@@ -2,8 +2,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { EMAIL_REGEX } from '@/utils/forms.utils';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
-import CustomTextInput from '../CustomTextInput';
-import FormError from '../FormError';
+import CustomTextInput from '../ui/CustomTextInput';
+import FormError from '../ui/FormError';
 import { SignInFormType } from '@/types/types';
 
 const SignInForm = ({

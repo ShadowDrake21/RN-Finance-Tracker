@@ -2,7 +2,7 @@ import React, { RefObject } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { IFinanceGroup } from '@/types/types';
-import FinanceItem from './FinanceItem';
+import FinanceItem from '../shared/FinanceItem';
 
 const DashboardBottomSheetList = ({
   bottomSheetRef,

@@ -1,29 +1,31 @@
 import { Text, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSignIn } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
-import CustomButton from '@/components/CustomButton';
-import CustomTextInput from '@/components/CustomTextInput';
-import FormError from '@/components/FormError';
+import CustomButton from '@/components/ui/CustomButton';
+import CustomTextInput from '@/components/ui/CustomTextInput';
+import FormError from '@/components/ui/FormError';
 import { STYLES } from '@/constants/styles';
 import LottieView from 'lottie-react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Loader from '@/components/Loader';
+import Loader from '@/components/shared/Loader';
 import { callToast } from '@/utils/toasts.utils';
-import CustomKeyboardAvoidingView from '@/components/CustomKeyboardAvoidingView';
+import CustomKeyboardAvoidingView from '@/components/shared/CustomKeyboardAvoidingView';
 import { CustomAlert } from '@/utils/helpers.utils';
 
 const Page = () => {
   const router = useRouter();
   const { signIn, setActive } = useSignIn();
   const { bottom } = useSafeAreaInsets();
-  const [error, setError] = useState('');
+
+  const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const {
     control,
     handleSubmit,
+    reset,
     getValues,
     formState: { errors },
   } = useForm({
@@ -32,6 +34,13 @@ const Page = () => {
       confirmPassword: '',
     },
   });
+
+  useEffect(() => {
+    if (isError) {
+      reset();
+      setIsError(false);
+    }
+  }, [isError]);
 
   const save = async () => {
     await signIn
@@ -46,22 +55,21 @@ const Page = () => {
               text2: 'You can now sign in with new password.',
             });
           });
-          setError('');
         } else {
-          setError('Password reset failed');
+          setIsError(true);
           callToast({
             type: 'error',
-            text1: error,
+            text1: 'Password reset failed!',
             text2: 'Please try again or contact support if the issue persists.',
           });
         }
       })
       .catch((err) => {
-        setError(err.errors[0].longMessage);
-
+        const errorMessage = err.errors[0].longMessage;
+        setIsError(true);
         CustomAlert({
           title: 'You have encountered an error!',
-          message: error,
+          message: errorMessage,
         });
       });
   };
@@ -81,7 +89,7 @@ const Page = () => {
       style={[STYLES.authKeyboardAvoidingView, { paddingBottom: bottom }]}
     >
       <LottieView
-        source={require('@/assets/animations/password2.lottie')}
+        source={require('@/assets/animations/password.lottie')}
         autoPlay
         loop
         style={{ width: 200, height: 130 }}

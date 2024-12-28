@@ -6,8 +6,8 @@ import {
   FieldErrors,
   UseFormGetValues,
 } from 'react-hook-form';
-import CustomTextInput from '../CustomTextInput';
-import FormError from '../FormError';
+import CustomTextInput from '../ui/CustomTextInput';
+import FormError from '../ui/FormError';
 import { SignUpFormType } from '@/types/types';
 
 const SignUpForm = ({

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useVerification } from '@/contexts/VerificationContext';
 import { useSignUp } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
-import VerificationCode from '@/components/VerificationCode';
-import Loader from '@/components/Loader';
+import VerificationCode from '@/components/auth/VerificationCode';
+import Loader from '@/components/shared/Loader';
 import { CustomAlert } from '@/utils/helpers.utils';
 
 const Page = () => {

@@ -3,15 +3,15 @@ import React, { useState } from 'react';
 import LottieView from 'lottie-react-native';
 import { STYLES } from '@/constants/styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import CustomTextInput from '@/components/CustomTextInput';
-import CustomButton from '@/components/CustomButton';
+import CustomTextInput from '@/components/ui/CustomTextInput';
+import CustomButton from '@/components/ui/CustomButton';
 import { Controller, useForm } from 'react-hook-form';
 import { EMAIL_REGEX } from '@/utils/forms.utils';
-import FormError from '@/components/FormError';
+import FormError from '@/components/ui/FormError';
 import { useRouter } from 'expo-router';
 import { useSignIn } from '@clerk/clerk-expo';
 import { useAuth } from '@clerk/clerk-react';
-import CustomKeyboardAvoidingView from '@/components/CustomKeyboardAvoidingView';
+import CustomKeyboardAvoidingView from '@/components/shared/CustomKeyboardAvoidingView';
 import { CustomAlert } from '@/utils/helpers.utils';
 
 const Page = () => {

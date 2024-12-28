@@ -1,8 +1,8 @@
 import { StyleSheet, View } from 'react-native';
 import React, { RefObject } from 'react';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import CustomActivityIndicator from './CustomActivityIndicator';
-import { useFetchFinances } from '@/hooks/fetch-finances.hook';
+import CustomActivityIndicator from '../ui/CustomActivityIndicator';
+import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
 import DashboardBottomSheetList from './DashboardBottomSheetList';
 
 type DashboardBottomSheetProps = {
@@ -14,7 +14,8 @@ const DashboardBottomSheet = ({
   selectedMonthId,
   bottomSheetRef,
 }: DashboardBottomSheetProps) => {
-  const { groups, handleLoadMore, loading } = useFetchFinances(selectedMonthId);
+  const { groups, handleLoadMore, loading } =
+    useFetchFinancesByMonth(selectedMonthId);
 
   return (
     <BottomSheet

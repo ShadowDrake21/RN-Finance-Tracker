@@ -1,44 +1,25 @@
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
 import {
-  AgendaList,
   CalendarProvider,
   ExpandableCalendar,
   WeekCalendar,
 } from 'react-native-calendars';
 import { Stack } from 'expo-router';
-import CustomSwitch from '@/components/CustomSwitch';
-import AgendaItem from '@/components/AgendaItem';
+import CustomSwitch from '@/components/ui/CustomSwitch';
 import { useFetchFinancesByDate } from '@/hooks/fetch-finances-by-date.hook';
-import { COLORS } from '@/constants/colors';
-import CustomActivityIndicator from '@/components/CustomActivityIndicator';
-import { formatCurrency } from 'react-native-format-currency';
+import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
+import CalendarAgendaList from '@/components/calendar/CalendarAgendaList';
 
 const Page = () => {
   const [selected, setSelected] = useState(
     new Date().toISOString().split('T')[0]
   );
   const [weekView, setWeekView] = useState(false);
-
   const { items, loading, total } = useFetchFinancesByDate(selected);
 
-  // TODO: component responsible for only one task
-
-  // TODO: use context
-
-  // TODO: single responsibility principle
-
-  // TODO: flash list
-  useEffect(() => {
-    // console.log(items);
-  }, [items]);
-
-  const renderItem = useCallback(({ item }: any) => {
-    return <AgendaItem {...item} />;
-  }, []);
-
   return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>
+    <View style={styles.container}>
       <Stack.Screen
         options={{
           headerRight: () => (
@@ -53,10 +34,7 @@ const Page = () => {
         date={new Date().toISOString().split('T')[0]}
         onDateChanged={setSelected}
         showTodayButton
-        style={{
-          borderBottomWidth: 1,
-          borderBottomColor: 'black',
-        }}
+        style={styles.calendarProvider}
       >
         {weekView ? (
           <WeekCalendar firstDay={1} allowShadow={false} />
@@ -68,43 +46,10 @@ const Page = () => {
         ) : (
           <>
             {items.length > 0 ? (
-              <AgendaList
-                sections={[{ title: items[0]?.date, data: items }]}
-                renderItem={renderItem}
-                sectionStyle={styles.section}
-                scrollToNextEvent
-                ListFooterComponent={
-                  <Text
-                    style={{
-                      alignSelf: 'flex-end',
-                      fontSize: 16,
-                      paddingHorizontal: 20,
-                      fontWeight: '700',
-                    }}
-                  >
-                    Total:{' '}
-                    <Text
-                      style={[
-                        total > 0
-                          ? { color: COLORS.tabBarTintActive }
-                          : { color: 'red' },
-                      ]}
-                    >
-                      {
-                        formatCurrency({
-                          amount: total,
-                          code: 'PLN',
-                        })[0]
-                      }
-                    </Text>
-                  </Text>
-                }
-              />
+              <CalendarAgendaList items={items} total={total} />
             ) : (
               <View style={{ paddingTop: 50 }}>
-                <Text style={{ fontWeight: '700', alignSelf: 'center' }}>
-                  No notes on income/outcome
-                </Text>
+                <Text style={styles.emptyText}>No notes on income/outcome</Text>
               </View>
             )}
           </>
@@ -117,6 +62,7 @@ const Page = () => {
 export default Page;
 
 const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: 'white' },
   calendar: {
     paddingLeft: 20,
     paddingRight: 20,
@@ -124,9 +70,9 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: 'lightgrey',
   },
-  section: {
-    // backgroundColor: lightThemeColor,
-    // color: 'grey',
-    // textTransform: 'capitalize',
+  emptyText: { fontWeight: '700', alignSelf: 'center' },
+  calendarProvider: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'black',
   },
 });

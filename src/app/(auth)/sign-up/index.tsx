@@ -8,15 +8,15 @@ import {
 import React, { useState } from 'react';
 import { COLORS } from '@/constants/colors';
 import { useRouter } from 'expo-router';
-import SocialButton from '@/components/SocialButton';
-import CustomButton from '@/components/CustomButton';
+import SocialButton from '@/components/auth/SocialButton';
+import CustomButton from '@/components/ui/CustomButton';
 import { useSignUp } from '@clerk/clerk-expo';
 import { useForm } from 'react-hook-form';
 import { STYLES } from '@/constants/styles';
-import Loader from '@/components/Loader';
+import Loader from '@/components/shared/Loader';
 import SignUpForm from '@/components/sign-up/SignUpForm';
 import { SignUpFormType } from '@/types/types';
-import CustomKeyboardAvoidingView from '@/components/CustomKeyboardAvoidingView';
+import CustomKeyboardAvoidingView from '@/components/shared/CustomKeyboardAvoidingView';
 import { CustomAlert } from '@/utils/helpers.utils';
 
 const Page = () => {

@@ -3,13 +3,13 @@ import React, { useCallback, useState } from 'react';
 import { Link, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '@/constants/colors';
-import SocialButton from '@/components/SocialButton';
-import CustomButton from '@/components/CustomButton';
+import SocialButton from '@/components/auth/SocialButton';
+import CustomButton from '@/components/ui/CustomButton';
 import { useSignIn } from '@clerk/clerk-expo';
 import { STYLES } from '@/constants/styles';
 import { useForm } from 'react-hook-form';
 import { callToast } from '@/utils/toasts.utils';
-import Loader from '@/components/Loader';
+import Loader from '@/components/shared/Loader';
 import SignInForm from '@/components/sign-in/SignInForm';
 import { CustomAlert } from '@/utils/helpers.utils';
 

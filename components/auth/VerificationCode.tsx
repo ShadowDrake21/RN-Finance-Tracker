@@ -10,9 +10,9 @@ import { useVerification } from '@/contexts/VerificationContext';
 import { COLORS } from '@/constants/colors';
 import LottieView from 'lottie-react-native';
 import { STYLES } from '@/constants/styles';
-import CustomButton from './CustomButton';
+import CustomButton from '../ui/CustomButton';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import CustomKeyboardAvoidingView from './CustomKeyboardAvoidingView';
+import CustomKeyboardAvoidingView from '../shared/CustomKeyboardAvoidingView';
 
 const CELL_COUNT = 6;
 

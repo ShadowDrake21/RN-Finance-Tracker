@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable } from 'react-native';
 import React from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { COLORS } from '@/constants/colors';
@@ -32,5 +32,3 @@ const Layout = () => {
 };
 
 export default Layout;
-
-const styles = StyleSheet.create({});

@@ -1,9 +1,8 @@
-import { Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSignIn } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import { callToast } from '@/utils/toasts.utils';
-import VerificationCode from '@/components/VerificationCode';
+import VerificationCode from '@/components/auth/VerificationCode';
 import { useVerification } from '@/contexts/VerificationContext';
 import { CustomAlert } from '@/utils/helpers.utils';
 

@@ -2,8 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { financeTable } from '@/db/schema';
 import { sql } from 'drizzle-orm';
-import { uniqueGroups } from '@/utils/finance-groups.utils';
-import { IFinanceGroup, IFinanceItemAction } from '@/types/types';
 import * as SQLite from 'expo-sqlite';
 
 const expo = SQLite.openDatabaseSync('db.db');
@@ -16,7 +14,7 @@ export const useFetchFinancesByDate = (selectedDate: string) => {
 
   useEffect(() => {
     pageRef.current = 0;
-    // setItems([]);
+
     fetchFinances();
   }, [selectedDate]);
 

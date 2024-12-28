@@ -1,16 +1,15 @@
 import { StyleSheet, View } from 'react-native';
 import React, { useRef, useState } from 'react';
-import { Redirect, useRouter } from 'expo-router';
+import { Redirect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS } from '../../constants/colors';
 import Carousel from 'pinar';
 import { useAuth } from '@clerk/clerk-expo';
-import CustomActivityIndicator from '@/components/CustomActivityIndicator';
-import OnboardingSlider from '@/components/dashboard/OnboardingSlider';
-import OnboardingButtons from '@/components/dashboard/OnboardingButtons';
+import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
+import OnboardingSlider from '@/components/onboarding/OnboardingSlider';
+import OnboardingButtons from '@/components/onboarding/OnboardingButtons';
 
 const Page = () => {
-  const router = useRouter();
   const carouselRef = useRef<Carousel | null>(null);
   const { bottom } = useSafeAreaInsets();
   const [isLastItem, setIsLastItem] = useState(false);
