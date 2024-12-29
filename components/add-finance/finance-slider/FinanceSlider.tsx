@@ -8,23 +8,25 @@ import OnboardingSlider from '../../onboarding/OnboardingSlider';
 import OnboardingSliderItem from '../../onboarding/OnboardingSliderItem';
 import Carousel from 'pinar';
 import { expensesItems } from '@/static/expenses.static';
+import FinanceSliderList from './FinanceSliderList';
+import { incomeItems } from '@/static/income.static';
 
-const ExpenseSlider = ({
-  carouselRef,
+const FinanceSlider = ({
+  type,
+}: // carouselRef,
 
-  setIsLoading,
-}: {
-  carouselRef: React.MutableRefObject<Carousel | null>;
-  isLastItem: boolean;
-  setIsLastItem: (a: boolean) => void;
-  setIsLoading: (a: boolean) => void;
+// setIsLoading,
+{
+  type: 'expense' | 'income';
+  // carouselRef: React.MutableRefObject<Carousel | null>;
+  // setIsLoading: (a: boolean) => void;
 }) => {
   const { bottom } = useSafeAreaInsets();
 
   return (
     <Carousel
-      ref={carouselRef}
-      showsControls={false}
+      // ref={carouselRef}
+      // showsControls={false}
       renderDots={({ index, total }) => {
         return (
           <View style={[styles.dotsContainer, { bottom: bottom }]}>
@@ -40,14 +42,14 @@ const ExpenseSlider = ({
         );
       }}
     >
-      {expensesItems.map((item, index) => (
-        <OnboardingSliderItem key={index} item={item} />
+      {(type === 'expense' ? expensesItems : incomeItems).map((item, index) => (
+        <FinanceSliderList key={index} category={item} />
       ))}
     </Carousel>
   );
 };
 
-export default OnboardingSlider;
+export default FinanceSlider;
 
 const styles = StyleSheet.create({
   container: {

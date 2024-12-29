@@ -9,6 +9,7 @@ import React, { useState } from 'react';
 import SumInput from '@/components/add-finance/SumInput';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TypeSwitch from '@/components/add-finance/TypeSwitch';
+import FinanceSlider from '@/components/add-finance/finance-slider/FinanceSlider';
 
 const Page = () => {
   const { bottom } = useSafeAreaInsets();
@@ -26,6 +27,7 @@ const Page = () => {
       >
         <SumInput style={{ paddingBottom: 30 }} />
         <TypeSwitch type={type} setType={setType} />
+        <FinanceSlider type={type} />
       </View>
     </TouchableWithoutFeedback>
   );

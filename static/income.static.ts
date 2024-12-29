@@ -3,21 +3,22 @@ import { FinanceCategory } from '@/types/types';
 
 export const incomeItems: FinanceCategory[] = [
   {
-    name: 'Unstructured',
+    name: 'unstructured',
+    type: 'income',
     items: [
-      { name: 'Business', icon: INCOME_ICONS.business },
-      { name: 'Freelance', icon: INCOME_ICONS.freelance },
-      { name: 'Gifts', icon: INCOME_ICONS.gifts },
+      { name: 'Business', icon: 'business' },
+      { name: 'Freelance', icon: 'freelance' },
+      { name: 'Gifts', icon: 'gifts' },
       {
         name: 'Government Assistance',
-        icon: INCOME_ICONS.government_assistance,
+        icon: 'government_assistance',
       },
-      { name: 'Investment', icon: INCOME_ICONS.investment },
-      { name: 'Other', icon: INCOME_ICONS.other },
-      { name: 'Refund', icon: INCOME_ICONS.refund },
-      { name: 'Rent', icon: INCOME_ICONS.rent },
-      { name: 'Salary', icon: INCOME_ICONS.salary },
-      { name: 'Side Hustle', icon: INCOME_ICONS.side_hustle },
+      { name: 'Investment', icon: 'investment' },
+      { name: 'Other', icon: 'other' },
+      { name: 'Refund', icon: 'refund' },
+      { name: 'Rent', icon: 'rent' },
+      { name: 'Salary', icon: 'salary' },
+      { name: 'Side Hustle', icon: 'side_hustle' },
     ],
   },
 ];

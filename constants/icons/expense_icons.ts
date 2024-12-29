@@ -40,8 +40,9 @@ import parking from '@/assets/finance-icons/expenses/transportation/parking.png'
 import public_transport from '@/assets/finance-icons/expenses/transportation/public-transport.png';
 import ride_sharing from '@/assets/finance-icons/expenses/transportation/ride-sharing.png';
 import vehicle_maintainance from '@/assets/finance-icons/expenses/transportation/vehicle-maintainance.png';
+import { FinanceIconsType } from '@/types/types';
 
-export const EXPENSES_ICONS = {
+export const EXPENSES_ICONS: FinanceIconsType = {
   education: {
     books,
     education,
@@ -61,24 +62,24 @@ export const EXPENSES_ICONS = {
     rent,
     utilities,
   },
-  'family-and-relationships': {
+  family_and_relationships: {
     childcare,
     family_care,
     pets,
     relationship,
   },
-  'financial-obligations': {
+  financial_obligations: {
     investments,
     loan,
     tax,
   },
-  'food-and-dining': {
+  food_and_dining: {
     alcohol,
     candies,
     coffee,
     restaurant,
   },
-  'health-and-wellness': {
+  health_and_wellness: {
     fitness,
     health,
     wellness,

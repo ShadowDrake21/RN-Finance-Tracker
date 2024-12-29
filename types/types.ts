@@ -62,10 +62,17 @@ export type SwitchItemProps = {
 
 export type FinanceCategory = {
   name: string;
+  type: 'expense' | 'income';
   items: FinanceCategoryItem[];
 };
 
 export type FinanceCategoryItem = {
   name: string;
   icon: string;
+};
+
+export type FinanceIconsType = {
+  [key: string]: {
+    [key: string]: any;
+  };
 };

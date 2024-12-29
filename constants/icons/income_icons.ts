@@ -8,16 +8,19 @@ import refund from '@/assets/finance-icons/income/refund.png';
 import rent from '@/assets/finance-icons/income/rent.png';
 import salary from '@/assets/finance-icons/income/salary.png';
 import side_hustle from '@/assets/finance-icons/income/side-hustle.png';
+import { FinanceIconsType } from '@/types/types';
 
-export const INCOME_ICONS = {
-  business,
-  freelance,
-  gifts,
-  government_assistance,
-  investment,
-  other,
-  refund,
-  rent,
-  salary,
-  side_hustle,
+export const INCOME_ICONS: FinanceIconsType = {
+  unstructured: {
+    business,
+    freelance,
+    gifts,
+    government_assistance,
+    investment,
+    other,
+    refund,
+    rent,
+    salary,
+    side_hustle,
+  },
 };
