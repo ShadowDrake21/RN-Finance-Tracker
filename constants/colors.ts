@@ -1,6 +1,9 @@
 export const COLORS = {
   lightGray: '#e6e6e6',
   primary: '#00b77a',
+  lightPrimary: '#03ffabff',
+  extraDarkPrimary: '#05563b',
+  darkPrimary: '#139167',
   mainTint: '#211d1d',
   text: '#000',
   gray: '#999',

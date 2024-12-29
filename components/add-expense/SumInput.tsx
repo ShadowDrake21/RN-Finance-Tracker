@@ -1,37 +1,25 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import React, { useState } from 'react';
 import { COLORS } from '@/constants/colors';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { Dropdown } from 'react-native-element-dropdown';
 import CurrencyInput from 'react-native-currency-input';
-import { sumFormat } from '@/utils/helpers.utils';
-import { set } from 'date-fns';
+import { currencies } from '@/content/currencies.content';
 
-const data = [
-  { label: 'zł PLN ', value: 'pln' },
-  { label: '$ USD', value: 'usd' },
-  { label: '€ EUR', value: 'eur' },
-  { label: '£ GBP', value: 'gbp' },
-  { label: '¥ JPY', value: 'jpy' },
-  { label: '₣ CHF', value: 'chf' },
-  { label: '₽ RUB', value: 'rub' },
-  { label: '₹ INR', value: 'inr' },
-  { label: '₩ KRW', value: 'krw' },
-  { label: '₺ TRY', value: 'try' },
-];
-
-const SumInput = () => {
+const SumInput = ({ style }: { style?: StyleProp<ViewStyle> }) => {
   const [sum, setSum] = useState<number | null>(null);
   const [value, setValue] = useState<string>('pln');
   const [isFocus, setIsFocus] = useState(false);
 
   return (
     <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-around',
-      }}
+      style={[
+        {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+        },
+        style,
+      ]}
     >
       <CurrencyInput
         value={sum}
@@ -41,7 +29,7 @@ const SumInput = () => {
         precision={2}
         minValue={0}
         onChangeText={(formattedValue) => {
-          console.log(formattedValue); // R$ +2.310,46
+          console.log(formattedValue);
         }}
         placeholder="40,90"
         placeholderTextColor={COLORS.gray}
@@ -59,7 +47,7 @@ const SumInput = () => {
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
-          data={data}
+          data={currencies}
           search
           maxHeight={300}
           labelField="label"
