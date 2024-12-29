@@ -59,3 +59,13 @@ export type SwitchItemProps = {
   circleActiveColor: string;
   circleInActiveColor: string;
 };
+
+export type FinanceCategory = {
+  name: string;
+  items: FinanceCategoryItem[];
+};
+
+export type FinanceCategoryItem = {
+  name: string;
+  icon: string;
+};

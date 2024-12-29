@@ -40,7 +40,7 @@ const Layout = () => {
       }}
     >
       <Stack.Screen
-        name="add-expense"
+        name="add-finance"
         options={{
           presentation: 'fullScreenModal',
           headerLeft: () => (

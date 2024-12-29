@@ -64,7 +64,7 @@ const Layout = () => {
         }}
       />
       <Tabs.Screen
-        name="(expenses)"
+        name="(finances)"
         options={{
           headerShown: false,
           tabBarLabel: '',

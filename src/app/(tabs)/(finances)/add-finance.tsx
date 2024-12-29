@@ -6,10 +6,9 @@ import {
   View,
 } from 'react-native';
 import React, { useState } from 'react';
-import SumInput from '@/components/add-expense/SumInput';
+import SumInput from '@/components/add-finance/SumInput';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import CustomSwitch from '@/components/ui/CustomSwitch';
-import TypeSwitch from '@/components/add-expense/TypeSwitch';
+import TypeSwitch from '@/components/add-finance/TypeSwitch';
 
 const Page = () => {
   const { bottom } = useSafeAreaInsets();
