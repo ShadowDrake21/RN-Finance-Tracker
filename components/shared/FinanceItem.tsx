@@ -1,10 +1,17 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  ImageSourcePropType,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, { memo, useEffect } from 'react';
 import { COLORS } from '@/constants/colors';
 import { IFinanceGroup, IFinanceItemAction } from '@/types/types';
 import { format, parse } from 'date-fns';
 import { formatCurrency } from 'react-native-format-currency';
-import { FINANCE_ICONS } from '@/constants/icons';
+import { EXPENSES_ICONS } from '@/constants/icons/expense_icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
@@ -94,9 +101,7 @@ export const FinanceItemAction = (item: IFinanceItemAction) => {
         <View key={item.id} style={styles.activityItemInnerContainer}>
           <View style={styles.activityItemBody}>
             <Image
-              source={
-                FINANCE_ICONS[item.iconType as keyof typeof FINANCE_ICONS]
-              }
+              source={EXPENSES_ICONS['essentials']['groceries']}
               style={{ width: 50, height: 50 }}
             />
             <View style={{ maxWidth: '70%' }}>
