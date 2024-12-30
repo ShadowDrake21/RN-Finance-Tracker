@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { COLORS } from '@/constants/colors';
 
@@ -7,29 +7,44 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import OnboardingSlider from '../../onboarding/OnboardingSlider';
 import OnboardingSliderItem from '../../onboarding/OnboardingSliderItem';
 import Carousel from 'pinar';
+import { Dimensions } from 'react-native';
 import { expensesItems } from '@/static/expenses.static';
 import FinanceSliderList from './FinanceSliderList';
 import { incomeItems } from '@/static/income.static';
 
 const FinanceSlider = ({
+  carouselRef,
   type,
-}: // carouselRef,
+}: // ,
 
 // setIsLoading,
 {
+  carouselRef: React.MutableRefObject<Carousel | null>;
   type: 'expense' | 'income';
-  // carouselRef: React.MutableRefObject<Carousel | null>;
   // setIsLoading: (a: boolean) => void;
 }) => {
-  const { bottom } = useSafeAreaInsets();
+  const items = type === 'expense' ? expensesItems : incomeItems;
+  const { width: deviceWidth } = Dimensions.get('window');
+
+  const getMaxLength = () => {
+    const res = items.reduce((acc, cur) => {
+      return cur.items.length > acc ? cur.items.length : acc;
+    }, 0);
+
+    console.log(res);
+
+    return res;
+  };
 
   return (
     <Carousel
-      // ref={carouselRef}
-      // showsControls={false}
+      ref={carouselRef}
+      showsControls={false}
+      width={deviceWidth - 40}
+      height={getMaxLength() > 5 ? 250 : 150}
       renderDots={({ index, total }) => {
-        return (
-          <View style={[styles.dotsContainer, { bottom: bottom }]}>
+        return total > 1 ? (
+          <View style={[styles.dotsContainer]}>
             {Array.from({ length: total }).map((_, dotIndex) => (
               <View
                 key={dotIndex}
@@ -39,10 +54,12 @@ const FinanceSlider = ({
               />
             ))}
           </View>
+        ) : (
+          <></>
         );
       }}
     >
-      {(type === 'expense' ? expensesItems : incomeItems).map((item, index) => (
+      {items.map((item, index) => (
         <FinanceSliderList key={index} category={item} />
       ))}
     </Carousel>

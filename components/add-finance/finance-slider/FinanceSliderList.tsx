@@ -12,10 +12,11 @@ import { FinanceCategory, FinanceCategoryItem } from '@/types/types';
 import { FlashList } from '@shopify/flash-list';
 import { EXPENSES_ICONS } from '@/constants/icons/expense_icons';
 import { INCOME_ICONS } from '@/constants/icons/income_icons';
+import { COLORS } from '@/constants/colors';
 
 const FinanceSliderList = ({ category }: { category: FinanceCategory }) => {
   const financeSliderItem = ({ item }: { item: FinanceCategoryItem }) => (
-    <TouchableOpacity>
+    <TouchableOpacity style={{ alignItems: 'center' }}>
       <Image
         source={
           category.type === 'expense'
@@ -24,20 +25,43 @@ const FinanceSliderList = ({ category }: { category: FinanceCategory }) => {
         }
         style={{ width: 50, height: 50, marginBottom: 10 }}
       />
-      <Text>{item.name}</Text>
+      <Text
+        style={{ fontSize: 12, textAlign: 'center', color: COLORS.text }}
+        numberOfLines={item.name.split(' ').length}
+      >
+        {item.name.split(' ').map((word, index) => (
+          <Text key={index}>
+            {word}
+            {'\n'}
+          </Text>
+        ))}
+      </Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <Text>{category.name}</Text>
+    <View>
+      <Text
+        style={{
+          textTransform: 'capitalize',
+          paddingVertical: 10,
+          fontWeight: '700',
+          // fontSize: 14,
+        }}
+      >
+        {category.name}
+      </Text>
       <FlatList
+        // style={{ alignSelf: 'center' }}
+
+        contentContainerStyle={{
+          justifyContent: 'space-between',
+        }}
+        columnWrapperStyle={{ justifyContent: 'space-between' }}
         data={category.items}
-        // estimatedItemSize={30}
-        // contentContainerStyle={{ flexDirection: 'row', gap: 20, }}
-        scrollEnabled={false}
         numColumns={5}
         renderItem={financeSliderItem}
+        scrollEnabled={false}
       />
     </View>
   );
