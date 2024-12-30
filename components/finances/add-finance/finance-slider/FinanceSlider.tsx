@@ -1,11 +1,6 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect } from 'react';
-import { useRouter } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
+import React from 'react';
 import { COLORS } from '@/constants/colors';
-
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import OnboardingSlider from '../../onboarding/OnboardingSlider';
-import OnboardingSliderItem from '../../onboarding/OnboardingSliderItem';
 import Carousel from 'pinar';
 import { Dimensions } from 'react-native';
 import { expensesItems } from '@/static/expenses.static';
@@ -15,13 +10,9 @@ import { incomeItems } from '@/static/income.static';
 const FinanceSlider = ({
   carouselRef,
   type,
-}: // ,
-
-// setIsLoading,
-{
+}: {
   carouselRef: React.MutableRefObject<Carousel | null>;
   type: 'expense' | 'income';
-  // setIsLoading: (a: boolean) => void;
 }) => {
   const items = type === 'expense' ? expensesItems : incomeItems;
   const { width: deviceWidth } = Dimensions.get('window');

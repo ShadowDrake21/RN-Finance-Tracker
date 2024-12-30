@@ -9,10 +9,12 @@ const INITIAL_DATE = new Date().toISOString();
 
 const CalendarModal = ({
   visible,
+  setVisible,
   date,
   setDate,
 }: {
   visible: boolean;
+  setVisible: React.Dispatch<React.SetStateAction<boolean>>;
   date: string;
   setDate: React.Dispatch<React.SetStateAction<string>>;
 }) => {
@@ -29,17 +31,13 @@ const CalendarModal = ({
   };
 
   const onDayPress = (day: { dateString: React.SetStateAction<string> }) => {
-    console.log('Selected day:', day.dateString);
     setDate(day.dateString);
-
     bottomSheetRef.current?.close();
   };
 
   useEffect(() => {
     if (visible) {
       bottomSheetRef.current?.expand();
-    } else {
-      bottomSheetRef.current?.close();
     }
   }, [visible]);
 
@@ -49,6 +47,7 @@ const CalendarModal = ({
         ref={bottomSheetRef}
         snapPoints={['50%']}
         enablePanDownToClose
+        onClose={() => setVisible(false)}
         index={2}
         handleStyle={{ paddingTop: 10, paddingBottom: 0 }}
         containerStyle={{

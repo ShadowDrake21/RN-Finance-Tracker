@@ -4,32 +4,10 @@ import { Stack, useRouter } from 'expo-router';
 import { DefaultTheme } from '@react-navigation/native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { COLORS } from '@/constants/colors';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
-
-const AnimatedTouchableOpacity =
-  Animated.createAnimatedComponent(TouchableOpacity);
+import ReloadBtn from '@/components/finances/ReloadBtn';
 
 const Layout = () => {
   const router = useRouter();
-  const degrees = useSharedValue(0);
-
-  const handleReload = () => {
-    degrees.value = withTiming(degrees.value + 360, { duration: 1000 });
-  };
-
-  const animatedStyles = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${degrees.value}deg` }],
-  }));
-
-  useEffect(() => {
-    console.log(degrees);
-  }, [degrees]);
 
   return (
     <Stack
@@ -54,21 +32,6 @@ const Layout = () => {
             >
               <AntDesign name="close" size={24} color="white" />
             </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <AnimatedTouchableOpacity
-              onPress={() => handleReload()}
-              style={[
-                {
-                  padding: 5,
-                  backgroundColor: COLORS.primary,
-                  borderRadius: '50%',
-                },
-                animatedStyles,
-              ]}
-            >
-              <MaterialCommunityIcons name="reload" size={24} color="white" />
-            </AnimatedTouchableOpacity>
           ),
         }}
       />
