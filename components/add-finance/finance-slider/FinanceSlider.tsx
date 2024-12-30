@@ -31,8 +31,6 @@ const FinanceSlider = ({
       return cur.items.length > acc ? cur.items.length : acc;
     }, 0);
 
-    console.log(res);
-
     return res;
   };
 
