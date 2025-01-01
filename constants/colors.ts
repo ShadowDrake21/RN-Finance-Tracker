@@ -12,4 +12,5 @@ export const COLORS = {
   darkGray: '#656565',
   tabBarTintActive: '#06f7a7',
   tabBarTintInactive: '#195106',
+  selected: '#8b0000',
 };

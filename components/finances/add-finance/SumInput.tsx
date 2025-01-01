@@ -4,11 +4,14 @@ import { COLORS } from '@/constants/colors';
 import { Dropdown } from 'react-native-element-dropdown';
 import CurrencyInput from 'react-native-currency-input';
 import { currencies } from '@/content/currencies.content';
+import { useFinanceForm } from '@/contexts/FinanceFormContext';
 
 const SumInput = ({ style }: { style?: StyleProp<ViewStyle> }) => {
-  const [sum, setSum] = useState<number | null>(null);
-  const [value, setValue] = useState<string>('pln');
   const [isFocus, setIsFocus] = useState(false);
+  const {
+    financeForm: { sum, currency },
+    setField,
+  } = useFinanceForm();
 
   return (
     <View
@@ -23,14 +26,11 @@ const SumInput = ({ style }: { style?: StyleProp<ViewStyle> }) => {
     >
       <CurrencyInput
         value={sum}
-        onChangeValue={(value) => setSum(value ?? 0)}
+        onChangeValue={(value) => setField('sum', value ?? 0)}
         delimiter="."
         separator=","
         precision={2}
         minValue={0}
-        onChangeText={(formattedValue) => {
-          console.log(formattedValue);
-        }}
         placeholder="40,90"
         placeholderTextColor={COLORS.gray}
         style={{
@@ -54,11 +54,11 @@ const SumInput = ({ style }: { style?: StyleProp<ViewStyle> }) => {
           valueField="value"
           placeholder={!isFocus ? 'Select item' : '...'}
           searchPlaceholder="Search..."
-          value={value}
+          value={currency}
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={(item) => {
-            setValue(item.value);
+            setField('currency', item);
             setIsFocus(false);
           }}
         />

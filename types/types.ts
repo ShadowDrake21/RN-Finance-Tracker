@@ -1,3 +1,10 @@
+import { currencies } from '@/content/currencies.content';
+
+export type Currency = {
+  label: string;
+  value: string;
+};
+
 export type OnboardingItem = {
   animationPath: string;
   title: string;
@@ -75,4 +82,15 @@ export type FinanceIconsType = {
   [key: string]: {
     [key: string]: any;
   };
+};
+
+export type FinanceFormType = {
+  id: number;
+  type: 'expense' | 'income';
+  kind: string;
+  sum: number | null;
+  currency: Currency;
+  note: string;
+  image: string | null;
+  date: string;
 };

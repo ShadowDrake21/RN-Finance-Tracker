@@ -5,8 +5,9 @@ import { DefaultTheme } from '@react-navigation/native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { COLORS } from '@/constants/colors';
 import ReloadBtn from '@/components/finances/ReloadBtn';
+import { FinanceFormProvider } from '@/contexts/FinanceFormContext';
 
-const Layout = () => {
+const FinanceLayout = () => {
   const router = useRouter();
 
   return (
@@ -21,23 +22,17 @@ const Layout = () => {
         name="add-finance"
         options={{
           presentation: 'fullScreenModal',
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={{
-                padding: 5,
-                backgroundColor: COLORS.primary,
-                borderRadius: '50%',
-              }}
-            >
-              <AntDesign name="close" size={24} color="white" />
-            </TouchableOpacity>
-          ),
         }}
       />
     </Stack>
   );
 };
+
+export const Layout = () => (
+  <FinanceFormProvider>
+    <FinanceLayout />
+  </FinanceFormProvider>
+);
 
 export default Layout;
 

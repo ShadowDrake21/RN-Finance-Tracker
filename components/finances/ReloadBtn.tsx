@@ -7,9 +7,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { COLORS } from '@/constants/colors';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-
-const AnimatedTouchableOpacity =
-  Animated.createAnimatedComponent(TouchableOpacity);
+import { AnimatedTouchableOpacity } from '@/utils/animation.utils';
 
 const ReloadBtn = ({ onReload }: { onReload: () => void }) => {
   const degrees = useSharedValue(0);

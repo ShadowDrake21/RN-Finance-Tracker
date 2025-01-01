@@ -4,24 +4,29 @@ import { Calendar, CalendarUtils } from 'react-native-calendars';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS } from '@/constants/colors';
+import { useFinanceForm } from '@/contexts/FinanceFormContext';
 
 const INITIAL_DATE = new Date().toISOString();
 
 const CalendarModal = ({
   visible,
   setVisible,
-  date,
-  setDate,
-}: {
+}: // date,
+// setDate,
+{
   visible: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  date: string;
-  setDate: React.Dispatch<React.SetStateAction<string>>;
+  // date: string;
+  // setDate: React.Dispatch<React.SetStateAction<string>>;
 }) => {
-  useEffect(() => {
-    console.log('date', date);
-  }, [date]);
+  // useEffect(() => {
+  //   console.log('date', date);
+  // }, [date]);
 
+  const {
+    financeForm: { date },
+    setField,
+  } = useFinanceForm();
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const getDate = (count: number, passedDate: string) => {
@@ -31,7 +36,7 @@ const CalendarModal = ({
   };
 
   const onDayPress = (day: { dateString: React.SetStateAction<string> }) => {
-    setDate(day.dateString);
+    setField('date', day.dateString);
     bottomSheetRef.current?.close();
   };
 

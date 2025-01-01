@@ -1,4 +1,6 @@
-export const currencies = [
+import { Currency } from '@/types/types';
+
+export const currencies: Currency[] = [
   { label: 'zł PLN ', value: 'pln' },
   { label: '$ USD', value: 'usd' },
   { label: '€ EUR', value: 'eur' },

@@ -1,13 +1,6 @@
-import {
-  Animated,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Image, Pressable, StyleSheet } from 'react-native';
 import React, { useEffect } from 'react';
-import {
+import Animated, {
   withTiming,
   runOnJS,
   useAnimatedStyle,
@@ -16,16 +9,15 @@ import {
 import AddFinanceButton from './AddFinanceButton';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useFinanceForm } from '@/contexts/FinanceFormContext';
 
-const PickImage = ({
-  image,
-  setImage,
-}: {
-  image: string | null;
-  setImage: React.Dispatch<React.SetStateAction<string | null>>;
-}) => {
+const PickImage = () => {
+  const {
+    financeForm: { image },
+    setField,
+  } = useFinanceForm();
+
   const fadeAnim = useSharedValue(1);
-
   const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: fadeAnim.value,
@@ -41,7 +33,7 @@ const PickImage = ({
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setField('image', result.assets[0].uri);
     }
   };
 
@@ -50,6 +42,7 @@ const PickImage = ({
       fadeAnim.value = 1;
     }
   }, [image]);
+
   return (
     <>
       <AddFinanceButton onPress={pickImage} text="Pick a photo" icon="camera" />
@@ -64,7 +57,7 @@ const PickImage = ({
           <Pressable
             onPress={() => {
               fadeAnim.value = withTiming(0, { duration: 500 }, () => {
-                runOnJS(setImage)(null);
+                runOnJS(setField)('image', null);
               });
             }}
             style={styles.imageDeleteBtn}

@@ -6,14 +6,16 @@ import { Dimensions } from 'react-native';
 import { expensesItems } from '@/static/expenses.static';
 import FinanceSliderList from './FinanceSliderList';
 import { incomeItems } from '@/static/income.static';
+import { useFinanceForm } from '@/contexts/FinanceFormContext';
 
 const FinanceSlider = ({
   carouselRef,
-  type,
 }: {
   carouselRef: React.MutableRefObject<Carousel | null>;
-  type: 'expense' | 'income';
 }) => {
+  const {
+    financeForm: { type },
+  } = useFinanceForm();
   const items = type === 'expense' ? expensesItems : incomeItems;
   const { width: deviceWidth } = Dimensions.get('window');
 

@@ -1,19 +1,21 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { COLORS } from '@/constants/colors';
+import { useFinanceForm } from '@/contexts/FinanceFormContext';
+import { FinanceFormType } from '@/types/types';
 
 type TypeSwitchProps = {
   type: 'expense' | 'income';
-  setType: React.Dispatch<React.SetStateAction<'expense' | 'income'>>;
+  setField: (field: keyof FinanceFormType, value: any) => void;
 };
 
 const SwitchItem = ({
   type,
-  setType,
+  setField,
   isActive,
 }: TypeSwitchProps & { isActive: boolean }) => (
   <Pressable
-    onPress={() => setType(type)}
+    onPress={() => setField('type', type)}
     style={[
       styles.switchContainer,
       isActive && {
@@ -34,18 +36,22 @@ const SwitchItem = ({
   </Pressable>
 );
 
-const TypeSwitch = ({ type, setType }: TypeSwitchProps) => {
+const TypeSwitch = () => {
+  const {
+    financeForm: { type },
+    setField,
+  } = useFinanceForm();
   return (
     <View style={{ alignSelf: 'center' }}>
       <View style={styles.switchWrapper}>
         <SwitchItem
           type="expense"
-          setType={setType}
+          setField={setField}
           isActive={type === 'expense'}
         />
         <SwitchItem
           type="income"
-          setType={setType}
+          setField={setField}
           isActive={type === 'income'}
         />
       </View>
