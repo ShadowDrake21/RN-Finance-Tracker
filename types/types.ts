@@ -94,3 +94,13 @@ export type FinanceFormType = {
   image: string | null;
   date: string;
 };
+
+export type Finances = {
+  date: string;
+  name: string;
+  price: number;
+  image: string | null;
+  type: 'expense' | 'income';
+  icon_type: string;
+  currency: Currency;
+};

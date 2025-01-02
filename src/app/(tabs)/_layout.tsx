@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Redirect, Tabs, useRouter, useSegments } from 'expo-router';
 import { useAuth } from '@clerk/clerk-expo';
 import { COLORS } from '@/constants/colors';

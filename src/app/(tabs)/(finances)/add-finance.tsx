@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Carousel from 'pinar';
 import CustomTextInput from '@/components/ui/CustomTextInput';
@@ -26,13 +26,14 @@ import { COLORS } from '@/constants/colors';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import useHeaderActions from '@/components/finances/add-finance/hooks/useHeaderActions';
 
+import { useAuth, useUser } from '@clerk/clerk-expo';
+import { addFinance } from '@/supabase/supabase.requests';
+
 const Page = () => {
-  const router = useRouter();
   const { bottom } = useSafeAreaInsets();
   const carouselRef = useRef<Carousel | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { financeForm, setField, resetFinanceForm, isFormValid, isFormDirty } =
-    useFinanceForm();
+  const { financeForm, setField } = useFinanceForm();
   const { headerLeft, headerRight } = useHeaderActions();
 
   return (

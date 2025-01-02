@@ -11,7 +11,7 @@ import {
 import { AnimatedTouchableOpacity } from '@/utils/animation.utils';
 import { useFinanceForm } from '@/contexts/FinanceFormContext';
 
-const SaveBtn = () => {
+const SaveBtn = ({ onSave }: { onSave: () => Promise<void> }) => {
   const pulseValue = useSharedValue(1);
   const { financeForm } = useFinanceForm();
 
@@ -33,7 +33,7 @@ const SaveBtn = () => {
         },
         animatedStyles,
       ]}
-      onPress={() => console.log(financeForm)}
+      onPress={() => onSave()}
     >
       <AntDesign name="save" size={24} color="white" />
     </AnimatedTouchableOpacity>

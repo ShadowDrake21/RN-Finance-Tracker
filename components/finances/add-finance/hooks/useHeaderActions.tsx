@@ -7,9 +7,28 @@ import ReloadBtn from '../../ReloadBtn';
 import SaveBtn from '../../SaveBtn';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
+import { useAuth } from '@clerk/clerk-expo';
+import { addFinance } from '@/supabase/supabase.requests';
+
 const useHeaderActions = () => {
-  const { resetFinanceForm, isFormValid, isFormDirty } = useFinanceForm();
+  const { financeForm, resetFinanceForm, isFormValid, isFormDirty } =
+    useFinanceForm();
   const router = useRouter();
+
+  const { userId, getToken } = useAuth();
+
+  const handleAddFinance = async () => {
+    if (!userId) return;
+
+    const token = await getToken({ template: 'supabase' });
+
+    if (!token) {
+      Alert.alert('Error', 'Failed to retrieve token');
+      return;
+    }
+    const finances = await addFinance({ userId, token, finance: financeForm });
+    console.log('finances', finances);
+  };
 
   const onLeaveWithUnsavedChanges = useCallback(() => {
     return Alert.alert('Are you sure?', 'All changes will be lost', [
@@ -35,7 +54,7 @@ const useHeaderActions = () => {
     () => (
       <View style={{ flexDirection: 'row', gap: 20 }}>
         <ReloadBtn onReload={resetFinanceForm} />
-        {isFormValid() && <SaveBtn />}
+        {isFormValid() && <SaveBtn onSave={handleAddFinance} />}
       </View>
     ),
     [resetFinanceForm, isFormValid]

@@ -28,11 +28,7 @@ const FinanceLayout = () => {
   );
 };
 
-export const Layout = () => (
-  <FinanceFormProvider>
-    <FinanceLayout />
-  </FinanceFormProvider>
-);
+export const Layout = () => <FinanceLayout />;
 
 export default Layout;
 
