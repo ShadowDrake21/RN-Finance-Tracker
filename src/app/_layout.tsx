@@ -1,12 +1,7 @@
 import { LogBox, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Stack } from 'expo-router/stack';
-import {
-  ClerkProvider,
-  ClerkLoaded,
-  useUser,
-  useSession,
-} from '@clerk/clerk-expo';
+import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
 import { tokenCache } from '@/cache';
 import Toast from 'react-native-toast-message';
 import * as SQLite from 'expo-sqlite';
@@ -17,7 +12,6 @@ import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS } from '@/constants/colors';
 import * as SplashScreen from 'expo-splash-screen';
-import { useClerkSupabaseClient } from '@/hooks/useClerkSupabaseClient';
 import { FinanceFormProvider } from '@/contexts/FinanceFormContext';
 
 SplashScreen.preventAutoHideAsync();

@@ -1,5 +1,6 @@
 import { FinanceFormType } from '@/types/types';
 import { supabaseClient } from './supabase.client';
+import { uploadImage } from './supabase.storage';
 
 export const getFinances = async ({
   userId,
@@ -27,14 +28,18 @@ export const addFinance = async ({
   finance: FinanceFormType;
 }) => {
   const supabase = await supabaseClient(token);
-  const { data, error } = await supabase.from('finances').insert({
+  const image = finance.image
+    ? await uploadImage({ userId, token, file: finance.image })
+    : null;
+
+  const { error } = await supabase.from('finances').insert({
     user_id: userId,
     name: finance.note,
     type: finance.type,
     icon_type: finance.kind,
     price: finance.sum,
     currency: finance.currency,
-    image: finance.image || null,
+    image: image?.fullPath,
     date: finance.date,
   });
 
@@ -42,6 +47,4 @@ export const addFinance = async ({
     console.log('error', error);
     return;
   }
-
-  return data;
 };

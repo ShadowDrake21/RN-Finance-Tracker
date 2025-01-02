@@ -30,10 +30,11 @@ const PickImage = () => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
 
     if (!result.canceled) {
-      setField('image', result.assets[0].uri);
+      setField('image', result.assets[0].base64);
     }
   };
 
@@ -50,7 +51,7 @@ const PickImage = () => {
       {image && (
         <Animated.View style={[styles.animatedView, animatedStyle]}>
           <Image
-            source={{ uri: image }}
+            source={{ uri: `data:image/jpeg;base64,${image}` }}
             style={[styles.image]}
             resizeMode="cover"
           />

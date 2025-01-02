@@ -1,7 +1,7 @@
 import { COLORS } from '@/constants/colors';
 import { useFinanceForm } from '@/contexts/FinanceFormContext';
 import { useRouter } from 'expo-router';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Alert, TouchableOpacity } from 'react-native';
 import ReloadBtn from '../../ReloadBtn';
 import SaveBtn from '../../SaveBtn';
@@ -14,20 +14,25 @@ const useHeaderActions = () => {
   const { financeForm, resetFinanceForm, isFormValid, isFormDirty } =
     useFinanceForm();
   const router = useRouter();
-
   const { userId, getToken } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const handleAddFinance = async () => {
     if (!userId) return;
 
+    setLoading(true);
     const token = await getToken({ template: 'supabase' });
 
     if (!token) {
       Alert.alert('Error', 'Failed to retrieve token');
+      setLoading(false);
       return;
     }
-    const finances = await addFinance({ userId, token, finance: financeForm });
-    console.log('finances', finances);
+
+    await addFinance({ userId, token, finance: financeForm });
+    setLoading(false);
+
+    router.back();
   };
 
   const onLeaveWithUnsavedChanges = useCallback(() => {
@@ -76,7 +81,7 @@ const useHeaderActions = () => {
     [isFormDirty, onLeaveWithUnsavedChanges, router]
   );
 
-  return { headerLeft, headerRight };
+  return { headerLeft, headerRight, loading };
 };
 
 export default useHeaderActions;

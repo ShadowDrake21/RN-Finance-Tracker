@@ -1,19 +1,16 @@
 import {
-  Alert,
   Keyboard,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Carousel from 'pinar';
 import CustomTextInput from '@/components/ui/CustomTextInput';
-import { format, set } from 'date-fns';
-import { Stack, useRouter } from 'expo-router';
-import ReloadBtn from '@/components/finances/ReloadBtn';
+import { format } from 'date-fns';
+import { Stack } from 'expo-router';
 import FinanceSlider from '@/components/finances/add-finance/finance-slider/FinanceSlider';
 import CalendarModal from '@/components/finances/add-finance/CalendarModal';
 import SumInput from '@/components/finances/add-finance/SumInput';
@@ -21,27 +18,24 @@ import TypeSwitch from '@/components/finances/add-finance/TypeSwitch';
 import AddFinanceButton from '@/components/finances/add-finance/AddFinanceButton';
 import PickImage from '@/components/finances/add-finance/PickImage';
 import { useFinanceForm } from '@/contexts/FinanceFormContext';
-import SaveBtn from '@/components/finances/SaveBtn';
-import { COLORS } from '@/constants/colors';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import useHeaderActions from '@/components/finances/add-finance/hooks/useHeaderActions';
-
-import { useAuth, useUser } from '@clerk/clerk-expo';
-import { addFinance } from '@/supabase/supabase.requests';
+import Loader from '@/components/shared/Loader';
 
 const Page = () => {
   const { bottom } = useSafeAreaInsets();
   const carouselRef = useRef<Carousel | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { financeForm, setField } = useFinanceForm();
-  const { headerLeft, headerRight } = useHeaderActions();
+  const { headerLeft, headerRight, loading } = useHeaderActions();
+
+  if (loading) return <Loader />;
 
   return (
     <>
       <Stack.Screen
         options={{
-          headerRight: headerRight,
           headerLeft: headerLeft,
+          headerRight: headerRight,
         }}
       />
       <ScrollView
