@@ -18,6 +18,7 @@ import Reanimated, {
   SharedValue,
   useAnimatedStyle,
 } from 'react-native-reanimated';
+import { INCOME_ICONS } from '@/constants/icons/income_icons';
 
 const AnimatedTouchableOpacity =
   Reanimated.createAnimatedComponent(TouchableOpacity);
@@ -104,7 +105,11 @@ export const FinanceItemAction = (item: Finances) => {
         <View key={item.id} style={styles.activityItemInnerContainer}>
           <View style={styles.activityItemBody}>
             <Image
-              source={EXPENSES_ICONS[category][name]}
+              source={
+                item.type === 'expense'
+                  ? EXPENSES_ICONS[category][name]
+                  : INCOME_ICONS[category][name]
+              }
               style={{ width: 50, height: 50 }}
             />
             <View style={{ maxWidth: '70%' }}>
@@ -117,8 +122,15 @@ export const FinanceItemAction = (item: Finances) => {
               </Text>
               {/* notes, photos */}
 
-              <Text style={{ fontSize: 12, color: COLORS.darkGray }}>
-                {item.icon_type}
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: COLORS.darkGray,
+                  textTransform: 'capitalize',
+                  width: '100%',
+                }}
+              >
+                {item.icon_type.split('/').join(' / ')}
               </Text>
             </View>
           </View>

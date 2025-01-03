@@ -1,11 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { financeTable } from '@/db/schema';
-import { eq, sql } from 'drizzle-orm';
+
 import {
   groupFinancesByDate,
   transformFinancesFromDB,
-  uniqueGroups,
 } from '@/utils/finance-groups.utils';
 import { IFinanceGroup } from '@/types/types';
 import * as SQLite from 'expo-sqlite';
@@ -13,7 +10,6 @@ import { getFinancesByMonth } from '@/supabase/supabase.requests';
 import { useAuth } from '@clerk/clerk-expo';
 
 const expo = SQLite.openDatabaseSync('db.db');
-const db = drizzle(expo);
 
 export const useFetchFinancesByMonth = (selectedMonthId: string) => {
   const { userId, getToken } = useAuth();
@@ -25,7 +21,6 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
     pageRef.current = 0;
     setGroups([]);
     fetchFinances();
-    console.log('selectedMonthId', selectedMonthId);
   }, [selectedMonthId]);
 
   const fetchFinances = async () => {
@@ -36,17 +31,6 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
     if (!token) return;
 
     setLoading(true);
-    // const finances = await db
-    //   .select()
-    //   .from(financeTable)
-    //   .where(
-    //     eq(
-    //       sql`strftime('%Y-%m', ${financeTable.date})`,
-    //       selectedMonthId.split('-').reverse().join('-')
-    //     )
-    //   )
-    //   .offset(pageRef.current * 10)
-    //   .limit(10);
 
     const finances = await getFinancesByMonth({
       userId,
@@ -58,15 +42,6 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
 
     const transformedFinances = transformFinancesFromDB(finances);
 
-    console.log('new finance', transformFinancesFromDB(finances));
-
-    // setGroups((existingGroups) => [
-    //   ...uniqueGroups([
-    //     ...existingGroups,
-    //     ...groupFinancesByDate(transformedFinances, existingGroups),
-    //   ]),
-    // ]);
-
     setGroups((existingGroups) => [
       ...groupFinancesByDate(transformedFinances, existingGroups),
     ]);
@@ -74,10 +49,45 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
     setLoading(false);
   };
 
+  const getFinanceSumByMonth = async ({
+    type,
+  }: {
+    type: 'expense' | 'income';
+  }) => {
+    if (!userId) return;
+
+    const token = await getToken({ template: 'supabase' });
+
+    if (!token) return;
+
+    setLoading(true);
+
+    const prices = await getFinancesByMonth({
+      userId,
+      token,
+      selectedMonthId,
+      selection: 'price',
+    });
+
+    const sum = prices.reduce((acc, price) => {
+      if (type === 'expense' && price.price < 0) {
+        return acc + Math.abs(price.price);
+      } else if (type === 'income' && price.price > 0) {
+        return acc + price.price;
+      }
+      return acc;
+    }, 0);
+
+    setLoading(false);
+
+    console.log('sum', sum, prices);
+    return sum;
+  };
+
   const handleLoadMore = () => {
     pageRef.current += 1;
     fetchFinances();
   };
 
-  return { groups, handleLoadMore, loading };
+  return { groups, handleLoadMore, getFinanceSumByMonth, loading };
 };

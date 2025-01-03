@@ -11,11 +11,13 @@ const INITIAL_DATE = new Date().toISOString();
 const CalendarModal = ({
   visible,
   setVisible,
+  firstDate,
 }: // date,
 // setDate,
 {
   visible: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  firstDate: Date;
   // date: string;
   // setDate: React.Dispatch<React.SetStateAction<string>>;
 }) => {
@@ -66,6 +68,7 @@ const CalendarModal = ({
             hideExtraDays
             firstDay={1}
             current={INITIAL_DATE}
+            minDate={firstDate.toISOString()}
             maxDate={getDate(0, INITIAL_DATE)}
             disableAllTouchEventsForDisabledDays
             markingType={'period'}

@@ -49,7 +49,9 @@ const Page = () => {
               <CalendarAgendaList items={items} total={total} />
             ) : (
               <View style={{ paddingTop: 50 }}>
-                <Text style={styles.emptyText}>No notes on income/outcome</Text>
+                <Text style={styles.emptyText}>
+                  No records of income/expenses on this day!
+                </Text>
               </View>
             )}
           </>

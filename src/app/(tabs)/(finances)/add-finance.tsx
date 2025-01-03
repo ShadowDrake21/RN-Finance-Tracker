@@ -20,6 +20,7 @@ import PickImage from '@/components/finances/add-finance/PickImage';
 import { useFinanceForm } from '@/contexts/FinanceFormContext';
 import useHeaderActions from '@/components/finances/add-finance/hooks/useHeaderActions';
 import Loader from '@/components/shared/Loader';
+import { useUser } from '@clerk/clerk-expo';
 
 const Page = () => {
   const { bottom } = useSafeAreaInsets();
@@ -27,6 +28,7 @@ const Page = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { financeForm, setField } = useFinanceForm();
   const { headerLeft, headerRight, loading } = useHeaderActions();
+  const { user } = useUser();
 
   if (loading) return <Loader />;
 
@@ -69,6 +71,7 @@ const Page = () => {
             <CalendarModal
               visible={isModalVisible}
               setVisible={setIsModalVisible}
+              firstDate={user?.createdAt || new Date()}
             />
           </View>
         </TouchableWithoutFeedback>

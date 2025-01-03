@@ -1,5 +1,3 @@
-import { currencies } from '@/content/currencies.content';
-
 export type Currency = {
   label: string;
   value: string;

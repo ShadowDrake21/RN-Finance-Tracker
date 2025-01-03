@@ -3,12 +3,13 @@ import React from 'react';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { COLORS } from '@/constants/colors';
 import { dummyMonthData } from '@/dummy/dummy-month-data';
+import { MonthScrollItem } from '@/types/types';
 
 const MoneyDashboardInfo = ({
-  selectedMonthId,
+  selectedMonthText,
   formattedCurrentBalance,
 }: {
-  selectedMonthId: string;
+  selectedMonthText: string;
   formattedCurrentBalance: string;
 }) => {
   return (
@@ -16,11 +17,7 @@ const MoneyDashboardInfo = ({
       <Text style={styles.mainTitle}>Current balance</Text>
       <Text style={styles.mainBalance}>{formattedCurrentBalance}</Text>
       <View>
-        <Text style={styles.secondaryTitle}>
-          {`In ${
-            dummyMonthData.find((value) => value.id === selectedMonthId)?.text
-          }:`}
-        </Text>
+        <Text style={styles.secondaryTitle}>{`In ${selectedMonthText}:`}</Text>
         <View style={styles.secondaryContainer}>
           <View style={styles.secondaryBalanceWrapper}>
             <AntDesign name="arrowup" size={24} color="black" />

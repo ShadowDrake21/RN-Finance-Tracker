@@ -22,14 +22,16 @@ export const getFinancesByMonth = async ({
   userId,
   token,
   selectedMonthId,
+  selection = '*',
   offset,
   limit,
 }: {
   userId: string;
   token: string;
   selectedMonthId: string;
-  offset: number;
-  limit: number;
+  selection?: string;
+  offset?: number;
+  limit?: number;
 }) => {
   const supabase = await supabaseClient(token);
   const [month, year] = selectedMonthId.split('-');
@@ -43,7 +45,7 @@ export const getFinancesByMonth = async ({
 
   const { data: finances, error } = await supabase
     .from('finances')
-    .select('*')
+    .select(selection)
     .eq('user_id', userId)
     .gte('date', startDate)
     .lte('date', endDate);

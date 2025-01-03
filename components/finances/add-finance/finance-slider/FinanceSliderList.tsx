@@ -20,19 +20,19 @@ const FinanceSliderList = ({ category }: { category: FinanceCategory }) => {
   } = useFinanceForm();
 
   const financeSliderItem = ({ item }: { item: FinanceCategoryItem }) => {
-    const usabaleCategory = category.name.toLowerCase().split(' ').join('_');
+    const usableCategory = category.name.toLowerCase().split(' ').join('_');
     return (
       <TouchableOpacity
         style={[{ alignItems: 'center' }]}
         onPress={() => {
-          setField('kind', `${usabaleCategory}/${item.icon}`);
+          setField('kind', `${usableCategory}/${item.icon}`);
         }}
       >
         <Image
           source={
             category.type === 'expense'
-              ? EXPENSES_ICONS[usabaleCategory][item.icon]
-              : INCOME_ICONS[usabaleCategory][item.icon]
+              ? EXPENSES_ICONS[usableCategory][item.icon]
+              : INCOME_ICONS[usableCategory][item.icon]
           }
           style={[
             styles.btnImage,
