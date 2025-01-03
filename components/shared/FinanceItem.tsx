@@ -27,7 +27,7 @@ const FinanceItem = memo((group: IFinanceGroup) => {
     amount: group.total,
     code: 'PLN',
   });
-  // problem
+
   const formattedDate = format(
     parse(group.date, 'd-M-yyyy', new Date()),
     'd MMM yyyy'
@@ -88,6 +88,8 @@ function swipeableAction(
 }
 
 export const FinanceItemAction = (item: Finances) => {
+  const [category, name] = item.icon_type.split('/');
+
   return (
     <GestureHandlerRootView>
       <ReanimatedSwipeable
@@ -102,7 +104,7 @@ export const FinanceItemAction = (item: Finances) => {
         <View key={item.id} style={styles.activityItemInnerContainer}>
           <View style={styles.activityItemBody}>
             <Image
-              source={EXPENSES_ICONS['essentials']['groceries']}
+              source={EXPENSES_ICONS[category][name]}
               style={{ width: 50, height: 50 }}
             />
             <View style={{ maxWidth: '70%' }}>

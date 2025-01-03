@@ -19,37 +19,45 @@ const FinanceSliderList = ({ category }: { category: FinanceCategory }) => {
     setField,
   } = useFinanceForm();
 
-  const financeSliderItem = ({ item }: { item: FinanceCategoryItem }) => (
-    <TouchableOpacity
-      style={[{ alignItems: 'center' }]}
-      onPress={() => setField('kind', item.name)}
-    >
-      <Image
-        source={
-          category.type === 'expense'
-            ? EXPENSES_ICONS[category.name.split(' ').join('_')][item.icon]
-            : INCOME_ICONS[category.name.split(' ').join('_')][item.icon]
-        }
-        style={[styles.btnImage, item.name === kind && styles.btnImageSelected]}
-      />
-      <Text
-        style={[
-          { fontSize: 12, textAlign: 'center' },
-          item.name === kind
-            ? { color: COLORS.selected, fontWeight: 600 }
-            : { color: COLORS.text },
-        ]}
-        numberOfLines={item.name.split(' ').length}
+  const financeSliderItem = ({ item }: { item: FinanceCategoryItem }) => {
+    const usabaleCategory = category.name.toLowerCase().split(' ').join('_');
+    return (
+      <TouchableOpacity
+        style={[{ alignItems: 'center' }]}
+        onPress={() => {
+          setField('kind', `${usabaleCategory}/${item.icon}`);
+        }}
       >
-        {item.name.split(' ').map((word, index) => (
-          <Text key={index}>
-            {word}
-            {'\n'}
-          </Text>
-        ))}
-      </Text>
-    </TouchableOpacity>
-  );
+        <Image
+          source={
+            category.type === 'expense'
+              ? EXPENSES_ICONS[usabaleCategory][item.icon]
+              : INCOME_ICONS[usabaleCategory][item.icon]
+          }
+          style={[
+            styles.btnImage,
+            item.icon === kind.split('/')[1] && styles.btnImageSelected,
+          ]}
+        />
+        <Text
+          style={[
+            { fontSize: 12, textAlign: 'center' },
+            item.icon === kind.split('/')[1]
+              ? { color: COLORS.selected, fontWeight: 600 }
+              : { color: COLORS.text },
+          ]}
+          numberOfLines={item.name.split(' ').length}
+        >
+          {item.name.split(' ').map((word, index) => (
+            <Text key={index}>
+              {word}
+              {'\n'}
+            </Text>
+          ))}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View>

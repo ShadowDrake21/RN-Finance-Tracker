@@ -76,7 +76,8 @@ export const addFinance = async ({
     name: finance.note,
     type: finance.type,
     icon_type: finance.kind,
-    price: finance.sum,
+    price:
+      finance.type === 'expense' && finance.sum ? -finance.sum : finance.sum,
     currency: finance.currency,
     image: image?.fullPath,
     date: new Date(finance.date).getTime(),
