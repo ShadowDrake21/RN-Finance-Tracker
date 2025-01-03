@@ -37,13 +37,7 @@ export type MonthScrollListProps = {
 export interface IFinanceGroup {
   date: string;
   total: number;
-  items: {
-    id: number;
-    name: string;
-    description?: string;
-    price: number;
-    iconType: string;
-  }[];
+  items: Finances[];
 }
 
 export interface IFinanceItemAction {
@@ -96,6 +90,8 @@ export type FinanceFormType = {
 };
 
 export type Finances = {
+  id: number;
+  user_id: number;
   date: string;
   name: string;
   price: number;

@@ -30,9 +30,10 @@ const useHeaderActions = () => {
     }
 
     await addFinance({ userId, token, finance: financeForm });
-    setLoading(false);
 
     router.back();
+    resetFinanceForm();
+    setLoading(false);
   };
 
   const onLeaveWithUnsavedChanges = useCallback(() => {

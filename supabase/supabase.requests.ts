@@ -2,7 +2,7 @@ import { FinanceFormType } from '@/types/types';
 import { supabaseClient } from './supabase.client';
 import { uploadImage } from './supabase.storage';
 
-export const getFinances = async ({
+export const getAllFinances = async ({
   userId,
   token,
 }: {
@@ -14,6 +14,45 @@ export const getFinances = async ({
     .from('finances')
     .select('*')
     .eq('user_id', userId);
+
+  return finances;
+};
+
+export const getFinancesByMonth = async ({
+  userId,
+  token,
+  selectedMonthId,
+  offset,
+  limit,
+}: {
+  userId: string;
+  token: string;
+  selectedMonthId: string;
+  offset: number;
+  limit: number;
+}) => {
+  const supabase = await supabaseClient(token);
+  const [month, year] = selectedMonthId.split('-');
+  const startDate = new Date(Number(year), Number(month) - 1, 1).getTime();
+  const endDate = new Date(Number(year), Number(month), 1).getTime() - 1;
+
+  console.log('startDate', new Date(startDate).toLocaleDateString());
+  console.log('endDate', new Date(endDate).toISOString());
+  console.log('endDate', endDate);
+  console.log('userId', userId);
+
+  const { data: finances, error } = await supabase
+    .from('finances')
+    .select('*')
+    .eq('user_id', userId)
+    .gte('date', startDate)
+    .lte('date', endDate);
+  // .range(offset, offset + limit - 1);
+
+  if (error) {
+    console.error('Error fetching finances:', error);
+    return [];
+  }
 
   return finances;
 };
@@ -40,7 +79,7 @@ export const addFinance = async ({
     price: finance.sum,
     currency: finance.currency,
     image: image?.fullPath,
-    date: finance.date,
+    date: new Date(finance.date).getTime(),
   });
 
   if (error) {
