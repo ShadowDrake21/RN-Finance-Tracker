@@ -10,11 +10,13 @@ const DashboardBottomSheetList = ({
   groups,
   handleLoadMore,
   listLoading,
+  refreshFinances,
 }: {
   bottomSheetRef: RefObject<BottomSheet>;
   groups: IFinanceGroup[];
   handleLoadMore: () => void;
   listLoading: boolean;
+  refreshFinances: () => Promise<void>;
 }) => {
   return (
     <FlashList
@@ -38,6 +40,8 @@ const DashboardBottomSheetList = ({
           </Text>
         ) : null
       }
+      refreshing={listLoading}
+      onRefresh={refreshFinances}
     />
   );
 };

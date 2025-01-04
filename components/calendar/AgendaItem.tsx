@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { FinanceItemAction } from '../shared/FinanceItem';
-import { IFinanceItemAction } from '@/types/types';
+import { Finances, IFinanceItemAction } from '@/types/types';
 
-const AgendaItem = (item: IFinanceItemAction) => {
+const AgendaItem = (item: Finances) => {
   if (!item) {
     return (
       <View style={styles.emptyItem}>

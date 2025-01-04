@@ -8,6 +8,7 @@ import { IFinanceGroup } from '@/types/types';
 
 type DashboardBottomSheetProps = {
   loading: boolean;
+  refreshFinances: () => Promise<void>;
   handleLoadMore: () => void;
   groups: IFinanceGroup[];
   bottomSheetRef: RefObject<BottomSheet>;
@@ -15,6 +16,7 @@ type DashboardBottomSheetProps = {
 
 const DashboardBottomSheet = ({
   loading,
+  refreshFinances,
   handleLoadMore,
   groups,
   bottomSheetRef,
@@ -39,6 +41,7 @@ const DashboardBottomSheet = ({
           <DashboardBottomSheetList
             bottomSheetRef={bottomSheetRef}
             groups={groups}
+            refreshFinances={refreshFinances}
             handleLoadMore={handleLoadMore}
             listLoading={loading}
           />

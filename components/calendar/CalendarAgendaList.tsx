@@ -6,9 +6,10 @@ import { formatCurrency } from 'react-native-format-currency';
 import { COLORS } from '@/constants/colors';
 import { AgendaList } from 'react-native-calendars';
 import AgendaItem from './AgendaItem';
+import { Finances } from '@/types/types';
 
 type CalendarAgendaListProps = {
-  items: (typeof financeTable.$inferSelect)[];
+  items: Finances[];
   total: number;
 };
 
@@ -32,7 +33,7 @@ const CalendarAgendaList = ({ items, total }: CalendarAgendaListProps) => {
           >
             {
               formatCurrency({
-                amount: total,
+                amount: +total.toFixed(2),
                 code: 'PLN',
               })[0]
             }

@@ -35,8 +35,13 @@ const Page = () => {
   );
   const [monthsList, setMonthsList] = useState<MonthScrollItem[]>([]);
 
-  const { groups, handleLoadMore, loading, getFinanceSumByMonth } =
-    useFetchFinancesByMonth(selectedMonthId);
+  const {
+    groups,
+    handleLoadMore,
+    refreshFinances,
+    loading,
+    getFinanceSumByMonth,
+  } = useFetchFinancesByMonth(selectedMonthId);
 
   const {
     expenseBalance,
@@ -107,6 +112,7 @@ const Page = () => {
             <DashboardBottomSheet
               loading={loading}
               groups={groups}
+              refreshFinances={refreshFinances}
               handleLoadMore={handleLoadMore}
               bottomSheetRef={bottomSheetRef}
             />

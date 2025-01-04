@@ -42,7 +42,9 @@ export const groupFinancesByDate = (
     return acc;
   }, {} as Record<string, IFinanceGroup>);
 
-  return Object.values(grouped);
+  return Object.values(grouped).sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
 };
 
 export const transformFinancesFromDB = (finances: any[]) => {

@@ -25,7 +25,7 @@ const AnimatedTouchableOpacity =
 
 const FinanceItem = memo((group: IFinanceGroup) => {
   const formattedTotal = formatCurrency({
-    amount: group.total,
+    amount: +group.total.toFixed(2),
     code: 'PLN',
   });
 
@@ -41,7 +41,7 @@ const FinanceItem = memo((group: IFinanceGroup) => {
           {formattedDate}
         </Text>
         <Text style={{ color: COLORS.darkGray, fontWeight: '500' }}>
-          {formattedTotal[0]}
+          {formattedTotal[1]}
         </Text>
       </View>
       <View>
@@ -120,7 +120,6 @@ export const FinanceItemAction = (item: Finances) => {
               >
                 {item.name}
               </Text>
-              {/* notes, photos */}
 
               <Text
                 style={{
@@ -130,7 +129,7 @@ export const FinanceItemAction = (item: Finances) => {
                   width: '100%',
                 }}
               >
-                {item.icon_type.split('/').join(' / ')}
+                {item.icon_type.replace(/_/g, ' ').replace(/\//g, ' / ')}
               </Text>
             </View>
           </View>

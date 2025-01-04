@@ -75,8 +75,6 @@ export const FinanceFormProvider = ({ children }: PropsWithChildren) => {
     return JSON.stringify(financeForm) !== JSON.stringify(FinanceFormInitial);
   };
 
-  const addFinanceToDB = async () => {};
-
   return (
     <FinanceFormContext.Provider
       value={{

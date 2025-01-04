@@ -59,6 +59,47 @@ export const getFinancesByMonth = async ({
   return finances;
 };
 
+export const getFinancesByDate = async ({
+  userId,
+  token,
+  date,
+  selection = '*',
+  offset,
+  limit,
+}: {
+  userId: string;
+  token: string;
+  date: number;
+  selection?: string;
+  offset?: number;
+  limit?: number;
+}) => {
+  const supabase = await supabaseClient(token);
+
+  const startDate = new Date(date).setHours(0, 0, 0, 0);
+  const endDate = new Date(date).setHours(23, 59, 59, 999);
+
+  console.log('startDate', new Date(startDate).toLocaleDateString());
+  console.log('endDate', new Date(endDate).toISOString());
+  console.log('endDate', endDate);
+  console.log('userId', userId);
+
+  const { data: finances, error } = await supabase
+    .from('finances')
+    .select(selection)
+    .eq('user_id', userId)
+    .gte('date', startDate)
+    .lte('date', endDate);
+  // .range(offset, offset + limit - 1);
+
+  if (error) {
+    console.error('Error fetching finances:', error);
+    return [];
+  }
+
+  return finances;
+};
+
 export const addFinance = async ({
   userId,
   token,

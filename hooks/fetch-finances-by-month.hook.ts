@@ -1,15 +1,21 @@
 import { useState, useRef, useEffect } from 'react';
-
 import {
   groupFinancesByDate,
   transformFinancesFromDB,
 } from '@/utils/finance-groups.utils';
 import { IFinanceGroup } from '@/types/types';
-import * as SQLite from 'expo-sqlite';
 import { getFinancesByMonth } from '@/supabase/supabase.requests';
 import { useAuth } from '@clerk/clerk-expo';
 
-const expo = SQLite.openDatabaseSync('db.db');
+const calcSum = (type: 'expense' | 'income', prices: { price: number }[]) =>
+  prices.reduce((acc, price) => {
+    if (type === 'expense' && price.price < 0) {
+      return acc + Math.abs(price.price);
+    } else if (type === 'income' && price.price > 0) {
+      return acc + price.price;
+    }
+    return acc;
+  }, 0);
 
 export const useFetchFinancesByMonth = (selectedMonthId: string) => {
   const { userId, getToken } = useAuth();
@@ -25,13 +31,9 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
 
   const fetchFinances = async () => {
     if (!userId) return;
-
     const token = await getToken({ template: 'supabase' });
-
     if (!token) return;
-
     setLoading(true);
-
     const finances = await getFinancesByMonth({
       userId,
       token,
@@ -55,33 +57,19 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
     type: 'expense' | 'income';
   }) => {
     if (!userId) return;
-
     const token = await getToken({ template: 'supabase' });
-
     if (!token) return;
-
     setLoading(true);
-
-    const prices = await getFinancesByMonth({
+    const prices = (await getFinancesByMonth({
       userId,
       token,
       selectedMonthId,
       selection: 'price',
-    });
+    })) as unknown as { price: number }[];
 
-    const sum = prices.reduce((acc, price) => {
-      console.log('prices.reduce', price);
-      if (type === 'expense' && price.price < 0) {
-        return acc + Math.abs(price.price);
-      } else if (type === 'income' && price.price > 0) {
-        return acc + price.price;
-      }
-      return acc;
-    }, 0);
+    const sum = calcSum(type, prices);
 
     setLoading(false);
-
-    console.log('sum', sum, prices[0].price);
     return sum;
   };
 
@@ -90,5 +78,11 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
     fetchFinances();
   };
 
-  return { groups, handleLoadMore, getFinanceSumByMonth, loading };
+  return {
+    groups,
+    refreshFinances: fetchFinances,
+    handleLoadMore,
+    getFinanceSumByMonth,
+    loading,
+  };
 };
