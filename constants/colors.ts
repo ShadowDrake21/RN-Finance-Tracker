@@ -1,6 +1,9 @@
 export const COLORS = {
   lightGray: '#e6e6e6',
   primary: '#00b77a',
+  lightPrimary: '#03ffabff',
+  extraDarkPrimary: '#05563b',
+  darkPrimary: '#139167',
   mainTint: '#211d1d',
   text: '#000',
   gray: '#999',
@@ -9,4 +12,5 @@ export const COLORS = {
   darkGray: '#656565',
   tabBarTintActive: '#06f7a7',
   tabBarTintInactive: '#195106',
+  selected: '#8b0000',
 };

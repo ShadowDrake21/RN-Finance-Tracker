@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS } from '@/constants/colors';
 import * as SplashScreen from 'expo-splash-screen';
+import { FinanceFormProvider } from '@/contexts/FinanceFormContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -114,8 +115,10 @@ const RootLayoutNav = () => {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <ClerkLoaded>
-        <RootLayout />
-        <Toast />
+        <FinanceFormProvider>
+          <RootLayout />
+          <Toast />
+        </FinanceFormProvider>
       </ClerkLoaded>
     </ClerkProvider>
   );

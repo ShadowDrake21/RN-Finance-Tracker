@@ -1,3 +1,8 @@
+export type Currency = {
+  label: string;
+  value: string;
+};
+
 export type OnboardingItem = {
   animationPath: string;
   title: string;
@@ -30,13 +35,7 @@ export type MonthScrollListProps = {
 export interface IFinanceGroup {
   date: string;
   total: number;
-  items: {
-    id: number;
-    name: string;
-    description?: string;
-    price: number;
-    iconType: string;
-  }[];
+  items: Finances[];
 }
 
 export interface IFinanceItemAction {
@@ -58,4 +57,44 @@ export type SwitchItemProps = {
   backgroundInactive: string;
   circleActiveColor: string;
   circleInActiveColor: string;
+};
+
+export type FinanceCategory = {
+  name: string;
+  type: 'expense' | 'income';
+  items: FinanceCategoryItem[];
+};
+
+export type FinanceCategoryItem = {
+  name: string;
+  icon: string;
+};
+
+export type FinanceIconsType = {
+  [key: string]: {
+    [key: string]: any;
+  };
+};
+
+export type FinanceFormType = {
+  id: number;
+  type: 'expense' | 'income';
+  kind: string;
+  sum: number | null;
+  currency: Currency;
+  note: string;
+  image: string | null;
+  date: string;
+};
+
+export type Finances = {
+  id: number;
+  user_id: number;
+  date: string;
+  name: string;
+  price: number;
+  image: string | null;
+  type: 'expense' | 'income';
+  icon_type: string;
+  currency: Currency;
 };

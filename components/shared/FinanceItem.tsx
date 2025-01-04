@@ -1,16 +1,24 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  ImageSourcePropType,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, { memo, useEffect } from 'react';
 import { COLORS } from '@/constants/colors';
-import { IFinanceGroup, IFinanceItemAction } from '@/types/types';
+import { Finances, IFinanceGroup, IFinanceItemAction } from '@/types/types';
 import { format, parse } from 'date-fns';
 import { formatCurrency } from 'react-native-format-currency';
-import { FINANCE_ICONS } from '@/constants/icons';
+import { EXPENSES_ICONS } from '@/constants/icons/expense_icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
   SharedValue,
   useAnimatedStyle,
 } from 'react-native-reanimated';
+import { INCOME_ICONS } from '@/constants/icons/income_icons';
 
 const AnimatedTouchableOpacity =
   Reanimated.createAnimatedComponent(TouchableOpacity);
@@ -20,6 +28,7 @@ const FinanceItem = memo((group: IFinanceGroup) => {
     amount: group.total,
     code: 'PLN',
   });
+
   const formattedDate = format(
     parse(group.date, 'd-M-yyyy', new Date()),
     'd MMM yyyy'
@@ -79,7 +88,9 @@ function swipeableAction(
   );
 }
 
-export const FinanceItemAction = (item: IFinanceItemAction) => {
+export const FinanceItemAction = (item: Finances) => {
+  const [category, name] = item.icon_type.split('/');
+
   return (
     <GestureHandlerRootView>
       <ReanimatedSwipeable
@@ -95,7 +106,9 @@ export const FinanceItemAction = (item: IFinanceItemAction) => {
           <View style={styles.activityItemBody}>
             <Image
               source={
-                FINANCE_ICONS[item.iconType as keyof typeof FINANCE_ICONS]
+                item.type === 'expense'
+                  ? EXPENSES_ICONS[category][name]
+                  : INCOME_ICONS[category][name]
               }
               style={{ width: 50, height: 50 }}
             />
@@ -108,11 +121,17 @@ export const FinanceItemAction = (item: IFinanceItemAction) => {
                 {item.name}
               </Text>
               {/* notes, photos */}
-              {item.description && (
-                <Text style={{ fontSize: 12, color: COLORS.darkGray }}>
-                  {item.description}
-                </Text>
-              )}
+
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: COLORS.darkGray,
+                  textTransform: 'capitalize',
+                  width: '100%',
+                }}
+              >
+                {item.icon_type.split('/').join(' / ')}
+              </Text>
             </View>
           </View>
           <Text

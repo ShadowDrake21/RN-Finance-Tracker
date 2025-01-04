@@ -1,9 +1,16 @@
 import { financeTable } from '@/db/schema';
-import { IFinanceGroup } from '@/types/types';
+import { Currency, Finances, IFinanceGroup } from '@/types/types';
 
 export const uniqueGroups = (grouped: IFinanceGroup[]) => {
-  return Object.values(grouped).reduce((acc, group) => {
-    if (!acc.find((g) => g.date === group.date)) {
+  console.log('uniqueGroups', grouped);
+  return grouped.reduce((acc, group) => {
+    if (
+      !acc.find((g) => {
+        console.log('!acc.find((g)', g.date, group.date, g.date === group.date);
+        return g.date === group.date;
+      })
+    ) {
+      console.log('group', group);
       acc.push(group);
     }
     return acc;
@@ -11,7 +18,7 @@ export const uniqueGroups = (grouped: IFinanceGroup[]) => {
 };
 
 export const groupFinancesByDate = (
-  finances: (typeof financeTable.$inferSelect)[],
+  finances: Finances[],
   existingGroups: IFinanceGroup[]
 ): IFinanceGroup[] => {
   const grouped = finances.reduce((acc, curr) => {
@@ -19,28 +26,35 @@ export const groupFinancesByDate = (
     const key = `${date.getDate()}-${
       date.getMonth() + 1
     }-${date.getFullYear()}`;
+
     if (!acc[key]) {
       const existingGroup = existingGroups.find((group) => group.date === key);
-      if (existingGroup) {
-        acc[key] = existingGroup;
-      } else {
-        acc[key] = {
-          date: key,
-          total: 0,
-          items: [],
-        };
-      }
+      acc[key] = existingGroup
+        ? { ...existingGroup, items: [...existingGroup.items] }
+        : { date: key, total: 0, items: [] };
     }
-    acc[key].total += curr.price;
-    acc[key].items.push({
-      id: curr.id,
-      name: curr.name,
-      description: curr.description!,
-      price: curr.price,
-      iconType: curr.iconType,
-    });
+
+    if (!acc[key].items.find((item) => item.id === curr.id)) {
+      acc[key].total += curr.price;
+      acc[key].items.push({ ...curr });
+    }
+
     return acc;
   }, {} as Record<string, IFinanceGroup>);
 
   return Object.values(grouped);
+};
+
+export const transformFinancesFromDB = (finances: any[]) => {
+  return finances.map<Finances>((finance) => {
+    console.log(
+      'transformFinancesFromDB',
+      new Date(finance.date).toISOString()
+    );
+    return {
+      ...finance,
+      date: new Date(finance.date),
+      currency: finance.currency as Currency,
+    };
+  });
 };

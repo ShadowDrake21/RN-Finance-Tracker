@@ -1,6 +1,12 @@
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import React from 'react';
-import { Redirect, Tabs } from 'expo-router';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, { useEffect } from 'react';
+import { Redirect, Tabs, useRouter, useSegments } from 'expo-router';
 import { useAuth } from '@clerk/clerk-expo';
 import { COLORS } from '@/constants/colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -11,6 +17,8 @@ import { BlurView } from 'expo-blur';
 
 const Layout = () => {
   const { isSignedIn, isLoaded } = useAuth();
+  const segment = useSegments();
+  const router = useRouter();
 
   if (!isLoaded) {
     return (
@@ -34,6 +42,7 @@ const Layout = () => {
         tabBarBackground: () => {
           return <BlurView intensity={80} style={{ flex: 1 }} />;
         },
+        animation: 'shift',
       }}
     >
       <Tabs.Screen
@@ -55,12 +64,18 @@ const Layout = () => {
         }}
       />
       <Tabs.Screen
-        name="(expenses)"
+        name="(finances)"
         options={{
           headerShown: false,
           tabBarLabel: '',
           tabBarIcon: ({ focused }) => <CreateTabBar isActive={focused} />,
           tabBarIconStyle: { top: '25%' },
+          tabBarStyle: { display: 'none' },
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.dismissAll()}>
+              <Text>Back</Text>
+            </TouchableOpacity>
+          ),
         }}
       />
       <Tabs.Screen

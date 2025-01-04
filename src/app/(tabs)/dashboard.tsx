@@ -5,37 +5,56 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
 import MainHeader from '@/components/shared/MainHeader';
 import MonthScrollList from '@/components/dashboard/MonthScrollList';
-import { formatCurrency } from 'react-native-format-currency';
 import LinearGradient from 'react-native-linear-gradient';
 import MoneyDashboardInfo from '@/components/dashboard/MoneyDashboardInfo';
-import { dummyMonthData } from '@/dummy/dummy-month-data';
+
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet from '@gorhom/bottom-sheet';
-import { IFinanceGroup } from '@/types/types';
+import { IFinanceGroup, MonthScrollItem } from '@/types/types';
 import DashboardBottomSheet from '@/components/dashboard/DashboardBottomSheet';
+import { useUser } from '@clerk/clerk-expo';
+import { generateMonthData } from '@/utils/date.utils';
+import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
+import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
+import useFetchBalances from '@/components/dashboard/hooks/useFetchBalances';
+
+const INITIAL_SELECTED_MONTH_ID = new Date()
+  .toLocaleString('default', { month: 'numeric', year: 'numeric' })
+  .replace('/', '-');
 
 const Page = () => {
   const flatListRef = useRef<FlatList<IFinanceGroup>>(null);
   const { top } = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const { user } = useUser();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [wallet, setWallet] = useState('Wallet 1');
-  const [selectedMonthId, setSelectedMonthId] = useState('12-2024');
-  const [rawCurrentBalance, setRawCurrentBalance] = useState(13456.56);
-  const [formattedCurrentBalance, setFormattedCurrentBalance] = useState('');
+  const [selectedMonthId, setSelectedMonthId] = useState(
+    INITIAL_SELECTED_MONTH_ID
+  );
+  const [monthsList, setMonthsList] = useState<MonthScrollItem[]>([]);
+
+  const { groups, handleLoadMore, loading, getFinanceSumByMonth } =
+    useFetchFinancesByMonth(selectedMonthId);
+
+  const {
+    expenseBalance,
+    incomeBalance,
+    formatedBalance,
+    loading: loadingBalances,
+  } = useFetchBalances(selectedMonthId, getFinanceSumByMonth);
+
+  useEffect(() => {
+    if (!user?.createdAt) return;
+
+    const months = generateMonthData(user?.createdAt);
+    setMonthsList(months);
+  }, [user]);
 
   useEffect(() => {
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
   }, [selectedMonthId]);
-
-  useEffect(() => {
-    const [valueFormattedWithSymbol] = formatCurrency({
-      amount: rawCurrentBalance,
-      code: 'PLN',
-    });
-    setFormattedCurrentBalance(valueFormattedWithSymbol);
-  }, [rawCurrentBalance]);
 
   const liniarGradientColors: string[] = [
     'rgba(255,255,255,0.6)',
@@ -66,19 +85,29 @@ const Page = () => {
           />
           <View style={{ paddingTop: headerHeight }}>
             <MonthScrollList
-              data={dummyMonthData}
+              data={monthsList}
               selectedId={selectedMonthId}
               setSelectedId={setSelectedMonthId}
             />
           </View>
-          <MoneyDashboardInfo
-            selectedMonthId={selectedMonthId}
-            formattedCurrentBalance={formattedCurrentBalance}
-          />
-
+          {monthsList.length > 0 ? (
+            <MoneyDashboardInfo
+              selectedMonth={
+                monthsList.find((month) => month.id === selectedMonthId)!
+              }
+              expenseBalance={expenseBalance}
+              incomeBalance={incomeBalance}
+              loading={loadingBalances}
+              formatedBalance={formatedBalance}
+            />
+          ) : (
+            <CustomActivityIndicator />
+          )}
           <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
             <DashboardBottomSheet
-              selectedMonthId={selectedMonthId}
+              loading={loading}
+              groups={groups}
+              handleLoadMore={handleLoadMore}
               bottomSheetRef={bottomSheetRef}
             />
           </GestureHandlerRootView>

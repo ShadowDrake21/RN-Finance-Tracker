@@ -4,19 +4,21 @@ import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import CustomActivityIndicator from '../ui/CustomActivityIndicator';
 import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
 import DashboardBottomSheetList from './DashboardBottomSheetList';
+import { IFinanceGroup } from '@/types/types';
 
 type DashboardBottomSheetProps = {
-  selectedMonthId: string;
+  loading: boolean;
+  handleLoadMore: () => void;
+  groups: IFinanceGroup[];
   bottomSheetRef: RefObject<BottomSheet>;
 };
 
 const DashboardBottomSheet = ({
-  selectedMonthId,
+  loading,
+  handleLoadMore,
+  groups,
   bottomSheetRef,
 }: DashboardBottomSheetProps) => {
-  const { groups, handleLoadMore, loading } =
-    useFetchFinancesByMonth(selectedMonthId);
-
   return (
     <BottomSheet
       ref={bottomSheetRef}
@@ -38,6 +40,7 @@ const DashboardBottomSheet = ({
             bottomSheetRef={bottomSheetRef}
             groups={groups}
             handleLoadMore={handleLoadMore}
+            listLoading={loading}
           />
         </View>
       </BottomSheetView>
