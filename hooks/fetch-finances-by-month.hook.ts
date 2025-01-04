@@ -70,6 +70,7 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
     });
 
     const sum = prices.reduce((acc, price) => {
+      console.log('prices.reduce', price);
       if (type === 'expense' && price.price < 0) {
         return acc + Math.abs(price.price);
       } else if (type === 'income' && price.price > 0) {
@@ -80,7 +81,7 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
 
     setLoading(false);
 
-    console.log('sum', sum, prices);
+    console.log('sum', sum, prices[0].price);
     return sum;
   };
 

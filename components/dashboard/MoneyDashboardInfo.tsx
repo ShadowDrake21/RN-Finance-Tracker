@@ -1,32 +1,47 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { COLORS } from '@/constants/colors';
-import { dummyMonthData } from '@/dummy/dummy-month-data';
 import { MonthScrollItem } from '@/types/types';
 
+type MoneyDashboardInfoProps = {
+  selectedMonth: MonthScrollItem;
+  expenseBalance: number;
+  incomeBalance: number;
+  loading: boolean;
+  formatedBalance: string;
+};
+
 const MoneyDashboardInfo = ({
-  selectedMonthText,
-  formattedCurrentBalance,
-}: {
-  selectedMonthText: string;
-  formattedCurrentBalance: string;
-}) => {
+  selectedMonth,
+  expenseBalance,
+  incomeBalance,
+  loading,
+  formatedBalance,
+}: MoneyDashboardInfoProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.mainTitle}>Current balance</Text>
-      <Text style={styles.mainBalance}>{formattedCurrentBalance}</Text>
+      <Text style={styles.mainTitle}>Month balance</Text>
+      <Text style={styles.mainBalance}>
+        {loading ? 'Loading...' : formatedBalance}
+      </Text>
+
       <View>
-        <Text style={styles.secondaryTitle}>{`In ${selectedMonthText}:`}</Text>
+        <Text style={styles.secondaryTitle}>{`${
+          loading ? 'Loading...' : `In ${selectedMonth.text}`
+        }:`}</Text>
         <View style={styles.secondaryContainer}>
           <View style={styles.secondaryBalanceWrapper}>
             <AntDesign name="arrowup" size={24} color="black" />
 
-            <Text style={styles.secondaryBalance}>34.555,90 zł</Text>
+            <Text style={styles.secondaryBalance}>
+              {loading ? 'Loading...' : `${incomeBalance} zł`}
+            </Text>
           </View>
           <View style={styles.secondaryBalanceWrapper}>
             <AntDesign name="arrowdown" size={24} color="black" />
-            <Text style={styles.secondaryBalance}>- 10.456,00 zł</Text>
+            <Text style={styles.secondaryBalance}>
+              - {loading ? 'Loading...' : `${expenseBalance} zł`}
+            </Text>
           </View>
         </View>
       </View>

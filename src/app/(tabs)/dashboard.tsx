@@ -5,7 +5,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
 import MainHeader from '@/components/shared/MainHeader';
 import MonthScrollList from '@/components/dashboard/MonthScrollList';
-import { formatCurrency } from 'react-native-format-currency';
 import LinearGradient from 'react-native-linear-gradient';
 import MoneyDashboardInfo from '@/components/dashboard/MoneyDashboardInfo';
 
@@ -16,6 +15,8 @@ import DashboardBottomSheet from '@/components/dashboard/DashboardBottomSheet';
 import { useUser } from '@clerk/clerk-expo';
 import { generateMonthData } from '@/utils/date.utils';
 import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
+import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
+import useFetchBalances from '@/components/dashboard/hooks/useFetchBalances';
 
 const INITIAL_SELECTED_MONTH_ID = new Date()
   .toLocaleString('default', { month: 'numeric', year: 'numeric' })
@@ -32,31 +33,28 @@ const Page = () => {
   const [selectedMonthId, setSelectedMonthId] = useState(
     INITIAL_SELECTED_MONTH_ID
   );
-  const [rawCurrentBalance, setRawCurrentBalance] = useState(13456.56);
-  const [formattedCurrentBalance, setFormattedCurrentBalance] = useState('');
   const [monthsList, setMonthsList] = useState<MonthScrollItem[]>([]);
 
   const { groups, handleLoadMore, loading, getFinanceSumByMonth } =
     useFetchFinancesByMonth(selectedMonthId);
 
+  const {
+    expenseBalance,
+    incomeBalance,
+    formatedBalance,
+    loading: loadingBalances,
+  } = useFetchBalances(selectedMonthId, getFinanceSumByMonth);
+
   useEffect(() => {
     if (!user?.createdAt) return;
 
-    setMonthsList(generateMonthData(user?.createdAt));
+    const months = generateMonthData(user?.createdAt);
+    setMonthsList(months);
   }, [user]);
 
   useEffect(() => {
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-    getFinanceSumByMonth({ type: 'expense' });
   }, [selectedMonthId]);
-
-  useEffect(() => {
-    const [valueFormattedWithSymbol] = formatCurrency({
-      amount: rawCurrentBalance,
-      code: 'PLN',
-    });
-    setFormattedCurrentBalance(valueFormattedWithSymbol);
-  }, [rawCurrentBalance]);
 
   const liniarGradientColors: string[] = [
     'rgba(255,255,255,0.6)',
@@ -92,14 +90,19 @@ const Page = () => {
               setSelectedId={setSelectedMonthId}
             />
           </View>
-          <MoneyDashboardInfo
-            selectedMonthText={
-              monthsList.find((m) => m.id === selectedMonthId)?.text ||
-              'Unknown date'
-            }
-            formattedCurrentBalance={formattedCurrentBalance}
-          />
-
+          {monthsList.length > 0 ? (
+            <MoneyDashboardInfo
+              selectedMonth={
+                monthsList.find((month) => month.id === selectedMonthId)!
+              }
+              expenseBalance={expenseBalance}
+              incomeBalance={incomeBalance}
+              loading={loadingBalances}
+              formatedBalance={formatedBalance}
+            />
+          ) : (
+            <CustomActivityIndicator />
+          )}
           <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
             <DashboardBottomSheet
               loading={loading}
