@@ -44,7 +44,6 @@ const RootLayout = () => {
         options={{ headerShown: false, animation: 'slide_from_bottom' }}
       />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="month-info/[id]" />
       <Stack.Screen
         name="notifications"
         options={{
@@ -87,6 +86,17 @@ const RootLayout = () => {
               style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}
             >
               <Ionicons name="chevron-back" size={24} color="black" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="month-info/[id]"
+        options={{
+          presentation: 'modal',
+          headerRight: () => (
+            <TouchableOpacity onPress={() => router.dismiss()}>
+              <Ionicons name="close" size={24} color="black" />
             </TouchableOpacity>
           ),
         }}

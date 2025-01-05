@@ -53,7 +53,7 @@ const Page = () => {
   useEffect(() => {
     if (!user?.createdAt) return;
 
-    const months = generateMonthData(user?.createdAt);
+    const months: MonthScrollItem[] = generateMonthData(user?.createdAt);
     setMonthsList(months);
   }, [user]);
 

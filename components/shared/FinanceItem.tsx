@@ -1,6 +1,7 @@
 import {
   Image,
   ImageSourcePropType,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -19,6 +20,7 @@ import Reanimated, {
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import { INCOME_ICONS } from '@/constants/icons/income_icons';
+import { Link } from 'expo-router';
 
 const AnimatedTouchableOpacity =
   Reanimated.createAnimatedComponent(TouchableOpacity);
@@ -35,7 +37,7 @@ const FinanceItem = memo((group: IFinanceGroup) => {
   );
 
   return (
-    <View>
+    <View style={{ paddingBottom: 10 }}>
       <View style={styles.itemContainer}>
         <Text style={{ color: COLORS.darkGray, fontWeight: '500' }}>
           {formattedDate}
@@ -90,7 +92,7 @@ function swipeableAction(
 
 export const FinanceItemAction = (item: Finances) => {
   const [category, name] = item.icon_type.split('/');
-
+  // editing and viewing the content of the item on push!!!!
   return (
     <GestureHandlerRootView>
       <ReanimatedSwipeable
@@ -102,54 +104,56 @@ export const FinanceItemAction = (item: Finances) => {
         }
         renderLeftActions={(prog, drag) => swipeableAction('left', prog, drag)}
       >
-        <View key={item.id} style={styles.activityItemInnerContainer}>
-          <View style={styles.activityItemBody}>
-            <Image
-              source={
-                item.type === 'expense'
-                  ? EXPENSES_ICONS[category][name]
-                  : INCOME_ICONS[category][name]
-              }
-              style={{ width: 50, height: 50 }}
-            />
-            <View style={{ maxWidth: '70%' }}>
-              <Text
-                style={{ fontWeight: '500', fontSize: 18 }}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {item.name}
-              </Text>
+        <Link href={`/month-info/${item.id}`} asChild>
+          <Pressable key={item.id} style={styles.activityItemInnerContainer}>
+            <View style={styles.activityItemBody}>
+              <Image
+                source={
+                  item.type === 'expense'
+                    ? EXPENSES_ICONS[category][name]
+                    : INCOME_ICONS[category][name]
+                }
+                style={{ width: 50, height: 50 }}
+              />
+              <View style={{ maxWidth: '70%' }}>
+                <Text
+                  style={{ fontWeight: '500', fontSize: 18 }}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {item.name}
+                </Text>
 
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: COLORS.darkGray,
-                  textTransform: 'capitalize',
-                  width: '100%',
-                }}
-              >
-                {item.icon_type.replace(/_/g, ' ').replace(/\//g, ' / ')}
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: COLORS.darkGray,
+                    textTransform: 'capitalize',
+                    width: '100%',
+                  }}
+                >
+                  {item.icon_type.replace(/_/g, ' ').replace(/\//g, ' / ')}
+                </Text>
+              </View>
             </View>
-          </View>
-          <Text
-            style={[
-              { fontWeight: '500' },
-              item.price > 0
-                ? { color: COLORS.tabBarTintActive }
-                : { color: 'red' },
-            ]}
-          >
-            {item.price > 0 && '+'}{' '}
-            {
-              formatCurrency({
-                amount: item.price,
-                code: 'PLN',
-              })[0]
-            }
-          </Text>
-        </View>
+            <Text
+              style={[
+                { fontWeight: '500' },
+                item.price > 0
+                  ? { color: COLORS.tabBarTintActive }
+                  : { color: 'red' },
+              ]}
+            >
+              {item.price > 0 && '+'}{' '}
+              {
+                formatCurrency({
+                  amount: item.price,
+                  code: 'PLN',
+                })[0]
+              }
+            </Text>
+          </Pressable>
+        </Link>
       </ReanimatedSwipeable>
     </GestureHandlerRootView>
   );

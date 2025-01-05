@@ -17,3 +17,9 @@ export const CustomAlert = ({
 export function sumFormat(num: number) {
   return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
+
+export const getIconPathParts = (icon_type: string) => {
+  const [category, name] = icon_type.split('/');
+
+  return [category, name];
+};

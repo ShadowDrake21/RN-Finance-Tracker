@@ -15,6 +15,7 @@
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "^8.2.0",
     "@shopify/flash-list": "1.7.1",
+    "@shopify/react-native-skia": "^1.8.0",
     "@supabase/supabase-js": "^2.47.10",
     "babel-plugin-inline-import": "^3.0.0",
     "base64-arraybuffer": "^1.0.2",
@@ -45,6 +46,7 @@
     "react-native-element-dropdown": "^2.12.2",
     "react-native-format-currency": "^0.0.5",
     "react-native-gesture-handler": "~2.20.2",
+    "react-native-image-viewing": "^0.2.2",
     "react-native-ios-context-menu": "^2.5.3",
     "react-native-ios-utilities": "^4.5.1",
     "react-native-linear-gradient": "^2.8.3",
@@ -55,7 +57,7 @@
     "react-native-switch": "^1.5.1",
     "react-native-toast-message": "^2.2.1",
     "react-native-uuid": "^2.0.3",
-    "victory-chart": "^37.3.4",
+    "victory-native": "^41.14.0",
     "zeego": "^2.0.4"
   },
   "devDependencies": {
@@ -66,5 +68,6 @@
     "tsx": "^4.19.2",
     "typescript": "^5.3.3"
   },
-  "private": true
+  "private": true,
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

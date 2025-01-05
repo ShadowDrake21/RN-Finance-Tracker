@@ -38,11 +38,6 @@ export const getFinancesByMonth = async ({
   const startDate = new Date(Number(year), Number(month) - 1, 1).getTime();
   const endDate = new Date(Number(year), Number(month), 1).getTime() - 1;
 
-  console.log('startDate', new Date(startDate).toLocaleDateString());
-  console.log('endDate', new Date(endDate).toISOString());
-  console.log('endDate', endDate);
-  console.log('userId', userId);
-
   const { data: finances, error } = await supabase
     .from('finances')
     .select(selection)
@@ -79,11 +74,6 @@ export const getFinancesByDate = async ({
   const startDate = new Date(date).setHours(0, 0, 0, 0);
   const endDate = new Date(date).setHours(23, 59, 59, 999);
 
-  console.log('startDate', new Date(startDate).toLocaleDateString());
-  console.log('endDate', new Date(endDate).toISOString());
-  console.log('endDate', endDate);
-  console.log('userId', userId);
-
   const { data: finances, error } = await supabase
     .from('finances')
     .select(selection)
@@ -98,6 +88,35 @@ export const getFinancesByDate = async ({
   }
 
   return finances;
+};
+
+export const getFinanceById = async ({
+  userId,
+  token,
+  finance_id,
+  selection = '*',
+}: {
+  userId: string;
+  token: string;
+  finance_id: number;
+  selection?: string;
+  offset?: number;
+  limit?: number;
+}) => {
+  const supabase = await supabaseClient(token);
+
+  const { data: finance, error } = await supabase
+    .from('finances')
+    .select(selection)
+    .eq('id', finance_id)
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('Error fetching finances:', error);
+    return [];
+  }
+
+  return finance;
 };
 
 export const addFinance = async ({
@@ -122,7 +141,7 @@ export const addFinance = async ({
     price:
       finance.type === 'expense' && finance.sum ? -finance.sum : finance.sum,
     currency: finance.currency,
-    image: image?.fullPath,
+    image: image?.id,
     date: new Date(finance.date).getTime(),
   });
 
