@@ -1,6 +1,7 @@
 import { FinanceFormType } from '@/types/types';
 import { supabaseClient } from './supabase.client';
 import { uploadImage } from './supabase.storage';
+import { calcSum } from '@/utils/helpers.utils';
 
 export const getAllFinances = async ({
   userId,
@@ -149,4 +150,25 @@ export const addFinance = async ({
     console.log('error', error);
     return;
   }
+};
+
+export const getFinanceSumByDay = async ({
+  token,
+  userId,
+  type,
+  selectedDate,
+}: {
+  token: string;
+  userId: string;
+  type: 'expense' | 'income';
+  selectedDate: string;
+}) => {
+  const prices = (await getFinancesByDate({
+    userId,
+    token,
+    date: new Date(selectedDate).getTime(),
+    selection: 'price, type',
+  })) as unknown as { price: number }[];
+
+  return calcSum(type, prices);
 };

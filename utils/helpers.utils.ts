@@ -23,3 +23,20 @@ export const getIconPathParts = (icon_type: string) => {
 
   return [category, name];
 };
+
+export const calcSum = (
+  type: 'expense' | 'income' | 'all',
+  prices: { price: number }[]
+) =>
+  prices.reduce((acc, price) => {
+    console.log('type reduce', type);
+    if (type === 'expense' && price.price < 0) {
+      console.log('price.price', price.price);
+      return acc + Math.abs(price.price);
+    } else if (type === 'income' && price.price > 0) {
+      return acc + price.price;
+    } else if (type === 'all') {
+      return acc + price.price;
+    }
+    return acc;
+  }, 0);

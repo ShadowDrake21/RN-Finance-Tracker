@@ -1,7 +1,17 @@
-import { Image, Pressable, Text, Touchable, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  Touchable,
+  View,
+} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { getFinanceById } from '@/supabase/supabase.requests';
+import {
+  getFinanceById,
+  getFinanceSumByDay,
+} from '@/supabase/supabase.requests';
 import { useUser } from '@clerk/clerk-expo';
 import { useAuth } from '@clerk/clerk-react';
 import { transformFinancesFromDB } from '@/utils/finance-groups.utils';
@@ -13,13 +23,57 @@ import { getIconPathParts } from '@/utils/helpers.utils';
 import { format } from 'date-fns';
 import { downloadImage } from '@/supabase/supabase.storage';
 import ImageView from 'react-native-image-viewing';
-import { Pie, PolarChart } from 'victory-native';
+import {
+  getTransformComponents,
+  Pie,
+  PolarChart,
+  setScale,
+  setTranslate,
+  useChartTransformState,
+} from 'victory-native';
+import {
+  useSharedValue,
+  useAnimatedReaction,
+  withTiming,
+} from 'react-native-reanimated';
+import { Group, Text as SkText, type SkFont } from '@shopify/react-native-skia';
+import type { PieSliceData } from 'victory-native';
+import { useFont } from '@shopify/react-native-skia';
+import inter from 'assets/inter-medium.ttf';
+
+const randomNumber = () => Math.floor(Math.random() * (50 - 25 + 1)) + 125;
+function generateRandomColor(): string {
+  // Generating a random number between 0 and 0xFFFFFF
+  const randomColor = Math.floor(Math.random() * 0xffffff);
+  // Converting the number to a hexadecimal string and padding with zeros
+  return `#${randomColor.toString(16).padStart(6, '0')}`;
+}
+
+const DATA = (numberPoints = 5) => {
+  const res = Array.from({ length: numberPoints }, (_, index) => ({
+    value: randomNumber(),
+    color: generateRandomColor(),
+    label: `Label ${index + 1}`,
+  }));
+  console.log('RES', res);
+
+  return res;
+};
 
 const Page = () => {
   const { user } = useUser();
   const { getToken } = useAuth();
   const { id } = useLocalSearchParams();
+  const font = useFont(inter, 10);
 
+  const [data, setData] = useState<
+    {
+      value: number;
+      color: string;
+      label: string;
+    }[]
+  >([]);
+  const [allTypeFinancesByDay, setAllTypeFinancesByDay] = useState(0);
   const [finance, setFinance] = useState<Finances>();
   const [iconParts, setIconParts] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -60,30 +114,53 @@ const Page = () => {
 
       setIconParts(getIconPathParts(transformedFinance.icon_type));
 
+      const typeFinances = await getFinanceSumByDay({
+        type: transformedFinance.type,
+        selectedDate: transformedFinance.date,
+        token: token,
+        userId: user.id,
+      });
+
+      setAllTypeFinancesByDay(typeFinances);
+
+      console.log('TYPE FINANCES', typeFinances);
+      // const chartData = [
+      //   {
+      //     value: allTypeFinancesByDay,
+      //     color: generateRandomColor(),
+      //     label: 'Total',
+      //   },
+      //   {
+      //     value: finance!.price,
+      //     color: generateRandomColor(),
+      //     label: finance!.name,
+      //   },
+      // ];
+
+      // console.log('CHART DATA', chartData);
+
+      // setData(chartData);
       setLoading(false);
     };
 
     fetchFinance();
-  }, []);
+  }, [id]);
 
-  function randomNumber() {
-    return Math.floor(Math.random() * 26) + 125;
-  }
-  function generateRandomColor(): string {
-    // Generating a random number between 0 and 0xFFFFFF
-    const randomColor = Math.floor(Math.random() * 0xffffff);
-    // Converting the number to a hexadecimal string and padding with zeros
-    return `#${randomColor.toString(16).padStart(6, '0')}`;
-  }
-  const DATA = (numberPoints = 5) =>
-    Array.from({ length: numberPoints }, (_, index) => ({
-      value: randomNumber(),
-      color: generateRandomColor(),
-      label: `Label ${index + 1}`,
-    }));
+  useCallback(() => {
+    if (!finance) {
+      console.log('NO FINANCE');
+      return;
+    }
+
+    console.log('DATA', data);
+  }, [finance, allTypeFinancesByDay]);
+
+  const [dataLabelSegment, setDataLabelSegment] = useState<
+    'simple' | 'custom' | 'none'
+  >('none');
 
   return (
-    <>
+    <ScrollView>
       <Stack.Screen
         options={{
           title: finance?.name ?? 'Loading...',
@@ -176,19 +253,51 @@ const Page = () => {
             </View>
           )}
           <PolarChart
-            data={DATA} // 👈 specify your data
-            labelKey={'label'} // 👈 specify data key for labels
-            valueKey={'value'} // 👈 specify data key for values
-            colorKey={'color'} // 👈 specify data key for color
+            // transformState={state}
+            data={data}
+            colorKey={'color'}
+            valueKey={'value'}
+            labelKey={'label'}
+            canvasStyle={{ width: 300, height: 300 }}
           >
-            <Pie.Chart />
+            <Pie.Chart>
+              {({ slice }) => {
+                return (
+                  <>
+                    <Pie.Slice>
+                      {dataLabelSegment === 'simple' && (
+                        <Pie.Label color={'black'} />
+                      )}
+                      {dataLabelSegment === 'custom' && (
+                        <Pie.Label radiusOffset={0.6}>
+                          {(position) => (
+                            <PieChartCustomLabel
+                              position={position}
+                              slice={slice}
+                              font={font}
+                            />
+                          )}
+                        </Pie.Label>
+                      )}
+                    </Pie.Slice>
+
+                    {/* <Pie.SliceAngularInset
+                      angularInset={{
+                        angularStrokeWidth: insetWidth,
+                        angularStrokeColor: insetColor,
+                      }}
+                    /> */}
+                  </>
+                );
+              }}
+            </Pie.Chart>
           </PolarChart>
         </View>
       ) : (
         // <Text>{JSON.stringify(finance)}</Text>
         <Text>Unexpected error!</Text>
       )}
-    </>
+    </ScrollView>
   );
 };
 
@@ -197,3 +306,48 @@ export default Page;
 // const styles = StyleSheet.create({
 //   cos:{dd}
 // });
+
+export const PieChartCustomLabel = ({
+  slice,
+  font,
+  position,
+}: {
+  slice: PieSliceData;
+  font: SkFont | null;
+  position: { x: number; y: number };
+}) => {
+  const { x, y } = position;
+  const fontSize = font?.getSize() ?? 0;
+  console.log('FONT SIZE', fontSize);
+
+  const getLabelWidth = (text: string) =>
+    font
+      ?.getGlyphWidths(font.getGlyphIDs(text))
+      .reduce((sum, value) => sum + value, 0) ?? 0;
+
+  const isGoodUnits = slice.value > 130;
+  const label = slice.label;
+  const value = `${slice.value} UNITS`;
+  const centerLabel = (font?.getSize() ?? 0) / 2;
+
+  return (
+    <Group transform={[{ translateY: -centerLabel }]}>
+      <SkText
+        x={x - getLabelWidth(label) / 2}
+        y={y}
+        text={label}
+        font={font}
+        color={'white'}
+      />
+      <Group>
+        <SkText
+          x={x - getLabelWidth(value) / 2}
+          y={y + fontSize}
+          text={value}
+          font={font}
+          color={isGoodUnits ? 'limegreen' : 'red'}
+        />
+      </Group>
+    </Group>
+  );
+};
