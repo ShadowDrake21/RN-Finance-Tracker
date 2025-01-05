@@ -91,7 +91,7 @@ const RootLayout = () => {
         }}
       />
       <Stack.Screen
-        name="month-info/[id]"
+        name="finance-info/[id]"
         options={{
           presentation: 'modal',
           headerRight: () => (

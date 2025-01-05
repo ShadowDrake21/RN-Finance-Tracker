@@ -104,7 +104,7 @@ export const FinanceItemAction = (item: Finances) => {
         }
         renderLeftActions={(prog, drag) => swipeableAction('left', prog, drag)}
       >
-        <Link href={`/month-info/${item.id}`} asChild>
+        <Link href={`/finance-info/${item.id}`} asChild>
           <Pressable key={item.id} style={styles.activityItemInnerContainer}>
             <View style={styles.activityItemBody}>
               <Image

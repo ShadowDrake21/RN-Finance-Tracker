@@ -98,3 +98,9 @@ export type Finances = {
   icon_type: string;
   currency: Currency;
 };
+
+export type PieChartData = {
+  value: number;
+  color: string;
+  label: string;
+};
