@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { format } from 'date-fns';
 import { EXPENSES_ICONS } from '@/constants/icons/expense_icons';
 import { INCOME_ICONS } from '@/constants/icons/income_icons';
@@ -7,11 +7,7 @@ import { Finances } from '@/types/types';
 import { getIconPathParts } from '@/utils/helpers.utils';
 
 const FinanceItemText = ({ finance }: { finance: Finances }) => {
-  const [iconParts, setIconParts] = useState<string[]>([]);
-
-  useEffect(() => {
-    setIconParts(getIconPathParts(finance.icon_type));
-  }, [finance]);
+  const iconParts = getIconPathParts(finance.icon_type);
 
   return (
     <View style={styles.topContainer}>

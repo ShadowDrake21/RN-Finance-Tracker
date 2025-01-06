@@ -14,8 +14,9 @@ import Foundation from '@expo/vector-icons/Foundation';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import CreateTabBar from '@/components/ui/CreateTabBar';
 import { BlurView } from 'expo-blur';
+import { UserSessionProvider } from '@/contexts/UserSessionContext';
 
-const Layout = () => {
+const TabsLayout = () => {
   const { isSignedIn, isLoaded } = useAuth();
   const segment = useSegments();
   const router = useRouter();
@@ -100,6 +101,12 @@ const Layout = () => {
     </Tabs>
   );
 };
+
+const Layout = () => (
+  <UserSessionProvider>
+    <TabsLayout />
+  </UserSessionProvider>
+);
 
 export default Layout;
 
