@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, { memo, useEffect } from 'react';
 import { COLORS } from '@/constants/colors';
-import { Finances, IFinanceGroup, IFinanceItemAction } from '@/types/types';
+import { Finances, IFinanceGroup } from '@/types/types';
 import { format, parse } from 'date-fns';
 import { formatCurrency } from 'react-native-format-currency';
 import { EXPENSES_ICONS } from '@/constants/icons/expense_icons';
@@ -20,7 +20,9 @@ import Reanimated, {
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import { INCOME_ICONS } from '@/constants/icons/income_icons';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
+import * as ContextMenu from 'zeego/context-menu';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const AnimatedTouchableOpacity =
   Reanimated.createAnimatedComponent(TouchableOpacity);
@@ -48,7 +50,7 @@ const FinanceItem = memo((group: IFinanceGroup) => {
       </View>
       <View>
         {group.items.map((item, index) => (
-          <FinanceItemAction key={index} {...item} />
+          <ContextFinanceItemAction key={index} {...item} />
         ))}
       </View>
     </View>
@@ -90,7 +92,7 @@ function swipeableAction(
   );
 }
 
-export const FinanceItemAction = (item: Finances) => {
+const FinanceItemAction = (item: Finances) => {
   const [category, name] = item.icon_type.split('/');
   // editing and viewing the content of the item on push!!!!
   return (
@@ -159,6 +161,63 @@ export const FinanceItemAction = (item: Finances) => {
   );
 };
 
+export const ContextFinanceItemAction = (item: Finances) => {
+  const router = useRouter();
+
+  return (
+    <ContextMenu.Root>
+      <ContextMenu.Trigger>
+        <FinanceItemAction {...item} />
+      </ContextMenu.Trigger>
+      <ContextMenu.Content>
+        <ContextMenu.Item
+          key="edit"
+          onSelect={() =>
+            router.push({
+              pathname: `/(finances)/add-finance`,
+              params: { id: item.id, type: 'edit' },
+            })
+          }
+        >
+          <ContextMenu.ItemTitle>Edit</ContextMenu.ItemTitle>
+          <ContextMenu.ItemIcon
+            ios={{
+              name: 'slider.vertical.3', // required
+              pointSize: 24,
+              weight: 'semibold',
+              scale: 'medium',
+            }}
+          ></ContextMenu.ItemIcon>
+        </ContextMenu.Item>
+        <ContextMenu.Item key="delete" destructive>
+          <ContextMenu.ItemTitle>Delete</ContextMenu.ItemTitle>
+          <ContextMenu.ItemIcon
+            ios={{
+              name: 'minus.circle', // required
+              pointSize: 24,
+              weight: 'semibold',
+              scale: 'medium',
+
+              // can also be a color string. Requires iOS 15+
+              hierarchicalColor: {
+                dark: 'blue',
+                light: 'green',
+              },
+              // alternative to hierarchical color. Requires iOS 15+
+              paletteColors: [
+                {
+                  dark: 'blue',
+                  light: 'green',
+                },
+              ],
+            }}
+          ></ContextMenu.ItemIcon>
+        </ContextMenu.Item>
+      </ContextMenu.Content>
+    </ContextMenu.Root>
+  );
+};
+
 const styles = StyleSheet.create({
   swipeableAction: {
     width: 100,
@@ -186,6 +245,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 15,
+    paddingHorizontal: 10,
+    backgroundColor: 'white',
   },
   activityItemBody: { flexDirection: 'row', alignItems: 'center', gap: 15 },
 });

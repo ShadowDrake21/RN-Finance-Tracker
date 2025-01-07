@@ -5,12 +5,12 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Carousel from 'pinar';
 import CustomTextInput from '@/components/ui/CustomTextInput';
 import { format } from 'date-fns';
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import FinanceSlider from '@/components/finances/add-finance/finance-slider/FinanceSlider';
 import CalendarModal from '@/components/finances/add-finance/CalendarModal';
 import SumInput from '@/components/finances/add-finance/SumInput';
@@ -20,7 +20,8 @@ import PickImage from '@/components/finances/add-finance/PickImage';
 import { useFinanceForm } from '@/contexts/FinanceFormContext';
 import useHeaderActions from '@/components/finances/add-finance/hooks/useHeaderActions';
 import Loader from '@/components/shared/Loader';
-import { useUser } from '@clerk/clerk-expo';
+import { useAuth, useUser } from '@clerk/clerk-expo';
+import { getFinanceById } from '@/supabase/supabase.requests';
 
 const Page = () => {
   const { bottom } = useSafeAreaInsets();
@@ -29,6 +30,29 @@ const Page = () => {
   const { financeForm, setField } = useFinanceForm();
   const { headerLeft, headerRight, loading } = useHeaderActions();
   const { user } = useUser();
+  const { userId, getToken } = useAuth();
+
+  const { id, type } = useLocalSearchParams();
+
+  useEffect(() => {
+    const fethEditFinance = async () => {
+      if (id && type === 'edit') {
+        const token = await getToken({ template: 'supabase' });
+
+        if (!userId || !token) return;
+
+        const finance = await getFinanceById({
+          userId,
+          token,
+          finance_id: +id,
+        });
+
+        console.log('new finance', finance);
+      }
+    };
+
+    fethEditFinance();
+  }, [id, type]);
 
   if (loading) return <Loader />;
 
