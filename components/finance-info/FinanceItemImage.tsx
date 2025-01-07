@@ -28,5 +28,10 @@ const FinanceItemImage = ({ image }: { image: string }) => {
 export default FinanceItemImage;
 
 const styles = StyleSheet.create({
-  imageTitle: { fontSize: 18, fontWeight: '700', paddingBottom: 10 },
+  imageTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    paddingBottom: 10,
+    textAlign: 'center',
+  },
 });

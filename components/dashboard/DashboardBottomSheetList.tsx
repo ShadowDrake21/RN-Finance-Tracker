@@ -29,7 +29,6 @@ const DashboardBottomSheetList = ({
       keyExtractor={(item) => item.date}
       onEndReached={() => {
         handleLoadMore();
-        bottomSheetRef.current?.expand();
       }}
       onEndReachedThreshold={0.5}
       renderItem={({ item }) => <FinanceItem {...item} />}
@@ -42,6 +41,7 @@ const DashboardBottomSheetList = ({
       }
       refreshing={listLoading}
       onRefresh={refreshFinances}
+      onScroll={() => bottomSheetRef.current?.expand()}
     />
   );
 };

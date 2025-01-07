@@ -39,6 +39,9 @@ export const getFinancesByMonth = async ({
   const startDate = new Date(Number(year), Number(month) - 1, 1).getTime();
   const endDate = new Date(Number(year), Number(month), 1).getTime() - 1;
 
+  console.log('selectedMonthId', selectedMonthId);
+  console.log('startDate', new Date(startDate).toLocaleString());
+  console.log('endDate', new Date(endDate).toLocaleString());
   const { data: finances, error } = await supabase
     .from('finances')
     .select(selection)
@@ -167,6 +170,27 @@ export const getFinanceSumByDay = async ({
     userId,
     token,
     date: new Date(selectedDate).getTime(),
+    selection: 'price, type',
+  })) as unknown as { price: number }[];
+
+  return calcSum(type, prices);
+};
+
+export const getFinanceSumByMonth = async ({
+  token,
+  userId,
+  type,
+  selectedMonthId,
+}: {
+  token: string;
+  userId: string;
+  type: 'expense' | 'income';
+  selectedMonthId: string;
+}) => {
+  const prices = (await getFinancesByMonth({
+    userId,
+    token,
+    selectedMonthId,
     selection: 'price, type',
   })) as unknown as { price: number }[];
 

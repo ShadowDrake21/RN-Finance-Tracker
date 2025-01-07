@@ -4,6 +4,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import {
   getFinanceById,
   getFinanceSumByDay,
+  getFinanceSumByMonth,
 } from '@/supabase/supabase.requests';
 import { useUser } from '@clerk/clerk-expo';
 import { useAuth } from '@clerk/clerk-react';
@@ -16,13 +17,16 @@ import CustomPolarChart from '@/components/shared/CustomPolarChart';
 import FinanceItemText from '@/components/finance-info/FinanceItemText';
 import FinanceItemImage from '@/components/finance-info/FinanceItemImage';
 import { formPieChartData } from '@/utils/charts.utils';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Page = () => {
   const { user } = useUser();
   const { getToken } = useAuth();
   const { id } = useLocalSearchParams();
+  const { bottom } = useSafeAreaInsets();
 
-  const [data, setData] = useState<PieChartData[]>([]);
+  const [dayData, setDayData] = useState<PieChartData[]>([]);
+  const [monthData, setMonthData] = useState<PieChartData[]>([]);
   const [finance, setFinance] = useState<Finances>();
   const [loading, setLoading] = useState(false);
 
@@ -59,7 +63,7 @@ const Page = () => {
 
     setFinance({ ...transformedFinance, image: downloadedImageUrl });
 
-    setData(
+    setDayData(
       formPieChartData({
         fullPrice: await getFinanceSumByDay({
           type: transformedFinance.type,
@@ -70,6 +74,25 @@ const Page = () => {
         finance: {
           name: transformedFinance.name,
           price: transformedFinance.price,
+          currency: transformedFinance.currency.label,
+        },
+      })
+    );
+
+    setMonthData(
+      formPieChartData({
+        fullPrice: await getFinanceSumByMonth({
+          type: transformedFinance.type,
+          selectedMonthId: `${
+            new Date(transformedFinance.date).getMonth() + 1
+          }-${new Date(transformedFinance.date).getFullYear()}`,
+          token,
+          userId: user.id,
+        }),
+        finance: {
+          name: transformedFinance.name,
+          price: transformedFinance.price,
+          currency: transformedFinance.currency.label,
         },
       })
     );
@@ -82,7 +105,7 @@ const Page = () => {
   }, [fetchFinance]);
 
   return (
-    <ScrollView>
+    <ScrollView style={{ paddingBottom: bottom, flex: 1 }}>
       <Stack.Screen
         options={{
           title: finance?.name ?? 'Loading...',
@@ -91,10 +114,46 @@ const Page = () => {
       {loading ? (
         <CustomActivityIndicator size="large" />
       ) : finance ? (
-        <View style={{ padding: 20 }}>
+        <View style={{ padding: 20, paddingBottom: bottom + 40, flex: 1 }}>
           <FinanceItemText finance={finance} />
           {finance.image && <FinanceItemImage image={finance.image} />}
-          <CustomPolarChart data={data} />
+
+          <View style={{ paddingVertical: 25, gap: 20 }}>
+            <View style={{ alignItems: 'center' }}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: 700,
+                  textAlign: 'center',
+                  paddingBottom: 10,
+                }}
+              >
+                Finance activity to all {finance.type.toLowerCase()}s on this
+                day
+              </Text>
+              <CustomPolarChart data={dayData} />
+            </View>
+            <View
+              style={{
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: 700,
+                  textAlign: 'center',
+                  paddingBottom: 10,
+                }}
+              >
+                Finance activity to all {finance.type.toLowerCase()}s in{' '}
+                {new Date(finance.date).toLocaleString('default', {
+                  month: 'long',
+                })}
+              </Text>
+              <CustomPolarChart data={monthData} />
+            </View>
+          </View>
         </View>
       ) : (
         <Text>Unexpected error!</Text>

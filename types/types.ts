@@ -103,4 +103,5 @@ export type PieChartData = {
   value: number;
   color: string;
   label: string;
+  currency: string;
 };

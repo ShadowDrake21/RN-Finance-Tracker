@@ -2,7 +2,6 @@ import { StyleSheet, View } from 'react-native';
 import React, { RefObject } from 'react';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import CustomActivityIndicator from '../ui/CustomActivityIndicator';
-import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
 import DashboardBottomSheetList from './DashboardBottomSheetList';
 import { IFinanceGroup } from '@/types/types';
 
@@ -29,6 +28,7 @@ const DashboardBottomSheet = ({
       handleStyle={{ paddingTop: 10, paddingBottom: 0 }}
       containerStyle={{ paddingBottom: 75 }}
       style={styles.container}
+      enableDynamicSizing={false}
     >
       <BottomSheetView style={styles.contentContainer}>
         <View style={{ flex: 1, width: '100%' }}>
