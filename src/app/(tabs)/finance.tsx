@@ -61,29 +61,22 @@ const Page = () => {
         )[0] as Finances;
 
         setFetchedEditFinance(finance);
-
-        // setTimeout(() => {
-        //   setForm({ ...finance, date: new Date(finance.date).toISOString() });
-        // }, 400);
-
-        console.log('new form', financeForm);
       }
     };
 
     fethEditFinance();
+    setFetchedEditFinance(null);
   }, [id, type]);
 
   useEffect(() => {
     if (fetchedEditFinance) {
       setForm({
-        id: fetchedEditFinance.id,
-        type: fetchedEditFinance.type,
-        note: fetchedEditFinance.name,
+        ...fetchedEditFinance,
         sum: fetchedEditFinance.price,
-        currency: fetchedEditFinance.currency,
-        image: fetchedEditFinance.image,
+        note: fetchedEditFinance.name,
         kind: fetchedEditFinance.icon_type,
         date: new Date(fetchedEditFinance.date).toISOString(),
+        action: 'edit',
       });
     }
   }, [fetchedEditFinance]);

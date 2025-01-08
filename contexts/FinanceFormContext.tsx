@@ -29,6 +29,7 @@ const FinanceFormInitial: FinanceFormType = {
   note: '',
   image: null,
   date: new Date().toISOString(),
+  action: 'create',
 };
 
 type Action =

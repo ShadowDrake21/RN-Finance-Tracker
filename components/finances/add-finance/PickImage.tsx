@@ -16,7 +16,7 @@ import FinanceItemImage from '@/components/finance-info/FinanceItemImage';
 
 const PickImage = () => {
   const {
-    financeForm: { image },
+    financeForm: { id, image, action },
     setField,
   } = useFinanceForm();
 
@@ -30,6 +30,14 @@ const PickImage = () => {
     };
   });
 
+  useEffect(() => {
+    console.warn(
+      'ACTION and IMAGE',
+      action,
+      image?.slice(0, 10),
+      downloadedImage?.slice(0, 10)
+    );
+  }, [action, image, downloadedImage]);
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
@@ -45,9 +53,14 @@ const PickImage = () => {
   };
 
   useEffect(() => {
-    console.log('image data:image/jpeg;base64,', image);
-
-    if (image && !image?.includes('data:image/jpeg;base64,')) {
+    setDownloadedImage('');
+  }, [id]);
+  useEffect(() => {
+    if (
+      action === 'edit' &&
+      image &&
+      !image.includes('data:image/jpeg;base64,')
+    ) {
       console.log('not base64');
 
       const getEditImage = async () => {
@@ -69,20 +82,13 @@ const PickImage = () => {
 
   // TODO: add a type to each finance: edit or create to recognise images
   return (
-    <View style={{ paddingBottom: 50 }}>
+    <View style={image && { gap: 20, paddingBottom: 40 }}>
       <AddFinanceButton onPress={pickImage} text="Pick a photo" icon="camera" />
 
       {image && (
-        <Animated.View
-          style={[styles.animatedView, animatedStyle, { paddingTop: 20 }]}
-        >
-          {/* <Image
-            source={{ uri: downloadedImage ?? image }}
-            style={[styles.image]}
-            resizeMode="cover"
-          /> */}
+        <Animated.View style={[styles.animatedView, animatedStyle]}>
           <View style={{ flex: 1 }}>
-            <FinanceItemImage image={downloadedImage ?? image} />
+            <FinanceItemImage image={downloadedImage || image} />
           </View>
           <Pressable
             onPress={() => {
@@ -105,5 +111,5 @@ export default PickImage;
 const styles = StyleSheet.create({
   animatedView: { width: '100%', aspectRatio: 1 },
   image: { width: '100%', height: '100%' },
-  imageDeleteBtn: { position: 'absolute', right: 10, top: 10 },
+  imageDeleteBtn: { position: 'absolute', right: 10, top: 40 },
 });
