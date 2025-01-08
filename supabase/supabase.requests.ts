@@ -109,6 +109,7 @@ export const getFinanceById = async ({
 }) => {
   const supabase = await supabaseClient(token);
 
+  console.log('getFinanceById', finance_id);
   const { data: finance, error } = await supabase
     .from('finances')
     .select(selection)
@@ -119,7 +120,7 @@ export const getFinanceById = async ({
     console.error('Error fetching finances:', error);
     return [];
   }
-
+  console.log('finance', finance);
   return finance;
 };
 
@@ -134,7 +135,11 @@ export const addFinance = async ({
 }) => {
   const supabase = await supabaseClient(token);
   const image = finance.image
-    ? await uploadImage({ userId, token, file: finance.image })
+    ? await uploadImage({
+        userId,
+        token,
+        file: finance.image.replace('data:image/jpeg;base64,', ''),
+      })
     : null;
 
   const { error } = await supabase.from('finances').insert({

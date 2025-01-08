@@ -55,7 +55,7 @@ const CalendarModal = ({
         snapPoints={['50%']}
         enablePanDownToClose
         onClose={() => setVisible(false)}
-        index={2}
+        index={-1}
         handleStyle={{ paddingTop: 10, paddingBottom: 0 }}
         containerStyle={{
           paddingBottom: 75,

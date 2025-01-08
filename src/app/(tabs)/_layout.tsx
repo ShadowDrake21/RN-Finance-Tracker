@@ -15,6 +15,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import CreateTabBar from '@/components/ui/CreateTabBar';
 import { BlurView } from 'expo-blur';
 import { UserSessionProvider } from '@/contexts/UserSessionContext';
+import { DefaultTheme } from '@react-navigation/native';
 
 const TabsLayout = () => {
   const { isSignedIn, isLoaded } = useAuth();
@@ -65,10 +66,13 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="(finances)"
+        name="finance"
+        initialParams={{ type: 'create' }}
         options={{
-          headerShown: false,
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: DefaultTheme.colors.background },
           tabBarLabel: '',
+          title: '',
           tabBarIcon: ({ focused }) => <CreateTabBar isActive={focused} />,
           tabBarIconStyle: { top: '25%' },
           tabBarStyle: { display: 'none' },

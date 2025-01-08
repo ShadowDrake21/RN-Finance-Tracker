@@ -22,53 +22,83 @@ import useHeaderActions from '@/components/finances/add-finance/hooks/useHeaderA
 import Loader from '@/components/shared/Loader';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { getFinanceById } from '@/supabase/supabase.requests';
+import { FinanceFormType, Finances } from '@/types/types';
 
 const Page = () => {
   const { bottom } = useSafeAreaInsets();
   const carouselRef = useRef<Carousel | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { financeForm, setField } = useFinanceForm();
+  const { financeForm, setField, setForm } = useFinanceForm();
   const { headerLeft, headerRight, loading } = useHeaderActions();
   const { user } = useUser();
   const { userId, getToken } = useAuth();
 
+  const [fetchedEditFinance, setFetchedEditFinance] = useState<Finances | null>(
+    null
+  );
   const { id, type } = useLocalSearchParams();
 
   useEffect(() => {
+    console.log('id', id);
+    console.log('type', type);
+
     const fethEditFinance = async () => {
+      if (!id && type === 'create') {
+        console.log('create');
+      }
       if (id && type === 'edit') {
         const token = await getToken({ template: 'supabase' });
+        console.log('token', token);
 
         if (!userId || !token) return;
 
-        const finance = await getFinanceById({
-          userId,
-          token,
-          finance_id: +id,
-        });
+        const finance = (
+          (await getFinanceById({
+            userId,
+            token,
+            finance_id: +id,
+          })) as unknown[]
+        )[0] as Finances;
 
-        console.log('new finance', finance);
+        setFetchedEditFinance(finance);
+
+        // setTimeout(() => {
+        //   setForm({ ...finance, date: new Date(finance.date).toISOString() });
+        // }, 400);
+
+        console.log('new form', financeForm);
       }
     };
 
     fethEditFinance();
   }, [id, type]);
 
+  useEffect(() => {
+    if (fetchedEditFinance) {
+      setForm({
+        id: fetchedEditFinance.id,
+        type: fetchedEditFinance.type,
+        note: fetchedEditFinance.name,
+        sum: fetchedEditFinance.price,
+        currency: fetchedEditFinance.currency,
+        image: fetchedEditFinance.image,
+        kind: fetchedEditFinance.icon_type,
+        date: new Date(fetchedEditFinance.date).toISOString(),
+      });
+    }
+  }, [fetchedEditFinance]);
+
   if (loading) return <Loader />;
 
   return (
-    <>
+    <ScrollView>
       <Stack.Screen
         options={{
           headerLeft: headerLeft,
           headerRight: headerRight,
         }}
       />
-      <ScrollView
-        contentContainerStyle={{
-          flex: 1,
-        }}
-      >
+      <>
         <TouchableWithoutFeedback
           style={{ flex: 1 }}
           onPress={Keyboard.dismiss}
@@ -88,10 +118,11 @@ const Page = () => {
                 onPress={() => {
                   setIsModalVisible((prev) => !prev);
                 }}
-                text={format(financeForm.date, 'd MMM yyyy')}
+                text={format(new Date(financeForm.date), 'd MMM yyyy')}
                 icon="calendar"
               />
             </View>
+
             <CalendarModal
               visible={isModalVisible}
               setVisible={setIsModalVisible}
@@ -99,8 +130,8 @@ const Page = () => {
             />
           </View>
         </TouchableWithoutFeedback>
-      </ScrollView>
-    </>
+      </>
+    </ScrollView>
   );
 };
 

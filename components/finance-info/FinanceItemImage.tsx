@@ -5,7 +5,7 @@ import ImageView from 'react-native-image-viewing';
 const FinanceItemImage = ({ image }: { image: string }) => {
   const [visible, setIsVisible] = useState(false);
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Text style={styles.imageTitle}>Attached image</Text>
       <Pressable onPress={() => setIsVisible(true)}>
         <Image

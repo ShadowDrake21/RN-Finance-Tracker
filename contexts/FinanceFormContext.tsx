@@ -10,6 +10,7 @@ import {
 type FinanceFormContextType = {
   financeForm: FinanceFormType;
   setField: (field: keyof FinanceFormType, value: any) => void;
+  setForm: (form: FinanceFormType) => void;
   resetFinanceForm: () => void;
   isFormValid: () => boolean;
   isFormDirty: () => boolean;
@@ -32,6 +33,10 @@ const FinanceFormInitial: FinanceFormType = {
 
 type Action =
   | { type: 'SET_FIELD'; field: keyof FinanceFormType; value: any }
+  | {
+      type: 'SET_FORM';
+      form: FinanceFormType;
+    }
   | { type: 'RESET_FORM' };
 
 const financeFormReducer = (
@@ -41,6 +46,8 @@ const financeFormReducer = (
   switch (action.type) {
     case 'SET_FIELD':
       return { ...state, [action.field]: action.value };
+    case 'SET_FORM':
+      return { ...action.form };
     case 'RESET_FORM':
       return FinanceFormInitial;
     default:
@@ -53,6 +60,11 @@ export const FinanceFormProvider = ({ children }: PropsWithChildren) => {
     financeFormReducer,
     FinanceFormInitial
   );
+
+  const setForm = (form: FinanceFormType) => {
+    dispatch({ type: 'SET_FORM', form });
+    console.log('form after setForm', financeForm);
+  };
 
   const setField = (field: keyof FinanceFormType, value: any) => {
     dispatch({ type: 'SET_FIELD', field, value });
@@ -80,6 +92,7 @@ export const FinanceFormProvider = ({ children }: PropsWithChildren) => {
       value={{
         financeForm,
         setField,
+        setForm,
         resetFinanceForm,
         isFormValid,
         isFormDirty,

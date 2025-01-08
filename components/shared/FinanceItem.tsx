@@ -174,7 +174,7 @@ export const ContextFinanceItemAction = (item: Finances) => {
           key="edit"
           onSelect={() =>
             router.push({
-              pathname: `/(finances)/add-finance`,
+              pathname: `/finance`,
               params: { id: item.id, type: 'edit' },
             })
           }

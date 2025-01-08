@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FinanceCategory, FinanceCategoryItem } from '@/types/types';
 import { EXPENSES_ICONS } from '@/constants/icons/expense_icons';
 import { INCOME_ICONS } from '@/constants/icons/income_icons';
