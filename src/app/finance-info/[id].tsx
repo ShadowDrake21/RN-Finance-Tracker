@@ -18,6 +18,7 @@ import FinanceItemText from '@/components/finance-info/FinanceItemText';
 import { formPieChartData } from '@/utils/charts.utils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FinanceImage from '@/components/shared/FinanceImage';
+import Loader from '@/components/shared/Loader';
 
 const Page = () => {
   const { user } = useUser();
@@ -105,60 +106,62 @@ const Page = () => {
   }, [fetchFinance]);
 
   return (
-    <ScrollView style={{ paddingBottom: bottom, flex: 1 }}>
-      <Stack.Screen
-        options={{
-          title: finance?.name ?? 'Loading...',
-        }}
-      />
+    <View style={{ flex: 1, paddingBottom: bottom + 40 }}>
       {loading ? (
-        <CustomActivityIndicator size="large" />
+        <Loader />
       ) : finance ? (
-        <View style={{ padding: 20, paddingBottom: bottom + 40, flex: 1 }}>
-          <FinanceItemText finance={finance} />
-          {finance.image && <FinanceImage image={finance.image} />}
+        <>
+          <Stack.Screen
+            options={{
+              title: finance?.name ?? 'Loading...',
+            }}
+          />
+          <ScrollView style={{ padding: 20, flex: 1 }}>
+            <FinanceItemText finance={finance} />
+            {finance.image && <FinanceImage image={finance.image} />}
 
-          <View style={{ paddingVertical: 25, gap: 20 }}>
-            <View style={{ alignItems: 'center' }}>
-              <Text
+            <View style={{ paddingVertical: 25, gap: 20 }}>
+              <View style={{ alignItems: 'center' }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 700,
+                    textAlign: 'center',
+                    paddingBottom: 10,
+                  }}
+                >
+                  Finance activity to all {finance.type.toLowerCase()}s on this
+                  day
+                </Text>
+                <CustomPolarChart data={dayData} />
+              </View>
+              <View
                 style={{
-                  fontSize: 18,
-                  fontWeight: 700,
-                  textAlign: 'center',
-                  paddingBottom: 10,
+                  alignItems: 'center',
                 }}
               >
-                Finance activity to all {finance.type.toLowerCase()}s on this
-                day
-              </Text>
-              <CustomPolarChart data={dayData} />
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 700,
+                    textAlign: 'center',
+                    paddingBottom: 10,
+                  }}
+                >
+                  Finance activity to all {finance.type.toLowerCase()}s in{' '}
+                  {new Date(finance.date).toLocaleString('default', {
+                    month: 'long',
+                  })}
+                </Text>
+                <CustomPolarChart data={monthData} />
+              </View>
             </View>
-            <View
-              style={{
-                alignItems: 'center',
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: 700,
-                  textAlign: 'center',
-                  paddingBottom: 10,
-                }}
-              >
-                Finance activity to all {finance.type.toLowerCase()}s in{' '}
-                {new Date(finance.date).toLocaleString('default', {
-                  month: 'long',
-                })}
-              </Text>
-              <CustomPolarChart data={monthData} />
-            </View>
-          </View>
-        </View>
+          </ScrollView>
+        </>
       ) : (
         <Text>Unexpected error!</Text>
       )}
-    </ScrollView>
+    </View>
   );
 };
 

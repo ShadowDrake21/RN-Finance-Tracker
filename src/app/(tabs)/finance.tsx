@@ -5,7 +5,6 @@ import { useFinanceForm } from '@/contexts/FinanceFormContext';
 import useHeaderActions from '@/components/finances/add-finance/hooks/useHeaderActions';
 import Loader from '@/components/shared/Loader';
 import useFetchEditFinance from '@/hooks/useFetchEditFinance';
-import FinanceLoading from '@/components/finance/FinanceLoading';
 import FinanceForm from '@/components/finance/FinanceForm';
 
 type FinanceLocalParams = {
@@ -47,7 +46,7 @@ const Page = () => {
         }}
       />
       {fetchEditLoading ? (
-        <FinanceLoading />
+        <Loader />
       ) : (
         <FinanceForm financeForm={financeForm} setField={setField} />
       )}
