@@ -35,7 +35,6 @@ export const downloadImage = async ({
   token: string;
   imagePath: string;
 }) => {
-  console.log('in getImageUrl');
   const supabase = await supabaseClient(token);
   const { data, error } = await supabase.storage
     .from('finance-images')

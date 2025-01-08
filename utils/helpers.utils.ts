@@ -29,9 +29,7 @@ export const calcSum = (
   prices: { price: number }[]
 ) =>
   prices.reduce((acc, price) => {
-    console.log('type reduce', type);
     if (type === 'expense' && price.price < 0) {
-      console.log('price.price', price.price);
       return acc + Math.abs(price.price);
     } else if (type === 'income' && price.price > 0) {
       return acc + price.price;

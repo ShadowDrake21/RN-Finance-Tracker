@@ -1,4 +1,4 @@
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Animated, {
   withTiming,
@@ -12,7 +12,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useFinanceForm } from '@/contexts/FinanceFormContext';
 import { downloadImage } from '@/supabase/supabase.storage';
 import { useAuth } from '@clerk/clerk-expo';
-import FinanceItemImage from '@/components/finance-info/FinanceItemImage';
+import FinanceImage from '@/components/shared/FinanceImage';
 
 const PickImage = () => {
   const {
@@ -30,14 +30,6 @@ const PickImage = () => {
     };
   });
 
-  useEffect(() => {
-    console.warn(
-      'ACTION and IMAGE',
-      action,
-      image?.slice(0, 10),
-      downloadedImage?.slice(0, 10)
-    );
-  }, [action, image, downloadedImage]);
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
@@ -56,13 +48,7 @@ const PickImage = () => {
     setDownloadedImage('');
   }, [id]);
   useEffect(() => {
-    if (
-      action === 'edit' &&
-      image &&
-      !image.includes('data:image/jpeg;base64,')
-    ) {
-      console.log('not base64');
-
+    if (action === 'edit' && image) {
       const getEditImage = async () => {
         const imageUrl = await downloadImage({
           user_id: userId!,
@@ -80,7 +66,6 @@ const PickImage = () => {
     }
   }, [image]);
 
-  // TODO: add a type to each finance: edit or create to recognise images
   return (
     <View style={image && { gap: 20, paddingBottom: 40 }}>
       <AddFinanceButton onPress={pickImage} text="Pick a photo" icon="camera" />
@@ -88,7 +73,7 @@ const PickImage = () => {
       {image && (
         <Animated.View style={[styles.animatedView, animatedStyle]}>
           <View style={{ flex: 1 }}>
-            <FinanceItemImage image={downloadedImage || image} />
+            <FinanceImage image={downloadedImage || image} />
           </View>
           <Pressable
             onPress={() => {

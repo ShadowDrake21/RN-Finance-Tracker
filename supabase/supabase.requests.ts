@@ -39,9 +39,6 @@ export const getFinancesByMonth = async ({
   const startDate = new Date(Number(year), Number(month) - 1, 1).getTime();
   const endDate = new Date(Number(year), Number(month), 1).getTime() - 1;
 
-  console.log('selectedMonthId', selectedMonthId);
-  console.log('startDate', new Date(startDate).toLocaleString());
-  console.log('endDate', new Date(endDate).toLocaleString());
   const { data: finances, error } = await supabase
     .from('finances')
     .select(selection)
@@ -109,7 +106,6 @@ export const getFinanceById = async ({
 }) => {
   const supabase = await supabaseClient(token);
 
-  console.log('getFinanceById', finance_id);
   const { data: finance, error } = await supabase
     .from('finances')
     .select(selection)
@@ -120,7 +116,7 @@ export const getFinanceById = async ({
     console.error('Error fetching finances:', error);
     return [];
   }
-  console.log('finance', finance);
+
   return finance;
 };
 

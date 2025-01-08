@@ -43,7 +43,6 @@ const Page = () => {
 
       if (signInAttempt.status === 'complete') {
         await setActive({ session: signInAttempt.createdSessionId });
-        console.log('User is signed in');
         router.replace('/(tabs)/dashboard');
       } else {
         callToast({

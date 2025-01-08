@@ -5,8 +5,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect } from 'react';
-import { Redirect, Tabs, useRouter, useSegments } from 'expo-router';
+import React from 'react';
+import { Redirect, Tabs, useRouter } from 'expo-router';
 import { useAuth } from '@clerk/clerk-expo';
 import { COLORS } from '@/constants/colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -14,12 +14,11 @@ import Foundation from '@expo/vector-icons/Foundation';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import CreateTabBar from '@/components/ui/CreateTabBar';
 import { BlurView } from 'expo-blur';
-import { UserSessionProvider } from '@/contexts/UserSessionContext';
+
 import { DefaultTheme } from '@react-navigation/native';
 
-const TabsLayout = () => {
+const Layout = () => {
   const { isSignedIn, isLoaded } = useAuth();
-  const segment = useSegments();
   const router = useRouter();
 
   if (!isLoaded) {
@@ -105,12 +104,6 @@ const TabsLayout = () => {
     </Tabs>
   );
 };
-
-const Layout = () => (
-  <UserSessionProvider>
-    <TabsLayout />
-  </UserSessionProvider>
-);
 
 export default Layout;
 

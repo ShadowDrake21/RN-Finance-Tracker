@@ -64,7 +64,6 @@ export const FinanceFormProvider = ({ children }: PropsWithChildren) => {
 
   const setForm = (form: FinanceFormType) => {
     dispatch({ type: 'SET_FORM', form });
-    console.log('form after setForm', financeForm);
   };
 
   const setField = (field: keyof FinanceFormType, value: any) => {

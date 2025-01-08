@@ -15,9 +15,9 @@ import { downloadImage } from '@/supabase/supabase.storage';
 
 import CustomPolarChart from '@/components/shared/CustomPolarChart';
 import FinanceItemText from '@/components/finance-info/FinanceItemText';
-import FinanceItemImage from '@/components/finance-info/FinanceItemImage';
 import { formPieChartData } from '@/utils/charts.utils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FinanceImage from '@/components/shared/FinanceImage';
 
 const Page = () => {
   const { user } = useUser();
@@ -116,7 +116,7 @@ const Page = () => {
       ) : finance ? (
         <View style={{ padding: 20, paddingBottom: bottom + 40, flex: 1 }}>
           <FinanceItemText finance={finance} />
-          {finance.image && <FinanceItemImage image={finance.image} />}
+          {finance.image && <FinanceImage image={finance.image} />}
 
           <View style={{ paddingVertical: 25, gap: 20 }}>
             <View style={{ alignItems: 'center' }}>

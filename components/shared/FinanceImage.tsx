@@ -2,7 +2,7 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import ImageView from 'react-native-image-viewing';
 
-const FinanceItemImage = ({ image }: { image: string }) => {
+const FinanceImage = ({ image }: { image: string }) => {
   const [visible, setIsVisible] = useState(false);
   return (
     <View style={{ flex: 1 }}>
@@ -25,7 +25,7 @@ const FinanceItemImage = ({ image }: { image: string }) => {
   );
 };
 
-export default FinanceItemImage;
+export default FinanceImage;
 
 const styles = StyleSheet.create({
   imageTitle: {

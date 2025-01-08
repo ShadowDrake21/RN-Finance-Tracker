@@ -17,7 +17,6 @@ import { generateMonthData } from '@/utils/date.utils';
 import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
 import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
 import useFetchBalances from '@/components/dashboard/hooks/useFetchBalances';
-import { useUserSession } from '@/contexts/UserSessionContext';
 
 const INITIAL_SELECTED_MONTH_ID = new Date()
   .toLocaleString('default', { month: 'numeric', year: 'numeric' })
@@ -36,7 +35,6 @@ const Page = () => {
   );
   const [monthsList, setMonthsList] = useState<MonthScrollItem[]>([]);
 
-  const { token, userId } = useUserSession();
   const {
     groups,
     handleLoadMore,
@@ -62,10 +60,6 @@ const Page = () => {
   useEffect(() => {
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
   }, [selectedMonthId]);
-
-  useEffect(() => {
-    console.log('token and userId', token, userId);
-  }, [token, userId]);
 
   const liniarGradientColors: string[] = [
     'rgba(255,255,255,0.6)',
