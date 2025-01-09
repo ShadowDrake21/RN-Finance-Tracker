@@ -1,11 +1,5 @@
-import { getFinancesByMonth } from '@/supabase/supabase.requests';
 import { Finances, IFinanceGroup } from '@/types/types';
-import {
-  groupFinancesByDate,
-  transformFinancesFromDB,
-  updateGroupedFinances,
-} from '@/utils/finance-groups.utils';
-import { useAuth } from '@clerk/clerk-expo';
+import { groupFinancesByDate } from '@/utils/finance-groups.utils';
 import { create } from 'zustand';
 
 interface FinanceStore {
@@ -18,11 +12,6 @@ interface FinanceStore {
   addFinance: (finance: Finances) => void;
   updateFinance: (updated: Finances) => void;
   deleteFinance: (id: number) => void;
-  fetchFinancesByMonth: (
-    selectedMonthId: string,
-    offset: number,
-    limit: number
-  ) => Promise<void>;
 }
 
 export const useFinanceStore = create<FinanceStore>((set) => ({
@@ -68,29 +57,5 @@ export const useFinanceStore = create<FinanceStore>((set) => ({
         groups: [...groupFinancesByDate(updatedFinances, [])],
       };
     });
-  },
-  fetchFinancesByMonth: async (selectedMonthId, offset, limit) => {
-    set({ loading: true });
-    console.log('fetching finances, selectedMonthId:', selectedMonthId);
-    const { userId, getToken } = useAuth();
-    const token = await getToken({ template: 'supabase' });
-    if (!token || !userId) {
-      set({ error: 'No user or token', loading: false });
-      return;
-    }
-
-    const fetchedfinances = await getFinancesByMonth({
-      userId,
-      token,
-      selectedMonthId,
-      offset,
-      limit,
-    });
-    console.log('finances', fetchedfinances);
-
-    const transformedFinances = transformFinancesFromDB(fetchedfinances);
-
-    console.log('transformedFinances', transformedFinances);
-    set({ finances: transformedFinances, loading: false });
   },
 }));

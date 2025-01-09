@@ -55,7 +55,6 @@ const Page = () => {
     groups,
     error,
     loading: financesLoading,
-    fetchFinancesByMonth,
   } = useFinanceStore();
 
   useEffect(() => {
@@ -64,14 +63,6 @@ const Page = () => {
     const months: MonthScrollItem[] = generateMonthData(user?.createdAt);
     setMonthsList(months);
   }, [user]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchFinancesByMonth(selectedMonthId, 0, 10);
-      console.log('res', finances);
-    };
-    fetchData();
-  }, [selectedMonthId]);
 
   useEffect(() => {
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });

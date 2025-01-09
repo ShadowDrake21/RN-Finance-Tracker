@@ -47,8 +47,6 @@ export const getFinancesByMonth = async ({
     .lte('date', endDate);
   // .range(offset, offset + limit - 1);
 
-  console.log('getFinancesByMonth', finances);
-
   if (error) {
     console.error('Error fetching finances:', error);
     return [];
@@ -175,20 +173,40 @@ export const updateFinance = async ({
   finance: FinanceFormType;
 }) => {
   const supabase = await supabaseClient(token);
-  const updatedImage =
-    finance.image && finance.image.includes('data:image/jpeg;base64,')
-      ? finance.prevImage
-        ? await updateImage({
-            token,
-            file: finance.image.replace('data:image/jpeg;base64,', ''),
-            imagePath: finance.prevImage,
-          })
-        : await uploadImage({
-            userId,
-            token,
-            file: finance.image.replace('data:image/jpeg;base64,', ''),
-          })
-      : null;
+  // const updatedImage =
+  //   finance.image && finance.image.includes('data:image/jpeg;base64,')
+  //     ? finance.prevImage
+  //       ? await updateImage({
+  //           token,
+  //           file: finance.image.replace('data:image/jpeg;base64,', ''),
+  //           imagePath: finance.prevImage,
+  //         })
+  //       : await uploadImage({
+  //           userId,
+  //           token,
+  //           file: finance.image.replace('data:image/jpeg;base64,', ''),
+  //         })
+  //     : null;
+
+  // TODO: fix using all fields in editing in order to save
+  // TODO: sometimes there is no info on editing
+
+  let updatedImage = null;
+  if (finance.image && finance.image.includes('data:image/jpeg;base64,')) {
+    if (finance.prevImage) {
+      updatedImage = await updateImage({
+        token,
+        file: finance.image.replace('data:image/jpeg;base64,', ''),
+        imagePath: finance.prevImage,
+      });
+    } else {
+      updatedImage = await uploadImage({
+        userId,
+        token,
+        file: finance.image.replace('data:image/jpeg;base64,', ''),
+      });
+    }
+  }
 
   const { error, data } = await supabase
     .from('finances')

@@ -41,6 +41,8 @@ const PickImage = () => {
 
     if (!result.canceled) {
       image && setField('prevImage', image);
+      console.log('new image', !!result.assets[0].base64);
+
       setField('image', `data:image/jpeg;base64,${result.assets[0].base64}`);
     }
   };
@@ -49,10 +51,13 @@ const PickImage = () => {
     setDownloadedImage('');
   }, [id]);
   useEffect(() => {
-    if (action === 'edit' && image) {
+    if (
+      action === 'edit' &&
+      image &&
+      !image.includes('data:image/jpeg;base64,')
+    ) {
       const getEditImage = async () => {
         const imageUrl = await downloadImage({
-          user_id: userId!,
           token: (await getToken({ template: 'supabase' }))!,
           imagePath: image,
         });
@@ -74,7 +79,12 @@ const PickImage = () => {
       {image && (
         <Animated.View style={[styles.animatedView, animatedStyle]}>
           <View style={{ flex: 1 }}>
-            <FinanceImage image={downloadedImage || image} />
+            <FinanceImage
+              image={
+                (image.includes('data:image/jpeg;base64,') && image) ||
+                downloadedImage
+              }
+            />
           </View>
           <Pressable
             onPress={() => {

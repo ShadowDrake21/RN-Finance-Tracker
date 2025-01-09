@@ -27,11 +27,9 @@ export const uploadImage = async ({
 };
 
 export const downloadImage = async ({
-  user_id,
   token,
   imagePath,
 }: {
-  user_id: string;
   token: string;
   imagePath: string;
 }) => {
@@ -74,10 +72,11 @@ export const updateImage = async ({
 }) => {
   const supabase = await supabaseClient(token);
   const { data, error } = await supabase.storage
-    .from('avatars')
-    .update(imagePath, file, {
+    .from('finance-images')
+    .update(imagePath, decode(file), {
       cacheControl: '3600',
       upsert: true,
+      contentType: 'image/jpeg',
     });
 
   if (error) {

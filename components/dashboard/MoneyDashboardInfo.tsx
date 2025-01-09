@@ -2,7 +2,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { COLORS } from '@/constants/colors';
 import { MonthScrollItem } from '@/types/types';
-import { useEffect } from 'react';
 import { useFinanceStore } from '@/store/useFinanceStore';
 
 type MoneyDashboardInfoProps = {
@@ -20,10 +19,6 @@ const MoneyDashboardInfo = ({
   loading,
   formatedBalance,
 }: MoneyDashboardInfoProps) => {
-  useEffect(() => {
-    console.log('loading', loading);
-  }, [loading]);
-
   const { loading: storeLoading } = useFinanceStore();
 
   return (

@@ -43,7 +43,6 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
     ]);
 
     setFinances(transformedFinances);
-    console.log('new finances', finances);
 
     setLoading(false);
     setStoreLoading(false);
