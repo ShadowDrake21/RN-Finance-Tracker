@@ -86,6 +86,7 @@ export type FinanceFormType = {
   image: string | null;
   date: string;
   action?: 'create' | 'edit';
+  prevImage?: string | null;
 };
 
 export type Finances = {

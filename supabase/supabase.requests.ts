@@ -1,6 +1,6 @@
 import { FinanceFormType, Finances } from '@/types/types';
 import { supabaseClient } from './supabase.client';
-import { uploadImage } from './supabase.storage';
+import { deleteImage, updateImage, uploadImage } from './supabase.storage';
 import { calcSum } from '@/utils/helpers.utils';
 
 export const getAllFinances = async ({
@@ -140,22 +140,29 @@ export const addFinance = async ({
       })
     : null;
 
-  const { error } = await supabase.from('finances').insert({
-    user_id: userId,
-    name: finance.note,
-    type: finance.type,
-    icon_type: finance.kind,
-    price:
-      finance.type === 'expense' && finance.sum ? -finance.sum : finance.sum,
-    currency: finance.currency,
-    image: image?.id,
-    date: new Date(finance.date).getTime(),
-  });
+  console.log('image', image, finance.image?.slice(0, 30));
+
+  const { data, error } = await supabase
+    .from('finances')
+    .insert({
+      user_id: userId,
+      name: finance.note,
+      type: finance.type,
+      icon_type: finance.kind,
+      price:
+        finance.type === 'expense' && finance.sum ? -finance.sum : finance.sum,
+      currency: finance.currency,
+      image: image?.path,
+      date: new Date(finance.date).getTime(),
+    })
+    .select();
 
   if (error) {
     console.log('error', error);
     return;
   }
+
+  return data[0] as Finances;
 };
 
 export const updateFinance = async ({
@@ -168,13 +175,20 @@ export const updateFinance = async ({
   finance: FinanceFormType;
 }) => {
   const supabase = await supabaseClient(token);
-  const image = finance.image
-    ? await uploadImage({
-        userId,
-        token,
-        file: finance.image.replace('data:image/jpeg;base64,', ''),
-      })
-    : null;
+  const updatedImage =
+    finance.image && finance.image.includes('data:image/jpeg;base64,')
+      ? finance.prevImage
+        ? await updateImage({
+            token,
+            file: finance.image.replace('data:image/jpeg;base64,', ''),
+            imagePath: finance.prevImage,
+          })
+        : await uploadImage({
+            userId,
+            token,
+            file: finance.image.replace('data:image/jpeg;base64,', ''),
+          })
+      : null;
 
   const { error, data } = await supabase
     .from('finances')
@@ -186,7 +200,7 @@ export const updateFinance = async ({
       price:
         finance.type === 'expense' && finance.sum ? -finance.sum : finance.sum,
       currency: finance.currency,
-      image: image?.id,
+      image: updatedImage ? updatedImage.path : finance.image,
       date: new Date(finance.date).getTime(),
     })
     .eq('id', finance.id)
@@ -198,6 +212,34 @@ export const updateFinance = async ({
   }
 
   return data[0] as Finances;
+};
+
+export const deleteFinance = async ({
+  userId,
+  token,
+  finance,
+}: {
+  userId: string;
+  token: string;
+  finance: FinanceFormType;
+}) => {
+  const supabase = await supabaseClient(token);
+
+  if (finance.image)
+    await deleteImage({ userId, token, imagePath: finance.image });
+
+  const { status, error } = await supabase
+    .from('finances')
+    .delete()
+    .eq('id', finance.id)
+    .eq('user_id', userId);
+
+  if (error) {
+    console.log('error', error);
+    return;
+  }
+
+  return status;
 };
 
 export const getFinanceSumByDay = async ({
@@ -241,3 +283,5 @@ export const getFinanceSumByMonth = async ({
 
   return calcSum(type, prices);
 };
+
+// TODO: delete and check if updating works

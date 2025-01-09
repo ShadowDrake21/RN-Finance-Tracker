@@ -14,11 +14,14 @@ type FinanceFormContextType = {
   resetFinanceForm: () => void;
   isFormValid: () => boolean;
   isFormDirty: () => boolean;
+  isFormChanged?: boolean;
 };
 
 const FinanceFormContext = createContext<FinanceFormContextType | undefined>(
   undefined
 );
+
+let isFormChanged: boolean = false;
 
 const FinanceFormInitial: FinanceFormType = {
   id: 0,
@@ -30,6 +33,7 @@ const FinanceFormInitial: FinanceFormType = {
   image: null,
   date: new Date().toISOString(),
   action: 'create',
+  prevImage: null,
 };
 
 type Action =
@@ -68,10 +72,12 @@ export const FinanceFormProvider = ({ children }: PropsWithChildren) => {
 
   const setField = (field: keyof FinanceFormType, value: any) => {
     dispatch({ type: 'SET_FIELD', field, value });
+    if (financeForm.action === 'edit') isFormChanged = true;
   };
 
   const resetFinanceForm = () => {
     dispatch({ type: 'RESET_FORM' });
+    isFormChanged = false;
   };
 
   const isFormValid = () => {
@@ -96,6 +102,7 @@ export const FinanceFormProvider = ({ children }: PropsWithChildren) => {
         resetFinanceForm,
         isFormValid,
         isFormDirty,
+        isFormChanged,
       }}
     >
       {children}

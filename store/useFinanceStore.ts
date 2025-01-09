@@ -14,7 +14,8 @@ interface FinanceStore {
   loading: boolean;
   error: string | null;
   setFinances: (finances: Finances[]) => void;
-  updateFinances: (updated: Finances[]) => void;
+  addFinance: (finance: Finances) => void;
+  updateFinance: (updated: Finances) => void;
   fetchFinancesByMonth: (
     selectedMonthId: string,
     offset: number,
@@ -34,18 +35,23 @@ export const useFinanceStore = create<FinanceStore>((set) => ({
         groups: [...groupFinancesByDate(finances, state.groups)],
       };
     }),
-  updateFinances: (updated: Finances[]) =>
+  addFinance: (finance: Finances) => {
     set((state) => {
-      const updatedFinances = state.finances.map(
-        (finance) => updated.find((u) => u.id === finance.id) || finance
+      return {
+        finances: [...state.finances, finance],
+        groups: [...groupFinancesByDate([...state.finances, finance], [])],
+      };
+    });
+  },
+  updateFinance: (updated: Finances) =>
+    set((state) => {
+      const updatedFinances = state.finances.map((finance) =>
+        updated.id === finance.id ? updated : finance
       );
-      const changedElements = updatedFinances.filter(
-        (finance, index) => finance !== state.finances[index]
-      );
-      console.log('Changed elements:', changedElements);
+
       return {
         finances: updatedFinances,
-        groups: [...updateGroupedFinances(state.groups, changedElements)],
+        groups: [...groupFinancesByDate(updatedFinances, [])],
       };
     }),
   fetchFinancesByMonth: async (selectedMonthId, offset, limit) => {

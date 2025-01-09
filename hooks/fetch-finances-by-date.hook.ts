@@ -1,9 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { financeTable } from '@/db/schema';
-import { sql } from 'drizzle-orm';
-import * as SQLite from 'expo-sqlite';
-import { Finances, IFinanceGroup } from '@/types/types';
+import { IFinanceGroup } from '@/types/types';
 import { getFinancesByDate } from '@/supabase/supabase.requests';
 import { useAuth } from '@clerk/clerk-expo';
 import {

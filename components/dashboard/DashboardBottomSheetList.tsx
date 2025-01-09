@@ -40,7 +40,7 @@ const DashboardBottomSheetList = ({
         ) : null
       }
       refreshing={listLoading}
-      onRefresh={refreshFinances}
+      // onRefresh={refreshFinances}
       onScroll={() => bottomSheetRef.current?.expand()}
     />
   );

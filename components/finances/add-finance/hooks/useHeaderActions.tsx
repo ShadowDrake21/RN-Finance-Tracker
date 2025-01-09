@@ -12,12 +12,18 @@ import { addFinance, updateFinance } from '@/supabase/supabase.requests';
 import { useFinanceStore } from '@/store/useFinanceStore';
 
 const useHeaderActions = () => {
-  const { financeForm, resetFinanceForm, isFormValid, isFormDirty } =
-    useFinanceForm();
+  const {
+    financeForm,
+    resetFinanceForm,
+    isFormValid,
+    isFormDirty,
+    isFormChanged,
+  } = useFinanceForm();
   const router = useRouter();
   const { userId, getToken } = useAuth();
   const [loading, setLoading] = useState(false);
-  const { updateFinances: updateFinancesInStore } = useFinanceStore();
+  const { addFinance: addFinanceToStore, updateFinance: updateFinanceInStore } =
+    useFinanceStore();
 
   const handleAddFinance = async () => {
     if (!userId) return;
@@ -31,7 +37,9 @@ const useHeaderActions = () => {
       return;
     }
 
-    await addFinance({ userId, token, finance: financeForm });
+    const created = await addFinance({ userId, token, finance: financeForm });
+
+    if (created) addFinanceToStore(created);
 
     router.back();
     resetFinanceForm();
@@ -56,7 +64,7 @@ const useHeaderActions = () => {
       finance: financeForm,
     });
 
-    if (updated) updateFinancesInStore([updated]);
+    if (updated) updateFinanceInStore(updated);
 
     router.back();
     resetFinanceForm();
@@ -87,15 +95,16 @@ const useHeaderActions = () => {
     () => (
       <View style={{ flexDirection: 'row', gap: 20 }}>
         <ReloadBtn onReload={resetFinanceForm} />
-        {isFormValid() && (
-          <SaveBtn
-            onSave={
-              financeForm.action === 'create'
-                ? handleAddFinance
-                : handleUpdateFinance
-            }
-          />
-        )}
+        {isFormValid() &&
+          (financeForm.action === 'edit' ? isFormChanged : true) && (
+            <SaveBtn
+              onSave={
+                financeForm.action === 'create'
+                  ? handleAddFinance
+                  : handleUpdateFinance
+              }
+            />
+          )}
       </View>
     ),
     [resetFinanceForm, isFormValid]

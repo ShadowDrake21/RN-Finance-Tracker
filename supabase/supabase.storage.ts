@@ -38,7 +38,7 @@ export const downloadImage = async ({
   const supabase = await supabaseClient(token);
   const { data, error } = await supabase.storage
     .from('finance-images')
-    .download(`${user_id}/${imagePath}`);
+    .download(imagePath);
 
   if (error) {
     console.error('Error downloading image:', error);
@@ -61,4 +61,48 @@ export const downloadImage = async ({
     console.error('No data or error returned');
   }
   return null;
+};
+
+export const updateImage = async ({
+  token,
+  file,
+  imagePath,
+}: {
+  token: string;
+  file: string;
+  imagePath: string;
+}) => {
+  const supabase = await supabaseClient(token);
+  const { data, error } = await supabase.storage
+    .from('avatars')
+    .update(imagePath, file, {
+      cacheControl: '3600',
+      upsert: true,
+    });
+
+  if (error) {
+    console.log('error', error);
+    return;
+  }
+
+  return data;
+};
+
+export const deleteImage = async ({
+  userId,
+  token,
+  imagePath,
+}: {
+  userId: string;
+  token: string;
+  imagePath: string;
+}) => {
+  const supabase = await supabaseClient(token);
+  const { error } = await supabase.storage
+    .from('finance-images')
+    .remove([imagePath]);
+
+  if (error) {
+    console.error('Error deleting image:', error);
+  }
 };

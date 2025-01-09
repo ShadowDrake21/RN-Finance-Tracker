@@ -40,6 +40,7 @@ const PickImage = () => {
     });
 
     if (!result.canceled) {
+      image && setField('prevImage', image);
       setField('image', `data:image/jpeg;base64,${result.assets[0].base64}`);
     }
   };
