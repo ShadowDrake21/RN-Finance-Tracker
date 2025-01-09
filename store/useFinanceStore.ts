@@ -13,9 +13,11 @@ interface FinanceStore {
   groups: IFinanceGroup[];
   loading: boolean;
   error: string | null;
+  setLoading: (value: boolean) => void;
   setFinances: (finances: Finances[]) => void;
   addFinance: (finance: Finances) => void;
   updateFinance: (updated: Finances) => void;
+  deleteFinance: (id: number) => void;
   fetchFinancesByMonth: (
     selectedMonthId: string,
     offset: number,
@@ -28,6 +30,7 @@ export const useFinanceStore = create<FinanceStore>((set) => ({
   groups: [],
   loading: false,
   error: null,
+  setLoading: (value: boolean) => set({ loading: value }),
   setFinances: (finances: Finances[]) =>
     set((state) => {
       return {
@@ -54,6 +57,18 @@ export const useFinanceStore = create<FinanceStore>((set) => ({
         groups: [...groupFinancesByDate(updatedFinances, [])],
       };
     }),
+  deleteFinance: (id: number) => {
+    set((state) => {
+      const updatedFinances = state.finances.filter(
+        (finance) => finance.id !== id
+      );
+
+      return {
+        finances: updatedFinances,
+        groups: [...groupFinancesByDate(updatedFinances, [])],
+      };
+    });
+  },
   fetchFinancesByMonth: async (selectedMonthId, offset, limit) => {
     set({ loading: true });
     console.log('fetching finances, selectedMonthId:', selectedMonthId);

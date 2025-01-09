@@ -41,7 +41,6 @@ const Page = () => {
     handleLoadMore,
     refreshFinances,
     loading,
-    getFinanceSumByMonth,
   } = useFetchFinancesByMonth(selectedMonthId);
 
   const {
@@ -49,7 +48,7 @@ const Page = () => {
     incomeBalance,
     formatedBalance,
     loading: loadingBalances,
-  } = useFetchBalances(selectedMonthId, getFinanceSumByMonth);
+  } = useFetchBalances();
 
   const {
     finances,

@@ -89,11 +89,9 @@ export const updateImage = async ({
 };
 
 export const deleteImage = async ({
-  userId,
   token,
   imagePath,
 }: {
-  userId: string;
   token: string;
   imagePath: string;
 }) => {

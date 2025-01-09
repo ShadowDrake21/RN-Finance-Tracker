@@ -14,13 +14,7 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
   const pageRef = useRef(0);
   const [groups, setGroups] = useState<IFinanceGroup[]>([]);
   const [loading, setLoading] = useState(false);
-  const {
-    fetchFinancesByMonth,
-    loading: financeLoading,
-    error,
-    finances,
-    setFinances,
-  } = useFinanceStore();
+  const { setLoading: setStoreLoading, setFinances } = useFinanceStore();
 
   useEffect(() => {
     pageRef.current = 0;
@@ -33,6 +27,7 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
     const token = await getToken({ template: 'supabase' });
     if (!token) return;
     setLoading(true);
+    setStoreLoading(true);
     const finances = await getFinancesByMonth({
       userId,
       token,
@@ -51,6 +46,7 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
     console.log('new finances', finances);
 
     setLoading(false);
+    setStoreLoading(false);
   };
 
   const getFinanceSumByMonth = async ({

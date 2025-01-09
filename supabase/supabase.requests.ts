@@ -217,21 +217,22 @@ export const updateFinance = async ({
 export const deleteFinance = async ({
   userId,
   token,
-  finance,
+  financeId,
+  financeImage,
 }: {
   userId: string;
   token: string;
-  finance: FinanceFormType;
+  financeId: number;
+  financeImage: string | null;
 }) => {
   const supabase = await supabaseClient(token);
 
-  if (finance.image)
-    await deleteImage({ userId, token, imagePath: finance.image });
+  if (financeImage) await deleteImage({ token, imagePath: financeImage });
 
   const { status, error } = await supabase
     .from('finances')
     .delete()
-    .eq('id', finance.id)
+    .eq('id', financeId)
     .eq('user_id', userId);
 
   if (error) {

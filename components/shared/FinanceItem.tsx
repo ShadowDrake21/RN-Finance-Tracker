@@ -1,6 +1,5 @@
 import {
   Image,
-  ImageSourcePropType,
   Pressable,
   StyleSheet,
   Text,
@@ -18,11 +17,14 @@ import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeabl
 import Reanimated, {
   SharedValue,
   useAnimatedStyle,
+  withTiming,
 } from 'react-native-reanimated';
 import { INCOME_ICONS } from '@/constants/icons/income_icons';
 import { Link, useRouter } from 'expo-router';
 import * as ContextMenu from 'zeego/context-menu';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import Animated from 'react-native-reanimated';
+import useDeleteFinance from '@/hooks/useDeleteFinance';
+import usePulseAnimation from '@/hooks/usePulseAnimation';
 
 const AnimatedTouchableOpacity =
   Reanimated.createAnimatedComponent(TouchableOpacity);
@@ -61,8 +63,9 @@ export default FinanceItem;
 
 function swipeableAction(
   type: 'left' | 'right',
-  prog: SharedValue<number>,
-  drag: SharedValue<number>
+
+  drag: SharedValue<number>,
+  action: () => Promise<void> | void
 ) {
   const styleAnimation = useAnimatedStyle(() => {
     return {
@@ -81,9 +84,10 @@ function swipeableAction(
         styleAnimation,
         { backgroundColor: type === 'right' ? 'red' : COLORS.primary },
       ]}
-      onPress={() =>
-        type === 'left' ? console.log('Archive') : console.log('Delete')
-      }
+      onPress={() => {
+        drag.value = withTiming(0);
+        action();
+      }}
     >
       <Text style={styles.swipeableActionText}>
         {type === 'left' ? 'Archive' : 'Delete'}
@@ -95,16 +99,23 @@ function swipeableAction(
 const FinanceItemAction = (item: Finances) => {
   const [category, name] = item.icon_type.split('/');
   // editing and viewing the content of the item on push!!!!
+  const { onDelete, loading } = useDeleteFinance({
+    id: item.id,
+    image: item.image,
+  });
+
   return (
     <GestureHandlerRootView>
       <ReanimatedSwipeable
         friction={2}
         enableTrackpadTwoFingerGesture
         rightThreshold={40}
-        renderRightActions={(prog, drag) =>
-          swipeableAction('right', prog, drag)
+        renderRightActions={(_, drag) =>
+          swipeableAction('right', drag, onDelete)
         }
-        renderLeftActions={(prog, drag) => swipeableAction('left', prog, drag)}
+        renderLeftActions={(_, drag) =>
+          swipeableAction('left', drag, () => console.log('Archive'))
+        }
       >
         <Link href={`/finance-info/${item.id}`} asChild>
           <Pressable key={item.id} style={styles.activityItemInnerContainer}>
@@ -163,11 +174,38 @@ const FinanceItemAction = (item: Finances) => {
 
 export const ContextFinanceItemAction = (item: Finances) => {
   const router = useRouter();
+  const { onDelete, loading } = useDeleteFinance({
+    id: item.id,
+    image: item.image,
+  });
+
+  useEffect(() => {
+    if (loading) {
+      executePulseAnimation();
+    }
+  }, [loading]);
+
+  const { executePulseAnimation, animatedStyle } = usePulseAnimation({});
 
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger>
-        <FinanceItemAction {...item} />
+        {loading ? (
+          <Animated.View
+            style={[
+              {
+                paddingVertical: 15,
+                paddingHorizontal: 10,
+                alignSelf: 'center',
+              },
+              animatedStyle,
+            ]}
+          >
+            <Animated.Text>Deleting...</Animated.Text>
+          </Animated.View>
+        ) : (
+          <FinanceItemAction {...item} />
+        )}
       </ContextMenu.Trigger>
       <ContextMenu.Content>
         <ContextMenu.Item
@@ -189,7 +227,7 @@ export const ContextFinanceItemAction = (item: Finances) => {
             }}
           ></ContextMenu.ItemIcon>
         </ContextMenu.Item>
-        <ContextMenu.Item key="delete" destructive>
+        <ContextMenu.Item key="delete" destructive onSelect={onDelete}>
           <ContextMenu.ItemTitle>Delete</ContextMenu.ItemTitle>
           <ContextMenu.ItemIcon
             ios={{
@@ -197,19 +235,6 @@ export const ContextFinanceItemAction = (item: Finances) => {
               pointSize: 24,
               weight: 'semibold',
               scale: 'medium',
-
-              // can also be a color string. Requires iOS 15+
-              hierarchicalColor: {
-                dark: 'blue',
-                light: 'green',
-              },
-              // alternative to hierarchical color. Requires iOS 15+
-              paletteColors: [
-                {
-                  dark: 'blue',
-                  light: 'green',
-                },
-              ],
             }}
           ></ContextMenu.ItemIcon>
         </ContextMenu.Item>

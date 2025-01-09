@@ -2,6 +2,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { COLORS } from '@/constants/colors';
 import { MonthScrollItem } from '@/types/types';
+import { useEffect } from 'react';
+import { useFinanceStore } from '@/store/useFinanceStore';
 
 type MoneyDashboardInfoProps = {
   selectedMonth: MonthScrollItem;
@@ -18,29 +20,35 @@ const MoneyDashboardInfo = ({
   loading,
   formatedBalance,
 }: MoneyDashboardInfoProps) => {
+  useEffect(() => {
+    console.log('loading', loading);
+  }, [loading]);
+
+  const { loading: storeLoading } = useFinanceStore();
+
   return (
     <View style={styles.container}>
       <Text style={styles.mainTitle}>Month balance</Text>
       <Text style={styles.mainBalance}>
-        {loading ? 'Loading...' : formatedBalance}
+        {storeLoading ? 'Loading...' : formatedBalance}
       </Text>
 
       <View>
         <Text style={styles.secondaryTitle}>{`${
-          loading ? 'Loading...' : `In ${selectedMonth.text}`
+          storeLoading ? 'Loading...' : `In ${selectedMonth.text}`
         }:`}</Text>
         <View style={styles.secondaryContainer}>
           <View style={styles.secondaryBalanceWrapper}>
             <AntDesign name="arrowup" size={24} color="black" />
 
             <Text style={styles.secondaryBalance}>
-              {loading ? 'Loading...' : `${incomeBalance} zł`}
+              {storeLoading ? 'Loading...' : `${incomeBalance.toFixed(2)} zł`}
             </Text>
           </View>
           <View style={styles.secondaryBalanceWrapper}>
             <AntDesign name="arrowdown" size={24} color="black" />
             <Text style={styles.secondaryBalance}>
-              - {loading ? 'Loading...' : `${expenseBalance} zł`}
+              {storeLoading ? 'Loading...' : `${expenseBalance.toFixed(2)} zł`}
             </Text>
           </View>
         </View>
