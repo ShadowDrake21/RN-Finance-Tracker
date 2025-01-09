@@ -44,7 +44,7 @@ const useFetchFinanceById = (id: string) => {
 
     setFinance({ ...transformedFinance, image: downloadedImageUrl });
     setLoading(false);
-  }, [id, user, getToken]);
+  }, [id, user]);
 
   useEffect(() => {
     fetchFinance();

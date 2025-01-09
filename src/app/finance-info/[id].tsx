@@ -1,112 +1,26 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import React from 'react';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import {
-  getFinanceById,
-  getFinanceSumByDay,
-  getFinanceSumByMonth,
-} from '@/supabase/supabase.requests';
-import { useUser } from '@clerk/clerk-expo';
-import { useAuth } from '@clerk/clerk-react';
-import { transformFinancesFromDB } from '@/utils/finance-groups.utils';
-import { Finances, PieChartData } from '@/types/types';
-import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
-import { downloadImage } from '@/supabase/supabase.storage';
-
-import CustomPolarChart from '@/components/shared/CustomPolarChart';
 import FinanceItemText from '@/components/finance-info/FinanceItemText';
-import { formPieChartData } from '@/utils/charts.utils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FinanceImage from '@/components/shared/FinanceImage';
 import Loader from '@/components/shared/Loader';
+import useFetchFinanceById from '@/hooks/useFetchFinanceById';
+import usePieChartData from '@/hooks/usePieChartData';
+import FinanceItemChart from '@/components/finance-info/FinanceItemChart';
+import FinanceItemError from '@/components/finance-info/FinanceItemError';
 
 const Page = () => {
-  const { user } = useUser();
-  const { getToken } = useAuth();
-  const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const { bottom } = useSafeAreaInsets();
 
-  const [dayData, setDayData] = useState<PieChartData[]>([]);
-  const [monthData, setMonthData] = useState<PieChartData[]>([]);
-  const [finance, setFinance] = useState<Finances>();
-  const [loading, setLoading] = useState(false);
-
-  const fetchFinance = useCallback(async () => {
-    setLoading(true);
-
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-
-    const token = await getToken({ template: 'supabase' });
-
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    const transformedFinance = transformFinancesFromDB(
-      await getFinanceById({
-        userId: user?.id,
-        token: token,
-        finance_id: isNaN(+id) ? 0 : +id,
-      })
-    )[0];
-
-    const downloadedImageUrl = transformedFinance.image
-      ? await downloadImage({
-          user_id: user.id,
-          token,
-          imagePath: transformedFinance.image,
-        })
-      : null;
-
-    setFinance({ ...transformedFinance, image: downloadedImageUrl });
-
-    setDayData(
-      formPieChartData({
-        fullPrice: await getFinanceSumByDay({
-          type: transformedFinance.type,
-          selectedDate: transformedFinance.date,
-          token,
-          userId: user.id,
-        }),
-        finance: {
-          name: transformedFinance.name,
-          price: transformedFinance.price,
-          currency: transformedFinance.currency.label,
-        },
-      })
-    );
-
-    setMonthData(
-      formPieChartData({
-        fullPrice: await getFinanceSumByMonth({
-          type: transformedFinance.type,
-          selectedMonthId: `${
-            new Date(transformedFinance.date).getMonth() + 1
-          }-${new Date(transformedFinance.date).getFullYear()}`,
-          token,
-          userId: user.id,
-        }),
-        finance: {
-          name: transformedFinance.name,
-          price: transformedFinance.price,
-          currency: transformedFinance.currency.label,
-        },
-      })
-    );
-
-    setLoading(false);
-  }, [id, user, getToken]);
-
-  useEffect(() => {
-    fetchFinance();
-  }, [fetchFinance]);
+  const { finance, loading } = useFetchFinanceById(id);
+  const { dayData, monthData } = usePieChartData(finance);
 
   return (
-    <View style={{ flex: 1, paddingBottom: bottom + 40 }}>
+    <View
+      style={[{ flex: 1 }, finance?.image && { paddingBottom: bottom + 30 }]}
+    >
       {loading ? (
         <Loader />
       ) : finance ? (
@@ -116,53 +30,36 @@ const Page = () => {
               title: finance?.name ?? 'Loading...',
             }}
           />
-          <ScrollView style={{ padding: 20, flex: 1 }}>
+          <ScrollView style={styles.scrollContainer}>
             <FinanceItemText finance={finance} />
             {finance.image && <FinanceImage image={finance.image} />}
 
-            <View style={{ paddingVertical: 25, gap: 20 }}>
-              <View style={{ alignItems: 'center' }}>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 700,
-                    textAlign: 'center',
-                    paddingBottom: 10,
-                  }}
-                >
-                  Finance activity to all {finance.type.toLowerCase()}s on this
-                  day
-                </Text>
-                <CustomPolarChart data={dayData} />
-              </View>
-              <View
-                style={{
-                  alignItems: 'center',
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 700,
-                    textAlign: 'center',
-                    paddingBottom: 10,
-                  }}
-                >
-                  Finance activity to all {finance.type.toLowerCase()}s in{' '}
-                  {new Date(finance.date).toLocaleString('default', {
+            <View style={styles.containerWrapper}>
+              <FinanceItemChart
+                text={`Finance activity to all ${finance.type.toLowerCase()}s on this
+                  day`}
+                data={dayData}
+              />
+              <FinanceItemChart
+                text={`Finance activity to all ${finance.type.toLowerCase()}s in{' '}
+                  ${new Date(finance.date).toLocaleString('default', {
                     month: 'long',
-                  })}
-                </Text>
-                <CustomPolarChart data={monthData} />
-              </View>
+                  })}`}
+                data={monthData}
+              />
             </View>
           </ScrollView>
         </>
       ) : (
-        <Text>Unexpected error!</Text>
+        <FinanceItemError />
       )}
     </View>
   );
 };
 
 export default Page;
+
+const styles = StyleSheet.create({
+  scrollContainer: { padding: 20, flex: 1 },
+  containerWrapper: { paddingVertical: 25, gap: 20 },
+});
