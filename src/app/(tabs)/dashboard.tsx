@@ -17,6 +17,7 @@ import { generateMonthData } from '@/utils/date.utils';
 import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
 import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
 import useFetchBalances from '@/components/dashboard/hooks/useFetchBalances';
+import { useFinanceStore } from '@/store/useFinanceStore';
 
 const INITIAL_SELECTED_MONTH_ID = new Date()
   .toLocaleString('default', { month: 'numeric', year: 'numeric' })
@@ -36,7 +37,7 @@ const Page = () => {
   const [monthsList, setMonthsList] = useState<MonthScrollItem[]>([]);
 
   const {
-    groups,
+    // groups,
     handleLoadMore,
     refreshFinances,
     loading,
@@ -50,12 +51,28 @@ const Page = () => {
     loading: loadingBalances,
   } = useFetchBalances(selectedMonthId, getFinanceSumByMonth);
 
+  const {
+    finances,
+    groups,
+    error,
+    loading: financesLoading,
+    fetchFinancesByMonth,
+  } = useFinanceStore();
+
   useEffect(() => {
     if (!user?.createdAt) return;
 
     const months: MonthScrollItem[] = generateMonthData(user?.createdAt);
     setMonthsList(months);
   }, [user]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchFinancesByMonth(selectedMonthId, 0, 10);
+      console.log('res', finances);
+    };
+    fetchData();
+  }, [selectedMonthId]);
 
   useEffect(() => {
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });

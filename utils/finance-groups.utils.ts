@@ -1,4 +1,3 @@
-import { financeTable } from '@/db/schema';
 import { Currency, Finances, IFinanceGroup } from '@/types/types';
 
 export const uniqueGroups = (grouped: IFinanceGroup[]) => {
@@ -42,6 +41,20 @@ export const groupFinancesByDate = (
   return Object.values(grouped).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
+};
+
+export const updateGroupedFinances = (
+  grouped: IFinanceGroup[],
+  updated: Finances[]
+) => {
+  return grouped.map((group) => {
+    return {
+      ...group,
+      items: group.items.map((item) => {
+        return updated.find((u) => u.id === item.id) || item;
+      }),
+    };
+  });
 };
 
 export const transformFinancesFromDB = (finances: any[]) => {

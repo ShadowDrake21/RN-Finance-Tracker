@@ -47,6 +47,8 @@ export const getFinancesByMonth = async ({
     .lte('date', endDate);
   // .range(offset, offset + limit - 1);
 
+  console.log('getFinancesByMonth', finances);
+
   if (error) {
     console.error('Error fetching finances:', error);
     return [];

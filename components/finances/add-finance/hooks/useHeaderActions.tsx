@@ -9,6 +9,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 
 import { useAuth } from '@clerk/clerk-expo';
 import { addFinance, updateFinance } from '@/supabase/supabase.requests';
+import { useFinanceStore } from '@/store/useFinanceStore';
 
 const useHeaderActions = () => {
   const { financeForm, resetFinanceForm, isFormValid, isFormDirty } =
@@ -16,6 +17,7 @@ const useHeaderActions = () => {
   const router = useRouter();
   const { userId, getToken } = useAuth();
   const [loading, setLoading] = useState(false);
+  const { updateFinances: updateFinancesInStore } = useFinanceStore();
 
   const handleAddFinance = async () => {
     if (!userId) return;
@@ -48,7 +50,13 @@ const useHeaderActions = () => {
       return;
     }
 
-    await updateFinance({ userId, token, finance: financeForm });
+    const updated = await updateFinance({
+      userId,
+      token,
+      finance: financeForm,
+    });
+
+    if (updated) updateFinancesInStore([updated]);
 
     router.back();
     resetFinanceForm();

@@ -7,12 +7,20 @@ import { IFinanceGroup } from '@/types/types';
 import { getFinancesByMonth } from '@/supabase/supabase.requests';
 import { useAuth } from '@clerk/clerk-expo';
 import { calcSum } from '@/utils/helpers.utils';
+import { useFinanceStore } from '@/store/useFinanceStore';
 
 export const useFetchFinancesByMonth = (selectedMonthId: string) => {
   const { userId, getToken } = useAuth();
   const pageRef = useRef(0);
   const [groups, setGroups] = useState<IFinanceGroup[]>([]);
   const [loading, setLoading] = useState(false);
+  const {
+    fetchFinancesByMonth,
+    loading: financeLoading,
+    error,
+    finances,
+    setFinances,
+  } = useFinanceStore();
 
   useEffect(() => {
     pageRef.current = 0;
@@ -38,6 +46,9 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
     setGroups((existingGroups) => [
       ...groupFinancesByDate(transformedFinances, existingGroups),
     ]);
+
+    setFinances(transformedFinances);
+    console.log('new finances', finances);
 
     setLoading(false);
   };
