@@ -10,7 +10,7 @@ import CustomSwitch from '@/components/ui/CustomSwitch';
 import { useFetchFinancesByDate } from '@/hooks/fetch-finances-by-date.hook';
 import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
 import CalendarAgendaList from '@/components/calendar/CalendarAgendaList';
-import { useAuth, useUser } from '@clerk/clerk-expo';
+import { useUser } from '@clerk/clerk-expo';
 
 const Page = () => {
   const { user } = useUser();

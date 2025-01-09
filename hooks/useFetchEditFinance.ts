@@ -36,7 +36,6 @@ const useFetchEditFinance = (id: string | undefined, type: string) => {
     };
 
     fetchEditFinance();
-    console.log('fetchedEditFinance', fetchedEditFinance);
   }, [id, type, userId]);
 
   return { fetchedEditFinance, loading };

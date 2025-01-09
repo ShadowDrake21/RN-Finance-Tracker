@@ -18,9 +18,7 @@ const Page = () => {
   const { dayData, monthData } = usePieChartData(finance);
 
   return (
-    <View
-      style={[{ flex: 1 }, finance?.image && { paddingBottom: bottom + 30 }]}
-    >
+    <View style={{ flex: 1, paddingBottom: bottom + 20 }}>
       {loading ? (
         <Loader />
       ) : finance ? (
@@ -36,15 +34,15 @@ const Page = () => {
 
             <View style={styles.containerWrapper}>
               <FinanceItemChart
-                text={`Finance activity to all ${finance.type.toLowerCase()}s on this
-                  day`}
+                text={`Finance activity to all ${finance.type.toLowerCase()}s on this day`}
                 data={dayData}
               />
               <FinanceItemChart
-                text={`Finance activity to all ${finance.type.toLowerCase()}s in{' '}
-                  ${new Date(finance.date).toLocaleString('default', {
-                    month: 'long',
-                  })}`}
+                text={`Finance activity to all ${finance.type.toLowerCase()}s in ${new Date(
+                  finance.date
+                ).toLocaleString('default', {
+                  month: 'long',
+                })}`}
                 data={monthData}
               />
             </View>

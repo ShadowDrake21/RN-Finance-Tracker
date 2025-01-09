@@ -8,7 +8,7 @@ import SaveBtn from '../../SaveBtn';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 import { useAuth } from '@clerk/clerk-expo';
-import { addFinance } from '@/supabase/supabase.requests';
+import { addFinance, updateFinance } from '@/supabase/supabase.requests';
 
 const useHeaderActions = () => {
   const { financeForm, resetFinanceForm, isFormValid, isFormDirty } =
@@ -30,6 +30,25 @@ const useHeaderActions = () => {
     }
 
     await addFinance({ userId, token, finance: financeForm });
+
+    router.back();
+    resetFinanceForm();
+    setLoading(false);
+  };
+
+  const handleUpdateFinance = async () => {
+    if (!userId) return;
+
+    setLoading(true);
+    const token = await getToken({ template: 'supabase' });
+
+    if (!token) {
+      Alert.alert('Error', 'Failed to retrieve token');
+      setLoading(false);
+      return;
+    }
+
+    await updateFinance({ userId, token, finance: financeForm });
 
     router.back();
     resetFinanceForm();
@@ -60,7 +79,15 @@ const useHeaderActions = () => {
     () => (
       <View style={{ flexDirection: 'row', gap: 20 }}>
         <ReloadBtn onReload={resetFinanceForm} />
-        {isFormValid() && <SaveBtn onSave={handleAddFinance} />}
+        {isFormValid() && (
+          <SaveBtn
+            onSave={
+              financeForm.action === 'create'
+                ? handleAddFinance
+                : handleUpdateFinance
+            }
+          />
+        )}
       </View>
     ),
     [resetFinanceForm, isFormValid]

@@ -25,7 +25,10 @@ const Page = () => {
   useEffect(() => {
     if (fetchedEditFinance) {
       setForm({
-        ...fetchedEditFinance,
+        id: fetchedEditFinance.id,
+        currency: fetchedEditFinance.currency,
+        image: fetchedEditFinance.image,
+        type: fetchedEditFinance.type,
         sum: fetchedEditFinance.price,
         note: fetchedEditFinance.name,
         kind: fetchedEditFinance.icon_type,
