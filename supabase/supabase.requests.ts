@@ -188,7 +188,6 @@ export const updateFinance = async ({
   //         })
   //     : null;
 
-  // TODO: fix using all fields in editing in order to save
   // TODO: sometimes there is no info on editing
 
   let updatedImage = null;
@@ -216,7 +215,9 @@ export const updateFinance = async ({
       type: finance.type,
       icon_type: finance.kind,
       price:
-        finance.type === 'expense' && finance.sum ? -finance.sum : finance.sum,
+        finance.type === 'expense'
+          ? -Math.abs(finance.sum!)
+          : Math.abs(finance.sum!),
       currency: finance.currency,
       image: updatedImage ? updatedImage.path : finance.image,
       date: new Date(finance.date).getTime(),

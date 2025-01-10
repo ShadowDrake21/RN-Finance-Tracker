@@ -73,8 +73,6 @@ export const FinanceFormProvider = ({ children }: PropsWithChildren) => {
   const setField = (field: keyof FinanceFormType, value: any) => {
     dispatch({ type: 'SET_FIELD', field, value });
     if (financeForm.action === 'edit') {
-      console.log('isFormChanged', isFormChanged);
-
       isFormChanged = true;
     }
   };
@@ -87,7 +85,7 @@ export const FinanceFormProvider = ({ children }: PropsWithChildren) => {
   const isFormValid = () => {
     return (
       !!financeForm.sum &&
-      financeForm.sum > 0 &&
+      Math.abs(financeForm.sum) !== 0 &&
       financeForm.kind !== '' &&
       financeForm.note !== ''
     );

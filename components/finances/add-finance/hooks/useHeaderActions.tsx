@@ -94,7 +94,7 @@ const useHeaderActions = () => {
   const headerRight = useCallback(
     () => (
       <View style={{ flexDirection: 'row', gap: 20 }}>
-        <ReloadBtn onReload={resetFinanceForm} />
+        <ReloadBtn onReload={resetFinanceForm} loading={loading} />
         {isFormValid() &&
           (financeForm.action === 'edit' ? isFormChanged : true) && (
             <SaveBtn
@@ -103,30 +103,39 @@ const useHeaderActions = () => {
                   ? handleAddFinance
                   : handleUpdateFinance
               }
+              loading={loading}
             />
           )}
       </View>
     ),
-    [resetFinanceForm, isFormValid]
+    [resetFinanceForm, isFormValid, loading]
   );
 
   const headerLeft = useCallback(
     () => (
       <TouchableOpacity
         onPress={isFormDirty() ? onLeaveWithUnsavedChanges : router.back}
-        style={{
-          padding: 5,
-          backgroundColor: COLORS.primary,
-          borderRadius: '50%',
-        }}
+        style={[
+          {
+            padding: 5,
+
+            borderRadius: '50%',
+          },
+          loading
+            ? { backgroundColor: COLORS.lightGray }
+            : { backgroundColor: COLORS.primary },
+        ]}
+        disabled={loading}
       >
         <AntDesign name="close" size={24} color="white" />
       </TouchableOpacity>
     ),
-    [isFormDirty, onLeaveWithUnsavedChanges, router]
+    [isFormDirty, onLeaveWithUnsavedChanges, router, loading]
   );
 
   return { headerLeft, headerRight, loading };
 };
+
+// TODO: handle loading disablity for header buttons
 
 export default useHeaderActions;

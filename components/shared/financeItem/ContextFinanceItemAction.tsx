@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import Animated from 'react-native-reanimated';
 import * as ContextMenu from 'zeego/context-menu';
 import FinanceItemAction from './FinanceItemAction';
+import AnimatedMessage from '@/components/ui/AnimatedMessage';
 
 const ContextFinanceItemAction = (item: Finances) => {
   const router = useRouter();
@@ -14,30 +15,19 @@ const ContextFinanceItemAction = (item: Finances) => {
     image: item.image,
   });
 
+  const { executePulseAnimation, animatedStyle } = usePulseAnimation({});
+
   useEffect(() => {
     if (loading) {
       executePulseAnimation();
     }
   }, [loading]);
 
-  const { executePulseAnimation, animatedStyle } = usePulseAnimation({});
-
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger>
         {loading ? (
-          <Animated.View
-            style={[
-              {
-                paddingVertical: 15,
-                paddingHorizontal: 10,
-                alignSelf: 'center',
-              },
-              animatedStyle,
-            ]}
-          >
-            <Animated.Text>Deleting...</Animated.Text>
-          </Animated.View>
+          <AnimatedMessage animatedStyle={animatedStyle} text="Deleting..." />
         ) : (
           <FinanceItemAction {...item} />
         )}
@@ -45,12 +35,15 @@ const ContextFinanceItemAction = (item: Finances) => {
       <ContextMenu.Content>
         <ContextMenu.Item
           key="edit"
-          onSelect={() =>
+          onSelect={() => {
+            console.log('edit item', item.id, 'edit');
+
+            if (router.canDismiss()) router.dismissAll();
             router.push({
               pathname: `/finance`,
               params: { id: item.id, type: 'edit' },
-            })
-          }
+            });
+          }}
         >
           <ContextMenu.ItemTitle>Edit</ContextMenu.ItemTitle>
           <ContextMenu.ItemIcon

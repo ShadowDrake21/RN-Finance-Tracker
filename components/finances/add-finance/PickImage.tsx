@@ -21,7 +21,7 @@ const PickImage = () => {
   } = useFinanceForm();
 
   const { userId, getToken } = useAuth();
-  const [downloadedImage, setDownloadedImage] = useState('');
+  const [validImage, setValidImage] = useState('');
 
   const fadeAnim = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => {
@@ -40,17 +40,16 @@ const PickImage = () => {
     });
 
     if (!result.canceled) {
-      image && setField('prevImage', image);
-      console.log('new image', !!result.assets[0].base64);
-
-      setField('image', `data:image/jpeg;base64,${result.assets[0].base64}`);
+      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+      setField('prevImage', image);
+      setField('image', base64Image);
+      setValidImage(base64Image);
     }
   };
 
   useEffect(() => {
-    setDownloadedImage('');
-  }, [id]);
-  useEffect(() => {
+    console.log('pickeImage', image);
+
     if (
       action === 'edit' &&
       image &&
@@ -62,10 +61,14 @@ const PickImage = () => {
           imagePath: image,
         });
 
-        if (imageUrl) setDownloadedImage(imageUrl);
+        if (imageUrl) setValidImage(imageUrl);
       };
 
       getEditImage();
+    } else if (image && image.includes('data:image/jpeg;base64,')) {
+      setValidImage(image);
+    } else {
+      setValidImage('');
     }
     if (image && fadeAnim.value === 0) {
       fadeAnim.value = 1;
@@ -76,15 +79,11 @@ const PickImage = () => {
     <View style={image && { gap: 20, paddingBottom: 40 }}>
       <AddFinanceButton onPress={pickImage} text="Pick a photo" icon="camera" />
 
-      {image && (
+      {/* TODO: Loader while image loads */}
+      {validImage && (
         <Animated.View style={[styles.animatedView, animatedStyle]}>
           <View style={{ flex: 1 }}>
-            <FinanceImage
-              image={
-                (image.includes('data:image/jpeg;base64,') && image) ||
-                downloadedImage
-              }
-            />
+            <FinanceImage image={validImage} />
           </View>
           <Pressable
             onPress={() => {

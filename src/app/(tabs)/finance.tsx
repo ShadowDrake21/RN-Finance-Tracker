@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import React, { useEffect } from 'react';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useGlobalSearchParams } from 'expo-router';
 import { useFinanceForm } from '@/contexts/FinanceFormContext';
 import useHeaderActions from '@/components/finances/add-finance/hooks/useHeaderActions';
 import Loader from '@/components/shared/Loader';
@@ -16,7 +16,7 @@ const Page = () => {
   const { financeForm, setField, setForm } = useFinanceForm();
   const { headerLeft, headerRight, loading } = useHeaderActions();
 
-  const { id, type } = useLocalSearchParams<FinanceLocalParams>();
+  const { id, type } = useGlobalSearchParams<FinanceLocalParams>();
   const { fetchedEditFinance, loading: fetchEditLoading } = useFetchEditFinance(
     id,
     type

@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -72,7 +73,25 @@ const Layout = () => {
           headerStyle: { backgroundColor: DefaultTheme.colors.background },
           tabBarLabel: '',
           title: '',
-          tabBarIcon: ({ focused }) => <CreateTabBar isActive={focused} />,
+          tabBarButton: () => (
+            <Pressable
+              style={{
+                position: 'relative',
+                flex: 1,
+                width: 60,
+                height: 60,
+              }}
+              onPress={() =>
+                router.push({
+                  pathname: `/finance`,
+                  params: { id: null, type: 'create' },
+                })
+              }
+            >
+              <CreateTabBar />
+            </Pressable>
+          ),
+          // tabBarIcon: ({ focused }) => <CreateTabBar isActive={focused} />,
           tabBarIconStyle: { top: '25%' },
           tabBarStyle: { display: 'none' },
           headerLeft: () => (

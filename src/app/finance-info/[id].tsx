@@ -19,15 +19,15 @@ const Page = () => {
 
   return (
     <View style={{ flex: 1, paddingBottom: bottom + 20 }}>
+      <Stack.Screen
+        options={{
+          title: finance?.name || 'Loading...',
+        }}
+      />
       {loading ? (
         <Loader />
       ) : finance ? (
         <>
-          <Stack.Screen
-            options={{
-              title: finance?.name ?? 'Loading...',
-            }}
-          />
           <ScrollView style={styles.scrollContainer}>
             <FinanceItemText finance={finance} />
             {finance.image && <FinanceImage image={finance.image} />}

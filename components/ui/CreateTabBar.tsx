@@ -4,7 +4,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import LinearGradient from 'react-native-linear-gradient';
 import { COLORS } from '@/constants/colors';
 
-const CreateTabBar = ({ isActive }: { isActive: boolean }) => {
+const CreateTabBar = ({ isActive }: { isActive?: boolean }) => {
   return (
     <LinearGradient
       colors={['rgb(0, 136, 91)', 'rgb(71, 165, 134)', 'rgb(2, 117, 79)']}
@@ -32,5 +32,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
+    top: -5,
   },
 });

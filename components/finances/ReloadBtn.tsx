@@ -7,9 +7,15 @@ import Animated, {
 } from 'react-native-reanimated';
 import { COLORS } from '@/constants/colors';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { AnimatedTouchableOpacity } from '@/utils/animation.utils';
+import { AnimatedPressable } from '@/utils/animation.utils';
 
-const ReloadBtn = ({ onReload }: { onReload: () => void }) => {
+const ReloadBtn = ({
+  onReload,
+  loading,
+}: {
+  onReload: () => void;
+  loading: boolean;
+}) => {
   const degrees = useSharedValue(0);
 
   const handleReload = () => {
@@ -22,7 +28,7 @@ const ReloadBtn = ({ onReload }: { onReload: () => void }) => {
   }));
 
   return (
-    <AnimatedTouchableOpacity
+    <AnimatedPressable
       onPress={() => handleReload()}
       style={[
         {
@@ -30,11 +36,13 @@ const ReloadBtn = ({ onReload }: { onReload: () => void }) => {
           backgroundColor: COLORS.primary,
           borderRadius: '50%',
         },
+        loading && { backgroundColor: COLORS.disabled },
         animatedStyles,
       ]}
+      disabled={loading}
     >
       <MaterialCommunityIcons name="reload" size={24} color="white" />
-    </AnimatedTouchableOpacity>
+    </AnimatedPressable>
   );
 };
 
