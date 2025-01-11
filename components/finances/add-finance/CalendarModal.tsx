@@ -5,26 +5,18 @@ import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS } from '@/constants/colors';
 import { useFinanceForm } from '@/contexts/FinanceFormContext';
+import { useAuth, useUser } from '@clerk/clerk-expo';
 
 const INITIAL_DATE = new Date().toISOString();
 
 const CalendarModal = ({
   visible,
   setVisible,
-  firstDate,
-}: // date,
-// setDate,
-{
+}: {
   visible: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  firstDate: Date;
-  // date: string;
-  // setDate: React.Dispatch<React.SetStateAction<string>>;
 }) => {
-  // useEffect(() => {
-  //   console.log('date', date);
-  // }, [date]);
-
+  const { user } = useUser();
   const {
     financeForm: { date },
     setField,
@@ -55,7 +47,7 @@ const CalendarModal = ({
         snapPoints={['50%']}
         enablePanDownToClose
         onClose={() => setVisible(false)}
-        index={2}
+        index={-1}
         handleStyle={{ paddingTop: 10, paddingBottom: 0 }}
         containerStyle={{
           paddingBottom: 75,
@@ -68,7 +60,7 @@ const CalendarModal = ({
             hideExtraDays
             firstDay={1}
             current={INITIAL_DATE}
-            minDate={firstDate.toISOString()}
+            minDate={(user?.createdAt || new Date()).toISOString()}
             maxDate={getDate(0, INITIAL_DATE)}
             disableAllTouchEventsForDisabledDays
             markingType={'period'}

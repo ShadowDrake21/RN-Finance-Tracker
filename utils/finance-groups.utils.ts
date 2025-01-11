@@ -1,16 +1,12 @@
-import { financeTable } from '@/db/schema';
 import { Currency, Finances, IFinanceGroup } from '@/types/types';
 
 export const uniqueGroups = (grouped: IFinanceGroup[]) => {
-  console.log('uniqueGroups', grouped);
   return grouped.reduce((acc, group) => {
     if (
       !acc.find((g) => {
-        console.log('!acc.find((g)', g.date, group.date, g.date === group.date);
         return g.date === group.date;
       })
     ) {
-      console.log('group', group);
       acc.push(group);
     }
     return acc;
@@ -47,12 +43,22 @@ export const groupFinancesByDate = (
   );
 };
 
+export const updateGroupedFinances = (
+  grouped: IFinanceGroup[],
+  updated: Finances[]
+) => {
+  return grouped.map((group) => {
+    return {
+      ...group,
+      items: group.items.map((item) => {
+        return updated.find((u) => u.id === item.id) || item;
+      }),
+    };
+  });
+};
+
 export const transformFinancesFromDB = (finances: any[]) => {
   return finances.map<Finances>((finance) => {
-    console.log(
-      'transformFinancesFromDB',
-      new Date(finance.date).toISOString()
-    );
     return {
       ...finance,
       date: new Date(finance.date),

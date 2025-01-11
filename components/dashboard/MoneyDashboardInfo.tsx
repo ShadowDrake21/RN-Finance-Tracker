@@ -2,12 +2,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { COLORS } from '@/constants/colors';
 import { MonthScrollItem } from '@/types/types';
+import { useFinanceStore } from '@/store/useFinanceStore';
+import { memo } from 'react';
 
 type MoneyDashboardInfoProps = {
   selectedMonth: MonthScrollItem;
   expenseBalance: number;
   incomeBalance: number;
-  loading: boolean;
   formatedBalance: string;
 };
 
@@ -15,9 +16,10 @@ const MoneyDashboardInfo = ({
   selectedMonth,
   expenseBalance,
   incomeBalance,
-  loading,
   formatedBalance,
 }: MoneyDashboardInfoProps) => {
+  const { loading } = useFinanceStore();
+
   return (
     <View style={styles.container}>
       <Text style={styles.mainTitle}>Month balance</Text>
@@ -34,13 +36,13 @@ const MoneyDashboardInfo = ({
             <AntDesign name="arrowup" size={24} color="black" />
 
             <Text style={styles.secondaryBalance}>
-              {loading ? 'Loading...' : `${incomeBalance} zł`}
+              {loading ? 'Loading...' : `${incomeBalance.toFixed(2)} zł`}
             </Text>
           </View>
           <View style={styles.secondaryBalanceWrapper}>
             <AntDesign name="arrowdown" size={24} color="black" />
             <Text style={styles.secondaryBalance}>
-              - {loading ? 'Loading...' : `${expenseBalance} zł`}
+              {loading ? 'Loading...' : `${expenseBalance.toFixed(2)} zł`}
             </Text>
           </View>
         </View>
@@ -49,7 +51,7 @@ const MoneyDashboardInfo = ({
   );
 };
 
-export default MoneyDashboardInfo;
+export default memo(MoneyDashboardInfo);
 
 const styles = StyleSheet.create({
   container: {

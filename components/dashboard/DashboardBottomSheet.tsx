@@ -1,26 +1,12 @@
-import { StyleSheet, View } from 'react-native';
-import React, { RefObject } from 'react';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import CustomActivityIndicator from '../ui/CustomActivityIndicator';
-import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
-import DashboardBottomSheetList from './DashboardBottomSheetList';
+import { StyleSheet } from 'react-native';
+import React, { memo, RefObject, useRef } from 'react';
+import BottomSheet from '@gorhom/bottom-sheet';
 import { IFinanceGroup } from '@/types/types';
+import DashboardBottomSheetView from './DashboardBottomSheetView';
 
-type DashboardBottomSheetProps = {
-  loading: boolean;
-  refreshFinances: () => Promise<void>;
-  handleLoadMore: () => void;
-  groups: IFinanceGroup[];
-  bottomSheetRef: RefObject<BottomSheet>;
-};
+const DashboardBottomSheet = () => {
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
-const DashboardBottomSheet = ({
-  loading,
-  refreshFinances,
-  handleLoadMore,
-  groups,
-  bottomSheetRef,
-}: DashboardBottomSheetProps) => {
   return (
     <BottomSheet
       ref={bottomSheetRef}
@@ -29,29 +15,14 @@ const DashboardBottomSheet = ({
       handleStyle={{ paddingTop: 10, paddingBottom: 0 }}
       containerStyle={{ paddingBottom: 75 }}
       style={styles.container}
+      enableDynamicSizing={false}
     >
-      <BottomSheetView style={styles.contentContainer}>
-        <View style={{ flex: 1, width: '100%' }}>
-          {loading && (
-            <CustomActivityIndicator
-              size="large"
-              style={{ marginVertical: 20 }}
-            />
-          )}
-          <DashboardBottomSheetList
-            bottomSheetRef={bottomSheetRef}
-            groups={groups}
-            refreshFinances={refreshFinances}
-            handleLoadMore={handleLoadMore}
-            listLoading={loading}
-          />
-        </View>
-      </BottomSheetView>
+      <DashboardBottomSheetView bottomSheetRef={bottomSheetRef} />
     </BottomSheet>
   );
 };
 
-export default DashboardBottomSheet;
+export default memo(DashboardBottomSheet);
 
 const styles = StyleSheet.create({
   container: {

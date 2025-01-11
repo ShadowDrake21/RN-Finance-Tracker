@@ -28,8 +28,6 @@ export type MonthScrollItem = {
 
 export type MonthScrollListProps = {
   data: MonthScrollItem[];
-  selectedId: string;
-  setSelectedId: (month: string) => void;
 };
 
 export interface IFinanceGroup {
@@ -85,6 +83,8 @@ export type FinanceFormType = {
   note: string;
   image: string | null;
   date: string;
+  action?: 'create' | 'edit';
+  prevImage?: string | null;
 };
 
 export type Finances = {
@@ -97,4 +97,11 @@ export type Finances = {
   type: 'expense' | 'income';
   icon_type: string;
   currency: Currency;
+};
+
+export type PieChartData = {
+  value: number;
+  color: string;
+  label: string;
+  currency: string;
 };

@@ -18,8 +18,6 @@ const Page = () => {
     setLoading(true);
 
     try {
-      console.log('onVerifyPress', code);
-
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
         code,
       });

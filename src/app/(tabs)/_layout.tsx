@@ -1,12 +1,6 @@
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, { useEffect } from 'react';
-import { Redirect, Tabs, useRouter, useSegments } from 'expo-router';
+import { Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { Redirect, Tabs, useRouter } from 'expo-router';
 import { useAuth } from '@clerk/clerk-expo';
 import { COLORS } from '@/constants/colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -15,17 +9,15 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import CreateTabBar from '@/components/ui/CreateTabBar';
 import { BlurView } from 'expo-blur';
 
+import { DefaultTheme } from '@react-navigation/native';
+import Loader from '@/components/shared/Loader';
+
 const Layout = () => {
   const { isSignedIn, isLoaded } = useAuth();
-  const segment = useSegments();
   const router = useRouter();
 
   if (!isLoaded) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
+    return <Loader />;
   }
 
   if (!isSignedIn) {
@@ -64,11 +56,31 @@ const Layout = () => {
         }}
       />
       <Tabs.Screen
-        name="(finances)"
+        name="finance"
+        initialParams={{ type: 'create' }}
         options={{
-          headerShown: false,
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: DefaultTheme.colors.background },
           tabBarLabel: '',
-          tabBarIcon: ({ focused }) => <CreateTabBar isActive={focused} />,
+          title: '',
+          tabBarButton: () => (
+            <Pressable
+              style={{
+                position: 'relative',
+                flex: 1,
+                width: 60,
+                height: 60,
+              }}
+              onPress={() =>
+                router.push({
+                  pathname: `/finance`,
+                  params: { id: null, type: 'create' },
+                })
+              }
+            >
+              <CreateTabBar />
+            </Pressable>
+          ),
           tabBarIconStyle: { top: '25%' },
           tabBarStyle: { display: 'none' },
           headerLeft: () => (

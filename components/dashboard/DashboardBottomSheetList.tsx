@@ -1,49 +1,51 @@
-import React, { RefObject } from 'react';
+import React, { memo, RefObject } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { IFinanceGroup } from '@/types/types';
 import FinanceItem from '../shared/FinanceItem';
-import { Text } from 'react-native';
+
+import EmptyLabel from '../ui/EmptyLabel';
+import { View } from 'react-native';
 
 const DashboardBottomSheetList = ({
   bottomSheetRef,
   groups,
-  handleLoadMore,
   listLoading,
-  refreshFinances,
-}: {
+}: // handleLoadMore,
+// refreshFinances,
+{
   bottomSheetRef: RefObject<BottomSheet>;
   groups: IFinanceGroup[];
-  handleLoadMore: () => void;
   listLoading: boolean;
-  refreshFinances: () => Promise<void>;
+  // handleLoadMore: () => void;
+  // refreshFinances: () => Promise<void>;
 }) => {
   return (
-    <FlashList
-      estimatedItemSize={100}
-      data={groups}
-      contentContainerStyle={{
-        paddingBottom: 75,
+    <View
+      style={{
+        flex: 1,
       }}
-      showsVerticalScrollIndicator={false}
-      keyExtractor={(item) => item.date}
-      onEndReached={() => {
-        handleLoadMore();
-        bottomSheetRef.current?.expand();
-      }}
-      onEndReachedThreshold={0.5}
-      renderItem={({ item }) => <FinanceItem {...item} />}
-      ListEmptyComponent={
-        !listLoading ? (
-          <Text style={{ fontWeight: '700', alignSelf: 'center' }}>
-            No records of income/expenses on this day!
-          </Text>
-        ) : null
-      }
-      refreshing={listLoading}
-      onRefresh={refreshFinances}
-    />
+    >
+      <FlashList
+        estimatedItemSize={100}
+        data={groups}
+        contentContainerStyle={{
+          paddingBottom: 75,
+        }}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item) => item.date}
+        onEndReachedThreshold={0.5}
+        renderItem={({ item }) => <FinanceItem {...item} />}
+        ListEmptyComponent={!listLoading ? <EmptyLabel /> : null}
+        refreshing={listLoading}
+        onScroll={() => bottomSheetRef.current?.expand()}
+        // onEndReached={() => {
+        //   handleLoadMore();
+        // }}
+        // onRefresh={refreshFinances}
+      />
+    </View>
   );
 };
 
-export default DashboardBottomSheetList;
+export default memo(DashboardBottomSheetList);

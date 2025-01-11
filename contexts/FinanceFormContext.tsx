@@ -10,14 +10,18 @@ import {
 type FinanceFormContextType = {
   financeForm: FinanceFormType;
   setField: (field: keyof FinanceFormType, value: any) => void;
+  setForm: (form: FinanceFormType) => void;
   resetFinanceForm: () => void;
   isFormValid: () => boolean;
   isFormDirty: () => boolean;
+  isFormChanged?: boolean;
 };
 
 const FinanceFormContext = createContext<FinanceFormContextType | undefined>(
   undefined
 );
+
+let isFormChanged: boolean = false;
 
 const FinanceFormInitial: FinanceFormType = {
   id: 0,
@@ -28,10 +32,16 @@ const FinanceFormInitial: FinanceFormType = {
   note: '',
   image: null,
   date: new Date().toISOString(),
+  action: 'create',
+  prevImage: null,
 };
 
 type Action =
   | { type: 'SET_FIELD'; field: keyof FinanceFormType; value: any }
+  | {
+      type: 'SET_FORM';
+      form: FinanceFormType;
+    }
   | { type: 'RESET_FORM' };
 
 const financeFormReducer = (
@@ -41,6 +51,8 @@ const financeFormReducer = (
   switch (action.type) {
     case 'SET_FIELD':
       return { ...state, [action.field]: action.value };
+    case 'SET_FORM':
+      return { ...action.form };
     case 'RESET_FORM':
       return FinanceFormInitial;
     default:
@@ -54,18 +66,26 @@ export const FinanceFormProvider = ({ children }: PropsWithChildren) => {
     FinanceFormInitial
   );
 
+  const setForm = (form: FinanceFormType) => {
+    dispatch({ type: 'SET_FORM', form });
+  };
+
   const setField = (field: keyof FinanceFormType, value: any) => {
     dispatch({ type: 'SET_FIELD', field, value });
+    if (financeForm.action === 'edit') {
+      isFormChanged = true;
+    }
   };
 
   const resetFinanceForm = () => {
     dispatch({ type: 'RESET_FORM' });
+    isFormChanged = false;
   };
 
   const isFormValid = () => {
     return (
       !!financeForm.sum &&
-      financeForm.sum > 0 &&
+      Math.abs(financeForm.sum) !== 0 &&
       financeForm.kind !== '' &&
       financeForm.note !== ''
     );
@@ -80,9 +100,11 @@ export const FinanceFormProvider = ({ children }: PropsWithChildren) => {
       value={{
         financeForm,
         setField,
+        setForm,
         resetFinanceForm,
         isFormValid,
         isFormDirty,
+        isFormChanged,
       }}
     >
       {children}

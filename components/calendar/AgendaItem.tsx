@@ -1,7 +1,8 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { FinanceItemAction } from '../shared/FinanceItem';
-import { Finances, IFinanceItemAction } from '@/types/types';
+
+import { Finances } from '@/types/types';
+import ContextFinanceItemAction from '../shared/financeItem/ContextFinanceItemAction';
 
 const AgendaItem = (item: Finances) => {
   if (!item) {
@@ -14,7 +15,7 @@ const AgendaItem = (item: Finances) => {
 
   return (
     <View style={{ paddingHorizontal: 20 }}>
-      <FinanceItemAction {...item} />
+      <ContextFinanceItemAction {...item} />
     </View>
   );
 };

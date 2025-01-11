@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { memo } from 'react';
 import { Link, useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as DropdownMenu from 'zeego/dropdown-menu';
@@ -101,7 +101,7 @@ const MainHeader = ({
   );
 };
 
-export default MainHeader;
+export default memo(MainHeader);
 
 const styles = StyleSheet.create({
   container: {

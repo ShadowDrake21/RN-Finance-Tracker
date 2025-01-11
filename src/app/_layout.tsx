@@ -1,23 +1,15 @@
-import { LogBox, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect } from 'react';
+import { LogBox, TouchableOpacity } from 'react-native';
+import React from 'react';
 import { Stack } from 'expo-router/stack';
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
 import { tokenCache } from '@/cache';
 import Toast from 'react-native-toast-message';
-import * as SQLite from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
-import migrations from '@/drizzle/migrations';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS } from '@/constants/colors';
 import * as SplashScreen from 'expo-splash-screen';
 import { FinanceFormProvider } from '@/contexts/FinanceFormContext';
 
-SplashScreen.preventAutoHideAsync();
-
-const expo = SQLite.openDatabaseSync('db.db');
-const db = drizzle(expo);
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
 SplashScreen.setOptions({
@@ -44,7 +36,6 @@ const RootLayout = () => {
         options={{ headerShown: false, animation: 'slide_from_bottom' }}
       />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="month-info/[id]" />
       <Stack.Screen
         name="notifications"
         options={{
@@ -91,27 +82,22 @@ const RootLayout = () => {
           ),
         }}
       />
+      <Stack.Screen
+        name="finance-info/[id]"
+        options={{
+          presentation: 'modal',
+          headerRight: () => (
+            <TouchableOpacity onPress={() => router.dismiss()}>
+              <Ionicons name="close" size={24} color="black" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
     </Stack>
   );
 };
 
 const RootLayoutNav = () => {
-  const { success, error } = useMigrations(db, migrations);
-
-  useEffect(() => {
-    if (success) {
-      SplashScreen.hide();
-    }
-  }, [success]);
-
-  if (error) {
-    return (
-      <View>
-        <Text>Migration error: {error.message}</Text>
-      </View>
-    );
-  }
-
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <ClerkLoaded>

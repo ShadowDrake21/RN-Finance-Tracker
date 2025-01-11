@@ -1,18 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { financeTable } from '@/db/schema';
-import { sql } from 'drizzle-orm';
-import * as SQLite from 'expo-sqlite';
-import { Finances, IFinanceGroup } from '@/types/types';
+import { IFinanceGroup } from '@/types/types';
 import { getFinancesByDate } from '@/supabase/supabase.requests';
 import { useAuth } from '@clerk/clerk-expo';
 import {
   groupFinancesByDate,
   transformFinancesFromDB,
 } from '@/utils/finance-groups.utils';
-
-const expo = SQLite.openDatabaseSync('db.db');
-const db = drizzle(expo);
+import { calcSum } from '@/utils/helpers.utils';
 
 export const useFetchFinancesByDate = (selectedDate: string) => {
   const { userId, getToken } = useAuth();
@@ -47,8 +41,31 @@ export const useFetchFinancesByDate = (selectedDate: string) => {
     setLoading(false);
   };
 
+  const getFinanceSumByDay = async ({
+    type,
+  }: {
+    type: 'expense' | 'income';
+  }) => {
+    if (!userId) return;
+    const token = await getToken({ template: 'supabase' });
+    if (!token) return;
+    setLoading(true);
+    const prices = (await getFinancesByDate({
+      userId,
+      token,
+      date: new Date(selectedDate).getTime(),
+      selection: 'price, type',
+    })) as unknown as { price: number }[];
+
+    const sum = calcSum(type, prices);
+
+    setLoading(false);
+    return sum;
+  };
+
   return {
     group,
     loading,
+    getFinanceSumByDay,
   };
 };

@@ -9,11 +9,15 @@ import {
   withTiming,
 } from 'react-native-reanimated';
 import { AnimatedTouchableOpacity } from '@/utils/animation.utils';
-import { useFinanceForm } from '@/contexts/FinanceFormContext';
 
-const SaveBtn = ({ onSave }: { onSave: () => Promise<void> }) => {
+const SaveBtn = ({
+  onSave,
+  loading,
+}: {
+  onSave: () => Promise<void>;
+  loading: boolean;
+}) => {
   const pulseValue = useSharedValue(1);
-  const { financeForm } = useFinanceForm();
 
   useEffect(() => {
     pulseValue.value = withRepeat(withTiming(1.2, { duration: 500 }), -1, true);
@@ -23,6 +27,10 @@ const SaveBtn = ({ onSave }: { onSave: () => Promise<void> }) => {
     transform: [{ scale: pulseValue.value }],
   }));
 
+  useEffect(() => {
+    console.log('loading savebtn', loading);
+  }, [loading]);
+
   return (
     <AnimatedTouchableOpacity
       style={[
@@ -31,9 +39,11 @@ const SaveBtn = ({ onSave }: { onSave: () => Promise<void> }) => {
           backgroundColor: COLORS.extraDarkPrimary,
           borderRadius: '50%',
         },
+        loading && { backgroundColor: COLORS.lightGray },
         animatedStyles,
       ]}
       onPress={() => onSave()}
+      disabled={loading}
     >
       <AntDesign name="save" size={24} color="white" />
     </AnimatedTouchableOpacity>

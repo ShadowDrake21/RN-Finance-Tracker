@@ -6,22 +6,15 @@ import {
 import { IFinanceGroup } from '@/types/types';
 import { getFinancesByMonth } from '@/supabase/supabase.requests';
 import { useAuth } from '@clerk/clerk-expo';
-
-const calcSum = (type: 'expense' | 'income', prices: { price: number }[]) =>
-  prices.reduce((acc, price) => {
-    if (type === 'expense' && price.price < 0) {
-      return acc + Math.abs(price.price);
-    } else if (type === 'income' && price.price > 0) {
-      return acc + price.price;
-    }
-    return acc;
-  }, 0);
+import { calcSum } from '@/utils/helpers.utils';
+import { useFinanceStore } from '@/store/useFinanceStore';
 
 export const useFetchFinancesByMonth = (selectedMonthId: string) => {
   const { userId, getToken } = useAuth();
   const pageRef = useRef(0);
   const [groups, setGroups] = useState<IFinanceGroup[]>([]);
   const [loading, setLoading] = useState(false);
+  const { setLoading: setStoreLoading, setFinances } = useFinanceStore();
 
   useEffect(() => {
     pageRef.current = 0;
@@ -34,6 +27,7 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
     const token = await getToken({ template: 'supabase' });
     if (!token) return;
     setLoading(true);
+    setStoreLoading(true);
     const finances = await getFinancesByMonth({
       userId,
       token,
@@ -48,7 +42,10 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
       ...groupFinancesByDate(transformedFinances, existingGroups),
     ]);
 
+    setFinances(transformedFinances);
+
     setLoading(false);
+    setStoreLoading(false);
   };
 
   const getFinanceSumByMonth = async ({
@@ -80,7 +77,7 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
 
   return {
     groups,
-    refreshFinances: fetchFinances,
+    fetchFinances,
     handleLoadMore,
     getFinanceSumByMonth,
     loading,
