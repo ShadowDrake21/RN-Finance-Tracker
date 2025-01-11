@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import { MonthScrollItem, MonthScrollListProps } from '@/types/types';
 
 const MonthScrollList = ({
@@ -68,6 +68,6 @@ const MonthScrollList = ({
   );
 };
 
-export default MonthScrollList;
+export default memo(MonthScrollList);
 
 const styles = StyleSheet.create({});

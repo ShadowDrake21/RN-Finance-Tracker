@@ -9,6 +9,8 @@ import FinanceItemAction from './FinanceItemAction';
 import AnimatedMessage from '@/components/ui/AnimatedMessage';
 
 const ContextFinanceItemAction = (item: Finances) => {
+  console.log('ContextFinanceItemAction');
+
   const router = useRouter();
   const { onDelete, loading } = useDeleteFinance({
     id: item.id,
@@ -23,6 +25,20 @@ const ContextFinanceItemAction = (item: Finances) => {
     }
   }, [loading]);
 
+  useEffect(() => {
+    console.log('loading context', loading);
+  }, [router]);
+
+  const onEditSelect = () => {
+    console.log('edit select');
+
+    if (router.canDismiss()) router.dismissAll();
+    router.push({
+      pathname: `/finance`,
+      params: { id: item.id, type: 'edit' },
+    });
+  };
+
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger>
@@ -33,18 +49,7 @@ const ContextFinanceItemAction = (item: Finances) => {
         )}
       </ContextMenu.Trigger>
       <ContextMenu.Content>
-        <ContextMenu.Item
-          key="edit"
-          onSelect={() => {
-            console.log('edit item', item.id, 'edit');
-
-            if (router.canDismiss()) router.dismissAll();
-            router.push({
-              pathname: `/finance`,
-              params: { id: item.id, type: 'edit' },
-            });
-          }}
-        >
+        <ContextMenu.Item key="edit" onSelect={onEditSelect}>
           <ContextMenu.ItemTitle>Edit</ContextMenu.ItemTitle>
           <ContextMenu.ItemIcon
             ios={{

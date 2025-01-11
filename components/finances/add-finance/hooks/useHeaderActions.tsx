@@ -1,29 +1,24 @@
-import { COLORS } from '@/constants/colors';
 import { useFinanceForm } from '@/contexts/FinanceFormContext';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useState } from 'react';
-import { View, Alert, TouchableOpacity } from 'react-native';
-import ReloadBtn from '../../ReloadBtn';
-import SaveBtn from '../../SaveBtn';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import { useCallback, useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 
 import { useAuth } from '@clerk/clerk-expo';
 import { addFinance, updateFinance } from '@/supabase/supabase.requests';
 import { useFinanceStore } from '@/store/useFinanceStore';
 
 const useHeaderActions = () => {
-  const {
-    financeForm,
-    resetFinanceForm,
-    isFormValid,
-    isFormDirty,
-    isFormChanged,
-  } = useFinanceForm();
+  console.log('useHeaderActions called');
+  const { financeForm, resetFinanceForm } = useFinanceForm();
   const router = useRouter();
   const { userId, getToken } = useAuth();
   const [loading, setLoading] = useState(false);
   const { addFinance: addFinanceToStore, updateFinance: updateFinanceInStore } =
     useFinanceStore();
+
+  useEffect(() => {
+    console.log('loading header actions', loading);
+  }, [loading]);
 
   const handleAddFinance = async () => {
     if (!userId) return;
@@ -91,51 +86,12 @@ const useHeaderActions = () => {
     ]);
   }, [router, resetFinanceForm]);
 
-  const headerRight = useCallback(
-    () => (
-      <View style={{ flexDirection: 'row', gap: 20 }}>
-        <ReloadBtn onReload={resetFinanceForm} loading={loading} />
-        {isFormValid() &&
-          (financeForm.action === 'edit' ? isFormChanged : true) && (
-            <SaveBtn
-              onSave={
-                financeForm.action === 'create'
-                  ? handleAddFinance
-                  : handleUpdateFinance
-              }
-              loading={loading}
-            />
-          )}
-      </View>
-    ),
-    [resetFinanceForm, isFormValid, loading]
-  );
-
-  const headerLeft = useCallback(
-    () => (
-      <TouchableOpacity
-        onPress={isFormDirty() ? onLeaveWithUnsavedChanges : router.back}
-        style={[
-          {
-            padding: 5,
-
-            borderRadius: '50%',
-          },
-          loading
-            ? { backgroundColor: COLORS.lightGray }
-            : { backgroundColor: COLORS.primary },
-        ]}
-        disabled={loading}
-      >
-        <AntDesign name="close" size={24} color="white" />
-      </TouchableOpacity>
-    ),
-    [isFormDirty, onLeaveWithUnsavedChanges, router, loading]
-  );
-
-  return { headerLeft, headerRight, loading };
+  return {
+    loading,
+    handleAddFinance,
+    handleUpdateFinance,
+    onLeaveWithUnsavedChanges,
+  };
 };
-
-// TODO: handle loading disablity for header buttons
 
 export default useHeaderActions;

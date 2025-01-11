@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import React, { memo, RefObject } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { IFinanceGroup } from '@/types/types';
@@ -18,6 +18,7 @@ const DashboardBottomSheetList = ({
   listLoading: boolean;
   refreshFinances: () => Promise<void>;
 }) => {
+  console.log('DashboardBottomSheetList render');
   return (
     <FlashList
       estimatedItemSize={100}
@@ -46,4 +47,4 @@ const DashboardBottomSheetList = ({
   );
 };
 
-export default DashboardBottomSheetList;
+export default memo(DashboardBottomSheetList);

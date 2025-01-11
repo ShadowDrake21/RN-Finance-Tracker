@@ -3,6 +3,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { COLORS } from '@/constants/colors';
 import { MonthScrollItem } from '@/types/types';
 import { useFinanceStore } from '@/store/useFinanceStore';
+import { memo } from 'react';
 
 type MoneyDashboardInfoProps = {
   selectedMonth: MonthScrollItem;
@@ -52,7 +53,7 @@ const MoneyDashboardInfo = ({
   );
 };
 
-export default MoneyDashboardInfo;
+export default memo(MoneyDashboardInfo);
 
 const styles = StyleSheet.create({
   container: {

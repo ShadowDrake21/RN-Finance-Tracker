@@ -1,5 +1,5 @@
 import { FlatList, ImageBackground, StyleSheet, View } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -18,12 +18,15 @@ import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
 import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
 import useFetchBalances from '@/components/dashboard/hooks/useFetchBalances';
 import { useFinanceStore } from '@/store/useFinanceStore';
+import { liniarGradientColors } from '@/constants/gradients';
 
 const INITIAL_SELECTED_MONTH_ID = new Date()
   .toLocaleString('default', { month: 'numeric', year: 'numeric' })
   .replace('/', '-');
 
 const Page = () => {
+  console.log('Dashboard render');
+
   const flatListRef = useRef<FlatList<IFinanceGroup>>(null);
   const { top } = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
@@ -36,12 +39,8 @@ const Page = () => {
   );
   const [monthsList, setMonthsList] = useState<MonthScrollItem[]>([]);
 
-  const {
-    // groups,
-    handleLoadMore,
-    refreshFinances,
-    loading,
-  } = useFetchFinancesByMonth(selectedMonthId);
+  const { handleLoadMore, refreshFinances } =
+    useFetchFinancesByMonth(selectedMonthId);
 
   const {
     expenseBalance,
@@ -50,14 +49,11 @@ const Page = () => {
     loading: loadingBalances,
   } = useFetchBalances();
 
-  const {
-    finances,
-    groups,
-    error,
-    loading: financesLoading,
-  } = useFinanceStore();
+  const { groups, loading: financesLoading } = useFinanceStore();
 
   useEffect(() => {
+    console.log('user useEffect');
+
     if (!user?.createdAt) return;
 
     const months: MonthScrollItem[] = generateMonthData(user?.createdAt);
@@ -68,10 +64,56 @@ const Page = () => {
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
   }, [selectedMonthId]);
 
-  const liniarGradientColors: string[] = [
-    'rgba(255,255,255,0.6)',
-    'rgba(0,0,0,0.4)',
-  ];
+  const renderHeader = useCallback(
+    (headerTintColor: string | undefined) => (
+      <MainHeader
+        headerTintColor={headerTintColor}
+        top={top}
+        wallet={wallet}
+        setWallet={setWallet}
+      />
+    ),
+    [top, wallet]
+  );
+
+  const renderMonthScrollList = useCallback(
+    () => (
+      <MonthScrollList
+        data={monthsList}
+        selectedId={selectedMonthId}
+        setSelectedId={setSelectedMonthId}
+      />
+    ),
+    [monthsList, selectedMonthId]
+  );
+
+  const renderMoneyDashboardInfo = useCallback(
+    () => (
+      <MoneyDashboardInfo
+        selectedMonth={
+          monthsList.find((month) => month.id === selectedMonthId)!
+        }
+        expenseBalance={expenseBalance}
+        incomeBalance={incomeBalance}
+        loading={loadingBalances}
+        formatedBalance={formatedBalance}
+      />
+    ),
+    [selectedMonthId, expenseBalance, incomeBalance, formatedBalance]
+  );
+
+  const renderDashboardBottomSheet = useCallback(
+    () => (
+      <DashboardBottomSheet
+        loading={financesLoading}
+        groups={groups}
+        refreshFinances={refreshFinances}
+        handleLoadMore={handleLoadMore}
+        bottomSheetRef={bottomSheetRef}
+      />
+    ),
+    [financesLoading, groups, refreshFinances]
+  );
 
   return (
     <View style={{ flex: 1 }}>
@@ -85,44 +127,20 @@ const Page = () => {
             options={{
               headerTransparent: true,
               headerTintColor: '#210e1b',
-              header: ({ options: { headerTintColor } }) => (
-                <MainHeader
-                  headerTintColor={headerTintColor}
-                  top={top}
-                  wallet={wallet}
-                  setWallet={setWallet}
-                />
-              ),
+              header: ({ options: { headerTintColor } }) =>
+                renderHeader(headerTintColor),
             }}
           />
           <View style={{ paddingTop: headerHeight }}>
-            <MonthScrollList
-              data={monthsList}
-              selectedId={selectedMonthId}
-              setSelectedId={setSelectedMonthId}
-            />
+            {renderMonthScrollList()}
           </View>
           {monthsList.length > 0 ? (
-            <MoneyDashboardInfo
-              selectedMonth={
-                monthsList.find((month) => month.id === selectedMonthId)!
-              }
-              expenseBalance={expenseBalance}
-              incomeBalance={incomeBalance}
-              loading={loadingBalances}
-              formatedBalance={formatedBalance}
-            />
+            renderMoneyDashboardInfo()
           ) : (
             <CustomActivityIndicator />
           )}
           <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
-            <DashboardBottomSheet
-              loading={loading}
-              groups={groups}
-              refreshFinances={refreshFinances}
-              handleLoadMore={handleLoadMore}
-              bottomSheetRef={bottomSheetRef}
-            />
+            {renderDashboardBottomSheet()}
           </GestureHandlerRootView>
         </LinearGradient>
       </ImageBackground>

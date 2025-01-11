@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import React, { RefObject } from 'react';
+import React, { memo, RefObject } from 'react';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import CustomActivityIndicator from '../ui/CustomActivityIndicator';
 import DashboardBottomSheetList from './DashboardBottomSheetList';
@@ -20,6 +20,8 @@ const DashboardBottomSheet = ({
   groups,
   bottomSheetRef,
 }: DashboardBottomSheetProps) => {
+  console.log('DashboardBottomSheet render');
+
   return (
     <BottomSheet
       ref={bottomSheetRef}
@@ -51,7 +53,7 @@ const DashboardBottomSheet = ({
   );
 };
 
-export default DashboardBottomSheet;
+export default memo(DashboardBottomSheet);
 
 const styles = StyleSheet.create({
   container: {
