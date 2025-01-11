@@ -14,16 +14,11 @@ const HeaderRight = ({
   updateFinance: () => Promise<void>;
   loading: boolean;
 }) => {
-  // const { loading, handleAddFinance, handleUpdateFinance } = useHeaderActions();
   const { isFormChanged, isFormValid, resetFinanceForm, financeForm } =
     useFinanceForm();
 
-  useEffect(() => {
-    console.log('header right loading', loading);
-  }, [loading]);
-
   return (
-    <View style={{ flexDirection: 'row', gap: 20 }}>
+    <View style={styles.container}>
       <ReloadBtn onReload={resetFinanceForm} loading={loading} />
       {isFormValid() &&
         (financeForm.action === 'edit' ? isFormChanged : true) && (
@@ -40,4 +35,6 @@ const HeaderRight = ({
 
 export default HeaderRight;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: { flexDirection: 'row', gap: 20 },
+});

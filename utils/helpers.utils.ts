@@ -44,3 +44,7 @@ export const generateRandomColor = (): string => {
 
   return `#${randomColor.toString(16).padStart(6, '0')}`;
 };
+
+export const INITIAL_SELECTED_MONTH_ID = new Date()
+  .toLocaleString('default', { month: 'numeric', year: 'numeric' })
+  .replace('/', '-');

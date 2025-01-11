@@ -1,18 +1,7 @@
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useOAuth } from '@clerk/clerk-expo';
-import { useRouter } from 'expo-router';
-import { callToast } from '@/utils/toasts.utils';
 import { useSocialAuth } from '@/hooks/auth.hook';
-import { COLORS } from '@/constants/colors';
 
 type SocialButtonProps = {
   type: 'google' | 'apple';

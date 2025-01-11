@@ -7,6 +7,7 @@ import { useAuth } from '@clerk/clerk-expo';
 import { addFinance, updateFinance } from '@/supabase/supabase.requests';
 import { useFinanceStore } from '@/store/useFinanceStore';
 
+// TODO: remove re-renderin on every change in the form
 const useHeaderActions = () => {
   console.log('useHeaderActions called');
   const { financeForm, resetFinanceForm } = useFinanceForm();

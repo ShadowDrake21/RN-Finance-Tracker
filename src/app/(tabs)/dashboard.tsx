@@ -20,10 +20,6 @@ import useFetchBalances from '@/components/dashboard/hooks/useFetchBalances';
 import { useFinanceStore } from '@/store/useFinanceStore';
 import { liniarGradientColors } from '@/constants/gradients';
 
-const INITIAL_SELECTED_MONTH_ID = new Date()
-  .toLocaleString('default', { month: 'numeric', year: 'numeric' })
-  .replace('/', '-');
-
 const Page = () => {
   console.log('Dashboard render');
 
@@ -34,13 +30,9 @@ const Page = () => {
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [wallet, setWallet] = useState('Wallet 1');
-  const [selectedMonthId, setSelectedMonthId] = useState(
-    INITIAL_SELECTED_MONTH_ID
-  );
   const [monthsList, setMonthsList] = useState<MonthScrollItem[]>([]);
-
-  const { handleLoadMore, refreshFinances } =
-    useFetchFinancesByMonth(selectedMonthId);
+  const { monthId, groups, loading: financesLoading } = useFinanceStore();
+  const { handleLoadMore, refreshFinances } = useFetchFinancesByMonth(monthId);
 
   const {
     expenseBalance,
@@ -49,20 +41,15 @@ const Page = () => {
     loading: loadingBalances,
   } = useFetchBalances();
 
-  const { groups, loading: financesLoading } = useFinanceStore();
-
   useEffect(() => {
-    console.log('user useEffect');
-
     if (!user?.createdAt) return;
-
     const months: MonthScrollItem[] = generateMonthData(user?.createdAt);
     setMonthsList(months);
   }, [user]);
 
   useEffect(() => {
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-  }, [selectedMonthId]);
+  }, [monthId]);
 
   const renderHeader = useCallback(
     (headerTintColor: string | undefined) => (
@@ -77,29 +64,20 @@ const Page = () => {
   );
 
   const renderMonthScrollList = useCallback(
-    () => (
-      <MonthScrollList
-        data={monthsList}
-        selectedId={selectedMonthId}
-        setSelectedId={setSelectedMonthId}
-      />
-    ),
-    [monthsList, selectedMonthId]
+    () => <MonthScrollList data={monthsList} />,
+    [monthsList, monthId]
   );
 
   const renderMoneyDashboardInfo = useCallback(
     () => (
       <MoneyDashboardInfo
-        selectedMonth={
-          monthsList.find((month) => month.id === selectedMonthId)!
-        }
+        selectedMonth={monthsList.find((month) => month.id === monthId)!}
         expenseBalance={expenseBalance}
         incomeBalance={incomeBalance}
-        loading={loadingBalances}
         formatedBalance={formatedBalance}
       />
     ),
-    [selectedMonthId, expenseBalance, incomeBalance, formatedBalance]
+    [monthId, expenseBalance, incomeBalance, formatedBalance]
   );
 
   const renderDashboardBottomSheet = useCallback(
@@ -132,7 +110,7 @@ const Page = () => {
             }}
           />
           <View style={{ paddingTop: headerHeight }}>
-            {renderMonthScrollList()}
+            {monthsList.length > 0 && renderMonthScrollList()}
           </View>
           {monthsList.length > 0 ? (
             renderMoneyDashboardInfo()

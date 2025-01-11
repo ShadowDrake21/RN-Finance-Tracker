@@ -1,31 +1,23 @@
-import {
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { FlatList } from 'react-native';
 import React, { memo, useEffect } from 'react';
 import { MonthScrollItem, MonthScrollListProps } from '@/types/types';
+import { useFinanceStore } from '@/store/useFinanceStore';
+import MonthScrollListItem from './MonthScrollListItem';
 
-const MonthScrollList = ({
-  data,
-  selectedId,
-  setSelectedId,
-}: MonthScrollListProps) => {
+const MonthScrollList = ({ data }: MonthScrollListProps) => {
   const flatListRef = React.useRef<FlatList<MonthScrollItem>>(null);
+  const { monthId } = useFinanceStore();
 
   useEffect(() => {
     const index = data.findIndex(
-      (month) => month.id.toLowerCase() === selectedId.toLowerCase()
+      (month) => month.id.toLowerCase() === monthId.toLowerCase()
     );
     if (index !== -1 && flatListRef.current) {
       setTimeout(() => {
         flatListRef.current?.scrollToIndex({ index, animated: true });
       }, 1000);
     }
-  }, [selectedId, data]);
+  }, [monthId, data]);
 
   return (
     <FlatList
@@ -38,36 +30,9 @@ const MonthScrollList = ({
         console.warn('Scroll to index failed', info);
       }}
       contentContainerStyle={{ paddingHorizontal: 20 }}
-      renderItem={({ item: { id, text } }) => (
-        <Pressable
-          style={[
-            id.toLowerCase() === selectedId.toLowerCase()
-              ? { backgroundColor: '#2c8f8b' }
-              : {},
-            {
-              paddingHorizontal: 15,
-              paddingVertical: 10,
-              borderRadius: 20,
-            },
-          ]}
-          onPress={() => setSelectedId(id)}
-        >
-          <Text
-            style={[
-              id.toLowerCase() === selectedId.toLowerCase() && {
-                color: '#fff',
-              },
-              { fontWeight: '600' },
-            ]}
-          >
-            {text.toUpperCase()}
-          </Text>
-        </Pressable>
-      )}
+      renderItem={({ item }) => <MonthScrollListItem {...item} />}
     />
   );
 };
 
 export default memo(MonthScrollList);
-
-const styles = StyleSheet.create({});

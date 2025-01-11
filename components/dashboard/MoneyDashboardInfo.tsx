@@ -9,7 +9,6 @@ type MoneyDashboardInfoProps = {
   selectedMonth: MonthScrollItem;
   expenseBalance: number;
   incomeBalance: number;
-  loading: boolean;
   formatedBalance: string;
 };
 
@@ -17,34 +16,33 @@ const MoneyDashboardInfo = ({
   selectedMonth,
   expenseBalance,
   incomeBalance,
-  loading,
   formatedBalance,
 }: MoneyDashboardInfoProps) => {
-  const { loading: storeLoading } = useFinanceStore();
+  const { loading } = useFinanceStore();
 
   return (
     <View style={styles.container}>
       <Text style={styles.mainTitle}>Month balance</Text>
       <Text style={styles.mainBalance}>
-        {storeLoading ? 'Loading...' : formatedBalance}
+        {loading ? 'Loading...' : formatedBalance}
       </Text>
 
       <View>
         <Text style={styles.secondaryTitle}>{`${
-          storeLoading ? 'Loading...' : `In ${selectedMonth.text}`
+          loading ? 'Loading...' : `In ${selectedMonth.text}`
         }:`}</Text>
         <View style={styles.secondaryContainer}>
           <View style={styles.secondaryBalanceWrapper}>
             <AntDesign name="arrowup" size={24} color="black" />
 
             <Text style={styles.secondaryBalance}>
-              {storeLoading ? 'Loading...' : `${incomeBalance.toFixed(2)} zł`}
+              {loading ? 'Loading...' : `${incomeBalance.toFixed(2)} zł`}
             </Text>
           </View>
           <View style={styles.secondaryBalanceWrapper}>
             <AntDesign name="arrowdown" size={24} color="black" />
             <Text style={styles.secondaryBalance}>
-              {storeLoading ? 'Loading...' : `${expenseBalance.toFixed(2)} zł`}
+              {loading ? 'Loading...' : `${expenseBalance.toFixed(2)} zł`}
             </Text>
           </View>
         </View>

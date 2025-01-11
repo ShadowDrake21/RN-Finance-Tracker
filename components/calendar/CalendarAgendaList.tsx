@@ -1,7 +1,6 @@
 import { StyleSheet, Text } from 'react-native';
 import React, { useCallback } from 'react';
 
-import { financeTable } from '@/db/schema';
 import { formatCurrency } from 'react-native-format-currency';
 import { COLORS } from '@/constants/colors';
 import { AgendaList } from 'react-native-calendars';

@@ -28,8 +28,6 @@ export type MonthScrollItem = {
 
 export type MonthScrollListProps = {
   data: MonthScrollItem[];
-  selectedId: string;
-  setSelectedId: (month: string) => void;
 };
 
 export interface IFinanceGroup {

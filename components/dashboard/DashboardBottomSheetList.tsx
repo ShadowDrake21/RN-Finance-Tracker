@@ -3,7 +3,8 @@ import { FlashList } from '@shopify/flash-list';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { IFinanceGroup } from '@/types/types';
 import FinanceItem from '../shared/FinanceItem';
-import { Text } from 'react-native';
+
+import DashboarBottomSheetListEmpty from './DashboardBottomSheetListEmpty';
 
 const DashboardBottomSheetList = ({
   bottomSheetRef,
@@ -18,7 +19,6 @@ const DashboardBottomSheetList = ({
   listLoading: boolean;
   refreshFinances: () => Promise<void>;
 }) => {
-  console.log('DashboardBottomSheetList render');
   return (
     <FlashList
       estimatedItemSize={100}
@@ -34,11 +34,7 @@ const DashboardBottomSheetList = ({
       onEndReachedThreshold={0.5}
       renderItem={({ item }) => <FinanceItem {...item} />}
       ListEmptyComponent={
-        !listLoading ? (
-          <Text style={{ fontWeight: '700', alignSelf: 'center' }}>
-            No records of income/expenses on this day!
-          </Text>
-        ) : null
+        !listLoading ? <DashboarBottomSheetListEmpty /> : null
       }
       refreshing={listLoading}
       // onRefresh={refreshFinances}
