@@ -17,6 +17,7 @@ import useFetchBalances from '@/components/dashboard/hooks/useFetchBalances';
 import { useFinanceStore } from '@/store/useFinanceStore';
 import { liniarGradientColors } from '@/constants/gradients';
 import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
+import ScreenWrapper from '@/components/shared/ScreenWrapper';
 
 const Page = () => {
   const flatListRef = useRef<FlatList<IFinanceGroup>>(null);
@@ -25,9 +26,13 @@ const Page = () => {
   const { user } = useUser();
   const [wallet, setWallet] = useState('Wallet 1');
   const [monthsList, setMonthsList] = useState<MonthScrollItem[]>([]);
-  const { monthId } = useFinanceStore();
+  const { monthId, groups } = useFinanceStore();
   const { expenseBalance, incomeBalance, formatedBalance } = useFetchBalances();
   const { loading } = useFetchFinancesByMonth(monthId);
+
+  useEffect(() => {
+    console.log('groups', groups);
+  }, [groups]);
 
   useEffect(() => {
     if (!user?.createdAt) return;
@@ -69,36 +74,28 @@ const Page = () => {
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <ImageBackground
-        blurRadius={10}
-        source={require('@/assets/images/dashboard-bg.png')}
-        style={{ flex: 1 }}
-      >
-        <LinearGradient colors={liniarGradientColors} style={{ flex: 1 }}>
-          <Tabs.Screen
-            options={{
-              headerTransparent: true,
-              headerTintColor: '#210e1b',
-              header: ({ options: { headerTintColor } }) =>
-                renderHeader(headerTintColor),
-            }}
-          />
-          <View style={{ paddingTop: headerHeight }}>
-            {monthsList.length > 0 && renderMonthScrollList()}
-          </View>
-          {monthsList.length > 0 ? (
-            renderMoneyDashboardInfo()
-          ) : (
-            <CustomActivityIndicator />
-          )}
-          <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
-            {loading && <CustomActivityIndicator />}
-            <DashboardBottomSheet />
-          </GestureHandlerRootView>
-        </LinearGradient>
-      </ImageBackground>
-    </View>
+    <ScreenWrapper>
+      <Tabs.Screen
+        options={{
+          headerTransparent: true,
+          headerTintColor: '#210e1b',
+          header: ({ options: { headerTintColor } }) =>
+            renderHeader(headerTintColor),
+        }}
+      />
+      <View style={{ paddingTop: headerHeight }}>
+        {monthsList.length > 0 && renderMonthScrollList()}
+      </View>
+      {monthsList.length > 0 ? (
+        renderMoneyDashboardInfo()
+      ) : (
+        <CustomActivityIndicator />
+      )}
+      <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
+        {loading && <CustomActivityIndicator />}
+        <DashboardBottomSheet />
+      </GestureHandlerRootView>
+    </ScreenWrapper>
   );
 };
 

@@ -1,11 +1,10 @@
-import React, { memo, RefObject } from 'react';
+import React, { memo, RefObject, useEffect } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { IFinanceGroup } from '@/types/types';
 import FinanceItem from '../shared/FinanceItem';
-
 import EmptyLabel from '../ui/EmptyLabel';
-import { View } from 'react-native';
+import GeneralBottomSheetList from '../shared/GeneralBottomSheetList';
 
 const DashboardBottomSheetList = ({
   bottomSheetRef,
@@ -20,12 +19,11 @@ const DashboardBottomSheetList = ({
   // handleLoadMore: () => void;
   // refreshFinances: () => Promise<void>;
 }) => {
+  useEffect(() => {
+    console.log('bottomSheetRef', bottomSheetRef.current);
+  }, [bottomSheetRef]);
   return (
-    <View
-      style={{
-        flex: 1,
-      }}
-    >
+    <GeneralBottomSheetList>
       <FlashList
         estimatedItemSize={100}
         data={groups}
@@ -38,13 +36,17 @@ const DashboardBottomSheetList = ({
         renderItem={({ item }) => <FinanceItem {...item} />}
         ListEmptyComponent={!listLoading ? <EmptyLabel /> : null}
         refreshing={listLoading}
-        onScroll={() => bottomSheetRef.current?.expand()}
+        onScroll={() => {
+          console.log('scrolling', bottomSheetRef.current);
+
+          bottomSheetRef.current?.expand();
+        }}
         // onEndReached={() => {
         //   handleLoadMore();
         // }}
         // onRefresh={refreshFinances}
       />
-    </View>
+    </GeneralBottomSheetList>
   );
 };
 

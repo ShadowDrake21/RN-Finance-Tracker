@@ -34,6 +34,12 @@ export const useFinanceStore = create<FinanceStore>((set) => ({
     }),
   addFinance: (finance: Finances) => {
     set((state) => {
+      const financeDate = new Date(finance.date)
+        .toLocaleDateString('default', { month: 'numeric', year: 'numeric' })
+        .replace('/', '-');
+      if (state.monthId !== financeDate) {
+        return state;
+      }
       return {
         finances: [...state.finances, finance],
         groups: [...groupFinancesByDate([...state.finances, finance], [])],
