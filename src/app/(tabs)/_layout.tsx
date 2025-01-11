@@ -1,11 +1,4 @@
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { Redirect, Tabs, useRouter } from 'expo-router';
 import { useAuth } from '@clerk/clerk-expo';
@@ -17,17 +10,14 @@ import CreateTabBar from '@/components/ui/CreateTabBar';
 import { BlurView } from 'expo-blur';
 
 import { DefaultTheme } from '@react-navigation/native';
+import Loader from '@/components/shared/Loader';
 
 const Layout = () => {
   const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
 
   if (!isLoaded) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
+    return <Loader />;
   }
 
   if (!isSignedIn) {
@@ -91,7 +81,6 @@ const Layout = () => {
               <CreateTabBar />
             </Pressable>
           ),
-          // tabBarIcon: ({ focused }) => <CreateTabBar isActive={focused} />,
           tabBarIconStyle: { top: '25%' },
           tabBarStyle: { display: 'none' },
           headerLeft: () => (

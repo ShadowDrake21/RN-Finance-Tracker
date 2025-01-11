@@ -1,26 +1,11 @@
-import { StyleSheet, View } from 'react-native';
-import React, { memo, RefObject } from 'react';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import CustomActivityIndicator from '../ui/CustomActivityIndicator';
-import DashboardBottomSheetList from './DashboardBottomSheetList';
+import { StyleSheet } from 'react-native';
+import React, { memo, RefObject, useRef } from 'react';
+import BottomSheet from '@gorhom/bottom-sheet';
 import { IFinanceGroup } from '@/types/types';
+import DashboardBottomSheetView from './DashboardBottomSheetView';
 
-type DashboardBottomSheetProps = {
-  loading: boolean;
-  refreshFinances: () => Promise<void>;
-  handleLoadMore: () => void;
-  groups: IFinanceGroup[];
-  bottomSheetRef: RefObject<BottomSheet>;
-};
-
-const DashboardBottomSheet = ({
-  loading,
-  refreshFinances,
-  handleLoadMore,
-  groups,
-  bottomSheetRef,
-}: DashboardBottomSheetProps) => {
-  console.log('DashboardBottomSheet render');
+const DashboardBottomSheet = () => {
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   return (
     <BottomSheet
@@ -32,23 +17,7 @@ const DashboardBottomSheet = ({
       style={styles.container}
       enableDynamicSizing={false}
     >
-      <BottomSheetView style={styles.contentContainer}>
-        <View style={{ flex: 1, width: '100%' }}>
-          {loading && (
-            <CustomActivityIndicator
-              size="large"
-              style={{ marginVertical: 20 }}
-            />
-          )}
-          <DashboardBottomSheetList
-            bottomSheetRef={bottomSheetRef}
-            groups={groups}
-            refreshFinances={refreshFinances}
-            handleLoadMore={handleLoadMore}
-            listLoading={loading}
-          />
-        </View>
-      </BottomSheetView>
+      <DashboardBottomSheetView bottomSheetRef={bottomSheetRef} />
     </BottomSheet>
   );
 };

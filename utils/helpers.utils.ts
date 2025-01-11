@@ -1,3 +1,4 @@
+import { Finances } from '@/types/types';
 import { Alert } from 'react-native';
 
 type CustomAlertProps = {
@@ -38,6 +39,15 @@ export const calcSum = (
     }
     return acc;
   }, 0);
+
+export const calculateBalance = (
+  finances: Finances[],
+  type: 'income' | 'expense'
+) => {
+  return finances
+    .filter((finance) => finance.type === type)
+    .reduce((acc, finance) => acc + finance.price, 0);
+};
 
 export const generateRandomColor = (): string => {
   const randomColor = Math.floor(Math.random() * 0xffffff);

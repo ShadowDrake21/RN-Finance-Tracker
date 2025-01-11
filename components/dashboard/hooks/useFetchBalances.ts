@@ -1,4 +1,5 @@
 import { useFinanceStore } from '@/store/useFinanceStore';
+import { calculateBalance } from '@/utils/helpers.utils';
 import { useEffect, useState } from 'react';
 import { formatCurrency } from 'react-native-format-currency';
 
@@ -12,13 +13,8 @@ const useFetchBalances = () => {
 
   useEffect(() => {
     setLoading(true);
-    const calculatedIncomeBalance = finances
-      .filter((finance) => finance.type === 'income')
-      .reduce((acc, finance) => acc + finance.price, 0);
-
-    const calculatedExpenseBalance = finances
-      .filter((finance) => finance.type === 'expense')
-      .reduce((acc, finance) => acc + finance.price, 0);
+    const calculatedIncomeBalance = calculateBalance(finances, 'income');
+    const calculatedExpenseBalance = calculateBalance(finances, 'expense');
 
     const [valueFormattedWithSymbol] = formatCurrency({
       amount: +(calculatedIncomeBalance + calculatedExpenseBalance).toFixed(2),

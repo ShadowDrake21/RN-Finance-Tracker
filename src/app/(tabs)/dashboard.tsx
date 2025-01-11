@@ -7,39 +7,27 @@ import MainHeader from '@/components/shared/MainHeader';
 import MonthScrollList from '@/components/dashboard/MonthScrollList';
 import LinearGradient from 'react-native-linear-gradient';
 import MoneyDashboardInfo from '@/components/dashboard/MoneyDashboardInfo';
-
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import BottomSheet from '@gorhom/bottom-sheet';
 import { IFinanceGroup, MonthScrollItem } from '@/types/types';
 import DashboardBottomSheet from '@/components/dashboard/DashboardBottomSheet';
 import { useUser } from '@clerk/clerk-expo';
 import { generateMonthData } from '@/utils/date.utils';
-import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
 import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
 import useFetchBalances from '@/components/dashboard/hooks/useFetchBalances';
 import { useFinanceStore } from '@/store/useFinanceStore';
 import { liniarGradientColors } from '@/constants/gradients';
+import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
 
 const Page = () => {
-  console.log('Dashboard render');
-
   const flatListRef = useRef<FlatList<IFinanceGroup>>(null);
   const { top } = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const { user } = useUser();
-
-  const bottomSheetRef = useRef<BottomSheet>(null);
   const [wallet, setWallet] = useState('Wallet 1');
   const [monthsList, setMonthsList] = useState<MonthScrollItem[]>([]);
-  const { monthId, groups, loading: financesLoading } = useFinanceStore();
-  const { handleLoadMore, refreshFinances } = useFetchFinancesByMonth(monthId);
-
-  const {
-    expenseBalance,
-    incomeBalance,
-    formatedBalance,
-    loading: loadingBalances,
-  } = useFetchBalances();
+  const { monthId } = useFinanceStore();
+  const { expenseBalance, incomeBalance, formatedBalance } = useFetchBalances();
+  const { loading } = useFetchFinancesByMonth(monthId);
 
   useEffect(() => {
     if (!user?.createdAt) return;
@@ -80,19 +68,6 @@ const Page = () => {
     [monthId, expenseBalance, incomeBalance, formatedBalance]
   );
 
-  const renderDashboardBottomSheet = useCallback(
-    () => (
-      <DashboardBottomSheet
-        loading={financesLoading}
-        groups={groups}
-        refreshFinances={refreshFinances}
-        handleLoadMore={handleLoadMore}
-        bottomSheetRef={bottomSheetRef}
-      />
-    ),
-    [financesLoading, groups, refreshFinances]
-  );
-
   return (
     <View style={{ flex: 1 }}>
       <ImageBackground
@@ -118,7 +93,8 @@ const Page = () => {
             <CustomActivityIndicator />
           )}
           <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
-            {renderDashboardBottomSheet()}
+            {loading && <CustomActivityIndicator />}
+            <DashboardBottomSheet />
           </GestureHandlerRootView>
         </LinearGradient>
       </ImageBackground>

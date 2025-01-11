@@ -1,16 +1,13 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import {
-  CalendarProvider,
-  ExpandableCalendar,
-  WeekCalendar,
-} from 'react-native-calendars';
+import { CalendarProvider } from 'react-native-calendars';
 import { Stack } from 'expo-router';
 import CustomSwitch from '@/components/ui/CustomSwitch';
 import { useFetchFinancesByDate } from '@/hooks/fetch-finances-by-date.hook';
 import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
-import CalendarAgendaList from '@/components/calendar/CalendarAgendaList';
 import { useUser } from '@clerk/clerk-expo';
+import CalendarView from '@/components/calendar/CalendarView';
+import CalendarList from '@/components/calendar/CalendarList';
 
 const Page = () => {
   const { user } = useUser();
@@ -45,25 +42,11 @@ const Page = () => {
         showTodayButton
         style={styles.calendarProvider}
       >
-        {weekView ? (
-          <WeekCalendar firstDay={1} allowShadow={false} minDate={minDate} />
-        ) : (
-          <ExpandableCalendar allowShadow={false} minDate={minDate} />
-        )}
+        <CalendarView weekView={weekView} minDate={minDate} />
         {loading ? (
           <CustomActivityIndicator size="large" style={{ marginTop: 20 }} />
         ) : (
-          <>
-            {group?.items.length! > 0 ? (
-              <CalendarAgendaList items={group?.items!} total={group?.total!} />
-            ) : (
-              <View style={{ paddingTop: 50 }}>
-                <Text style={styles.emptyText}>
-                  No records of income/expenses on this day!
-                </Text>
-              </View>
-            )}
-          </>
+          <CalendarList group={group} />
         )}
       </CalendarProvider>
     </View>

@@ -77,7 +77,7 @@ export const useFetchFinancesByMonth = (selectedMonthId: string) => {
 
   return {
     groups,
-    refreshFinances: fetchFinances,
+    fetchFinances,
     handleLoadMore,
     getFinanceSumByMonth,
     loading,

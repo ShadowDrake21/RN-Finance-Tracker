@@ -15,8 +15,6 @@ type FinanceLocalParams = {
 };
 
 const Page = () => {
-  console.log('finance page');
-
   const { financeForm, setField, setForm } = useFinanceForm();
   const {
     loading,
