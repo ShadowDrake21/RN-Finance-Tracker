@@ -104,4 +104,5 @@ export type PieChartData = {
   color: string;
   label: string;
   currency: string;
+  type?: 'expense' | 'income';
 };
