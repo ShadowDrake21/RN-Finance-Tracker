@@ -12,7 +12,8 @@ import {
   getFinanceSumByYear,
 } from '@/supabase/supabase.requests';
 import { useAuth } from '@clerk/clerk-expo';
-import { Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ChartsBottomSheetList = ({
   bottomSheetRef,
@@ -27,10 +28,11 @@ const ChartsBottomSheetList = ({
   // handleLoadMore: () => void;
   // refreshFinances: () => Promise<void>;
 }) => {
+  const { top, bottom } = useSafeAreaInsets();
   const { userId, getToken } = useAuth();
   const [monthsData, setMonthsData] = useState<Record<
     string,
-    (PieChartData & { type: 'income' | 'expense' })[]
+    { income: PieChartData[]; expense: PieChartData[] }
   > | null>(null);
   const [yearData, setYearData] = useState<PieChartData[]>([]);
 
@@ -48,7 +50,10 @@ const ChartsBottomSheetList = ({
     if (!token || !userId) return;
 
     const monthsDataPromises = monthsIds.map(async (monthId) => {
-      const monthData = [];
+      const monthData: { income: PieChartData[]; expense: PieChartData[] } = {
+        income: [],
+        expense: [],
+      };
       for (const type of ['income', 'expense'] as const) {
         const yearPrice = await getFinanceSumByYear({
           type,
@@ -75,7 +80,7 @@ const ChartsBottomSheetList = ({
           },
         }).map((data) => ({ ...data, type }));
 
-        monthData.push(...monthInfo);
+        monthData[type].push(...monthInfo);
       }
       return { monthId, data: monthData };
     });
@@ -90,7 +95,7 @@ const ChartsBottomSheetList = ({
           acc[monthId] = data;
         }
         return acc;
-      }, {} as Record<string, (PieChartData & { type: 'income' | 'expense' })[]>);
+      }, {} as Record<string, { income: PieChartData[]; expense: PieChartData[] }>);
 
       return { ...prev, ...newMonthsData };
     });
@@ -120,15 +125,93 @@ const ChartsBottomSheetList = ({
         // }}
         // onRefresh={refreshFinances}
       /> */}
-      {monthsData &&
-        Object.entries(monthsData).map(([monthId, data]) => (
-          <View key={monthId} style={{ flex: 1 }}>
-            <Text numberOfLines={1}>{monthId}</Text>
-            <CustomPolarChart data={data} />
-          </View>
-        ))}
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        <View style={{ paddingBottom: bottom + 20 }}>
+          {monthsData &&
+            Object.entries(monthsData).map(([monthId, data]) => (
+              <View key={monthId} style={styles.chartContainer}>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    fontSize: 20,
+                    fontWeight: '700',
+                    textAlign: 'center',
+                  }}
+                >
+                  {new Date(
+                    new Date().setFullYear(
+                      year,
+                      parseInt(monthId.split('-')[0]) - 1
+                    )
+                  ).toLocaleString('default', {
+                    month: 'long',
+                    year: 'numeric',
+                  })}
+                </Text>
+                <View style={{ flex: 1, flexDirection: 'row' }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      aspectRatio: 1,
+                      justifyContent: 'flex-start',
+                      gap: 10,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: '500',
+                        textAlign: 'center',
+                      }}
+                    >
+                      Income
+                    </Text>
+                    <CustomPolarChart
+                      data={data.income}
+                      style={{ width: 180, height: 180 }}
+                      isValueVisible={false}
+                      noValueLabel=""
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      aspectRatio: 1,
+                      justifyContent: 'flex-start',
+                      gap: 10,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: '500',
+                        textAlign: 'center',
+                      }}
+                    >
+                      Expense
+                    </Text>
+                    <CustomPolarChart
+                      data={data.expense}
+                      style={{ width: 180, height: 180 }}
+                      isValueVisible={false}
+                      noValueLabel=""
+                    />
+                  </View>
+                </View>
+              </View>
+            ))}
+        </View>
+      </ScrollView>
     </GeneralBottomSheetList>
   );
 };
 
 export default ChartsBottomSheetList;
+
+const styles = StyleSheet.create({
+  chartContainer: {
+    flex: 1,
+    marginBottom: 16,
+    gap: 20,
+  },
+});

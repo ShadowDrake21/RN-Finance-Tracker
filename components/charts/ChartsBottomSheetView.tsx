@@ -42,18 +42,34 @@ const ChartsBottomSheetView = ({
       console.log('months', months);
 
       setMonthsIds(months);
+    } else if (new Date().getFullYear() === year) {
+      const currentMonth = new Date().getMonth();
+      console.log('currentMonth', currentMonth);
+      const months = Array.from({ length: currentMonth + 1 }, (_, i) => {
+        return new Date(new Date().setMonth(i))
+          .toLocaleString('default', { month: 'numeric', year: 'numeric' })
+          .replace('/', '-');
+      });
+
+      console.log('months', months);
+
+      setMonthsIds(months);
     }
   };
 
   useEffect(() => {
     getMonths();
+
+    return () => {
+      setMonthsIds([]);
+    };
   }, [user]);
 
   return (
     <GeneralBottomSheetView>
-      (
+      {/* (
       <CustomActivityIndicator size="large" style={{ marginVertical: 20 }} />
-      )
+      ) */}
       <ChartsBottomSheetList
         bottomSheetRef={bottomSheetRef}
         monthsIds={monthsIds}
