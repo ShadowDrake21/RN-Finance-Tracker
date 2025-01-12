@@ -5,6 +5,9 @@ import { useUser } from '@clerk/clerk-expo';
 import ScreenWrapper from '@/components/shared/ScreenWrapper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
+import ChartsBottomSheet from '@/components/charts/ChartsBottomSheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import ChartsItem from '@/components/charts/ChartsItem';
 
 const Page = () => {
   const { user } = useUser();
@@ -42,8 +45,19 @@ const Page = () => {
           headerTitleStyle: { fontWeight: '800', fontSize: 18 },
         }}
       />
-      <View style={[{ paddingTop: headerHeight + 10, flex: 1 }]}>
-        <Text>something</Text>
+      <View
+        style={[
+          { paddingTop: headerHeight + 10, flex: 1, paddingHorizontal: 20 },
+        ]}
+      >
+        {/* <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
+          <ChartsBottomSheet />
+        </GestureHandlerRootView> */}
+        <View style={{ flex: 1, gap: 20 }}>
+          {years.map((year) => (
+            <ChartsItem key={year} year={year} />
+          ))}
+        </View>
       </View>
     </ScreenWrapper>
   );

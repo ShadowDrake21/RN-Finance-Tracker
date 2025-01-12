@@ -16,6 +16,8 @@ const GeneralBottomSheet = ({
   containerStyle = {},
   pointIndex = 1,
 }: PropsWithChildren & GeneralBottomSheetProps) => {
+  console.log('pointIndex', pointIndex);
+
   return (
     <BottomSheet
       ref={bottomSheetRef}

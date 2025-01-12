@@ -55,6 +55,42 @@ export const getFinancesByMonth = async ({
   return finances;
 };
 
+export const getFinancesByYear = async ({
+  userId,
+  token,
+  year,
+  selection = '*',
+  offset,
+  limit,
+}: {
+  userId: string;
+  token: string;
+  year: number;
+  selection?: string;
+  offset?: number;
+  limit?: number;
+}) => {
+  const supabase = await supabaseClient(token);
+  // const [month, year] = selectedMonthId.split('-');
+  const startDate = new Date(Number(year), 0, 1).getTime();
+  const endDate = new Date(Number(year) + 1, 0, 1).getTime() - 1;
+
+  const { data: finances, error } = await supabase
+    .from('finances')
+    .select(selection)
+    .eq('user_id', userId)
+    .gte('date', startDate)
+    .lte('date', endDate);
+  // .range(offset, offset + limit - 1);
+
+  if (error) {
+    console.error('Error fetching finances:', error);
+    return [];
+  }
+
+  return finances;
+};
+
 export const getFinancesByDate = async ({
   userId,
   token,
@@ -304,4 +340,27 @@ export const getFinanceSumByMonth = async ({
   return calcSum(type, prices);
 };
 
-// TODO: delete and check if updating works
+export const getFinanceSumByYear = async ({
+  token,
+  userId,
+  type,
+  year,
+}: {
+  token: string;
+  userId: string;
+  type: 'expense' | 'income';
+  year: number;
+}) => {
+  const prices = (await getFinancesByYear({
+    userId,
+    token,
+    year,
+    selection: 'price, type',
+  })) as unknown as { price: number }[];
+
+  const sumForYear = calcSum(type, prices);
+
+  console.log('sumForYear', sumForYear);
+
+  return sumForYear;
+};
