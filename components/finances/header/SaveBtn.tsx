@@ -27,10 +27,6 @@ const SaveBtn = ({
     transform: [{ scale: pulseValue.value }],
   }));
 
-  useEffect(() => {
-    console.log('loading savebtn', loading);
-  }, [loading]);
-
   return (
     <AnimatedTouchableOpacity
       style={[

@@ -17,10 +17,6 @@ const HeaderLeft = ({
   // const { loading, onLeaveWithUnsavedChanges } = useHeaderActions();
   const { isFormDirty } = useFinanceForm();
 
-  useEffect(() => {
-    console.log('header left loading', loading);
-  }, [loading]);
-
   return (
     <TouchableOpacity
       onPress={isFormDirty() ? leaveWithUnsavedChanges : router.back}

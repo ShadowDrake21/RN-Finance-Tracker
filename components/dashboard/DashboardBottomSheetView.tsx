@@ -1,5 +1,4 @@
-import { StyleSheet } from 'react-native';
-import React, { RefObject, useEffect } from 'react';
+import React, { RefObject } from 'react';
 import CustomActivityIndicator from '../ui/CustomActivityIndicator';
 import DashboardBottomSheetList from './DashboardBottomSheetList';
 import { useFinanceStore } from '@/store/useFinanceStore';
@@ -12,10 +11,6 @@ const DashboardBottomSheetView = ({
   bottomSheetRef: RefObject<BottomSheetMethods>;
 }) => {
   const { groups, loading } = useFinanceStore();
-
-  useEffect(() => {
-    console.log('bottomSheetRef', bottomSheetRef);
-  }, [bottomSheetRef]);
 
   return (
     <GeneralBottomSheetView>

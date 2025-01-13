@@ -174,8 +174,6 @@ export const addFinance = async ({
       })
     : null;
 
-  console.log('image', image, finance.image?.slice(0, 30));
-
   const { data, error } = await supabase
     .from('finances')
     .insert({

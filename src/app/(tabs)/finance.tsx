@@ -30,10 +30,6 @@ const Page = () => {
   );
 
   useEffect(() => {
-    console.log('finance loading', loading);
-  }, [loading]);
-
-  useEffect(() => {
     if (fetchedEditFinance) {
       setForm({
         id: fetchedEditFinance.id,

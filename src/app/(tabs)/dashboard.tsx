@@ -5,7 +5,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useHeaderHeight } from '@react-navigation/elements';
 import MainHeader from '@/components/shared/MainHeader';
 import MonthScrollList from '@/components/dashboard/MonthScrollList';
-import LinearGradient from 'react-native-linear-gradient';
 import MoneyDashboardInfo from '@/components/dashboard/MoneyDashboardInfo';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { IFinanceGroup, MonthScrollItem } from '@/types/types';
@@ -13,10 +12,9 @@ import DashboardBottomSheet from '@/components/dashboard/DashboardBottomSheet';
 import { useUser } from '@clerk/clerk-expo';
 import { generateMonthData } from '@/utils/date.utils';
 import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
-import useFetchBalances from '@/components/dashboard/hooks/useFetchBalances';
+import useFetchBalances from '@/hooks/useFetchBalances';
 import { useFinanceStore } from '@/store/useFinanceStore';
-import { liniarGradientColors } from '@/constants/gradients';
-import { useFetchFinancesByMonth } from '@/hooks/fetch-finances-by-month.hook';
+import { useFetchFinancesByMonth } from '@/hooks/useFetchFinancesByMonth';
 import ScreenWrapper from '@/components/shared/ScreenWrapper';
 
 const Page = () => {
@@ -29,10 +27,6 @@ const Page = () => {
   const { monthId, groups } = useFinanceStore();
   const { expenseBalance, incomeBalance, formatedBalance } = useFetchBalances();
   const { loading } = useFetchFinancesByMonth(monthId);
-
-  useEffect(() => {
-    console.log('groups', groups);
-  }, [groups]);
 
   useEffect(() => {
     if (!user?.createdAt) return;

@@ -19,9 +19,6 @@ const DashboardBottomSheetList = ({
   // handleLoadMore: () => void;
   // refreshFinances: () => Promise<void>;
 }) => {
-  useEffect(() => {
-    console.log('bottomSheetRef', bottomSheetRef.current);
-  }, [bottomSheetRef]);
   return (
     <GeneralBottomSheetList>
       <FlashList
@@ -37,8 +34,6 @@ const DashboardBottomSheetList = ({
         ListEmptyComponent={!listLoading ? <EmptyLabel /> : null}
         refreshing={listLoading}
         onScroll={() => {
-          console.log('scrolling', bottomSheetRef.current);
-
           bottomSheetRef.current?.expand();
         }}
         // onEndReached={() => {

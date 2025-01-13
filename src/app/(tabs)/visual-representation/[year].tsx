@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import ChartsBottomSheet from '@/components/charts/ChartsBottomSheet';
 import ScreenWrapper from '@/components/shared/ScreenWrapper';
@@ -29,5 +29,3 @@ const Page = () => {
 };
 
 export default Page;
-
-const styles = StyleSheet.create({});
