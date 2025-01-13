@@ -102,3 +102,7 @@ export const getMonthsBetween = ({
 
   return months;
 };
+
+export const customCapitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};

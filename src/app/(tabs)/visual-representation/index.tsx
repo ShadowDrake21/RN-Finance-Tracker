@@ -28,16 +28,18 @@ const Page = () => {
       <Stack.Screen
         options={{
           headerTransparent: true,
-          headerTitle: `Your charts (${Math.min(...years)}-${Math.max(
+          headerTitle: `My charts (${Math.min(...years)}-${Math.max(
             ...years
           )})`,
           headerTitleStyle: { fontWeight: '800', fontSize: 18 },
         }}
       />
       <View
-        style={[
-          { paddingTop: headerHeight + 10, flex: 1, paddingHorizontal: 20 },
-        ]}
+        style={{
+          paddingTop: headerHeight + 10,
+          flex: 1,
+          paddingHorizontal: 20,
+        }}
       >
         <View style={{ flex: 1, gap: 20 }}>
           {years.map((year) => (
