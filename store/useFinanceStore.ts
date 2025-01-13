@@ -1,6 +1,9 @@
 import { Finances, IFinanceGroup } from '@/types/types';
 import { groupFinancesByDate } from '@/utils/finance-groups.utils';
-import { INITIAL_SELECTED_MONTH_ID } from '@/utils/helpers.utils';
+import {
+  formatDateToLocale,
+  INITIAL_SELECTED_MONTH_ID,
+} from '@/utils/helpers.utils';
 import { create } from 'zustand';
 
 interface FinanceStore {
@@ -34,6 +37,10 @@ export const useFinanceStore = create<FinanceStore>((set) => ({
     }),
   addFinance: (finance: Finances) => {
     set((state) => {
+      const financeDate = formatDateToLocale(new Date(finance.date));
+      if (state.monthId !== financeDate) {
+        return state;
+      }
       return {
         finances: [...state.finances, finance],
         groups: [...groupFinancesByDate([...state.finances, finance], [])],

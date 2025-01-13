@@ -53,6 +53,7 @@ const Layout = () => {
             <Foundation name="graph-pie" size={size} color={color} />
           ),
           tabBarLabel: 'Charts',
+          headerShown: false,
         }}
       />
       <Tabs.Screen

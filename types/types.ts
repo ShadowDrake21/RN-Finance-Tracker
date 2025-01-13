@@ -104,4 +104,15 @@ export type PieChartData = {
   color: string;
   label: string;
   currency: string;
+  type?: 'income' | 'expense';
 };
+
+export interface ChartsBottomRawMonthData {
+  income: PieChartData[];
+  expense: PieChartData[];
+}
+
+export interface ChartsBottomReadyMonthData {
+  monthId: string;
+  data: ChartsBottomRawMonthData;
+}

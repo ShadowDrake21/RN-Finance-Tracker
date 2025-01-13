@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { CalendarProvider } from 'react-native-calendars';
 import { Stack } from 'expo-router';
 import CustomSwitch from '@/components/ui/CustomSwitch';
-import { useFetchFinancesByDate } from '@/hooks/fetch-finances-by-date.hook';
+import { useFetchFinancesByDate } from '@/hooks/useFetchFinancesByDate';
 import CustomActivityIndicator from '@/components/ui/CustomActivityIndicator';
 import { useUser } from '@clerk/clerk-expo';
 import CalendarView from '@/components/calendar/CalendarView';

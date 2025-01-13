@@ -3,10 +3,15 @@ import { generateRandomColor } from './helpers.utils';
 
 export const formPieChartData = ({
   fullPrice,
-  finance: { name, price, currency },
+  finance: { name, price, currency, type },
 }: {
   fullPrice: number;
-  finance: { name: string; price: number; currency: string };
+  finance: {
+    name: string;
+    price: number;
+    currency: string;
+    type?: 'income' | 'expense';
+  };
 }): PieChartData[] => {
   return [
     {
@@ -20,6 +25,7 @@ export const formPieChartData = ({
       color: generateRandomColor(),
       label: name,
       currency,
+      type,
     },
   ];
 };

@@ -12,17 +12,22 @@ export const PieChartCustomLabel = ({
   slice,
   position,
   currency,
+  isValueVisible = true,
+  noValueLabel = 'No Value',
 }: {
   slice: PieSliceData;
   position: { x: number; y: number };
   currency: string;
+  isValueVisible?: boolean;
+  noValueLabel?: string;
 }) => {
   const font = useFont(inter, 10);
   const { x, y } = position;
   const label = slice.label || 'No Label';
-  const value = slice.value
-    ? `${slice.value.toFixed(2)} ${currency}`
-    : 'No Value';
+  const value =
+    slice.value && isValueVisible
+      ? `${slice.value.toFixed(2)} ${currency}`
+      : noValueLabel;
 
   if (!font) return null;
   const fontSize = font.getSize() ?? 0;

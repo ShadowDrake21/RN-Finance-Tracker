@@ -8,9 +8,13 @@ import { SkFont } from '@shopify/react-native-skia';
 const CustomPolarChart = ({
   data,
   style = { width: 250, height: 250, flex: 1 },
+  isValueVisible = true,
+  noValueLabel = 'No Value',
 }: {
   data: PieChartData[];
   style?: StyleProp<ViewStyle>;
+  isValueVisible?: boolean;
+  noValueLabel?: string;
 }) => {
   return (
     <PolarChart
@@ -31,10 +35,18 @@ const CustomPolarChart = ({
                       position={position}
                       slice={slice}
                       currency={data[0].currency}
+                      isValueVisible={isValueVisible}
+                      noValueLabel={noValueLabel}
                     />
                   )}
                 </Pie.Label>
               </Pie.Slice>
+              <Pie.SliceAngularInset
+                angularInset={{
+                  angularStrokeWidth: 1,
+                  angularStrokeColor: 'white',
+                }}
+              />
             </>
           );
         }}

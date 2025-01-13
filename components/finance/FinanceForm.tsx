@@ -30,8 +30,8 @@ const FinanceForm = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1 }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={[styles.container, { paddingBottom: bottom }]}>
           <SumInput style={{ paddingBottom: 20 }} />
           <TypeSwitch />
@@ -66,6 +66,7 @@ export default FinanceForm;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+
     paddingHorizontal: 20,
     paddingTop: 15,
   },

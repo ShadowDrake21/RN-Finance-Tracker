@@ -25,13 +25,7 @@ const ContextFinanceItemAction = (item: Finances) => {
     }
   }, [loading]);
 
-  useEffect(() => {
-    console.log('loading context', loading);
-  }, [router]);
-
   const onEditSelect = () => {
-    console.log('edit select');
-
     if (router.canDismiss()) router.dismissAll();
     router.push({
       pathname: `/finance`,

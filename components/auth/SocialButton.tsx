@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useSocialAuth } from '@/hooks/auth.hook';
+import { useSocialAuth } from '@/hooks/useSocialAuth';
 
 type SocialButtonProps = {
   type: 'google' | 'apple';

@@ -55,6 +55,50 @@ export const generateRandomColor = (): string => {
   return `#${randomColor.toString(16).padStart(6, '0')}`;
 };
 
-export const INITIAL_SELECTED_MONTH_ID = new Date()
-  .toLocaleString('default', { month: 'numeric', year: 'numeric' })
-  .replace('/', '-');
+export const formatDateToLocale = (date: Date) => {
+  return date
+    .toLocaleString('default', { month: 'numeric', year: 'numeric' })
+    .replace('/', '-');
+};
+
+export const INITIAL_SELECTED_MONTH_ID = formatDateToLocale(new Date());
+
+export const getYearsBetween = ({ start, end }: { start: Date; end: Date }) => {
+  let years = [];
+  const startDate = start.getFullYear();
+  const endDate = end.getFullYear();
+
+  for (let i = startDate; i <= endDate; i++) {
+    years.push(i);
+  }
+
+  return years;
+};
+
+export const getMonthsBetween = ({
+  start,
+  end,
+  selectedYear,
+}: {
+  start: Date;
+  end: Date;
+  selectedYear: number;
+}) => {
+  const startYear = start.getFullYear();
+  const endYear = end.getFullYear();
+
+  let months: string[] = [];
+  if (startYear === selectedYear && startYear !== endYear) {
+    const startMonth = start.getMonth();
+    months = Array.from({ length: 12 - startMonth }, (_, i) => {
+      return formatDateToLocale(new Date(start.setMonth(startMonth + i)));
+    });
+  } else if (new Date().getFullYear() === selectedYear) {
+    const currentMonth = new Date().getMonth();
+    months = Array.from({ length: currentMonth + 1 }, (_, i) => {
+      return formatDateToLocale(new Date(new Date().setMonth(i)));
+    });
+  }
+
+  return months;
+};

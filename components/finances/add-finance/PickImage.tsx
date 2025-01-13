@@ -48,8 +48,6 @@ const PickImage = () => {
   };
 
   useEffect(() => {
-    console.log('pickeImage', image);
-
     if (
       action === 'edit' &&
       image &&

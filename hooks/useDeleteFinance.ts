@@ -32,8 +32,6 @@ const useDeleteFinance = ({
 
     deleteFinanceFromStore(id);
     setLoading(false);
-
-    console.log('deletedStatus', deletedStatus);
   };
 
   return { onDelete, loading };
