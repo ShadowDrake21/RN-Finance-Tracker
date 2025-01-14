@@ -74,22 +74,34 @@ const FinanceItemAction = (item: Finances) => {
                   </Text>
                 </View>
               </View>
-              <Text
-                style={[
-                  { fontWeight: '500' },
-                  item.price > 0
-                    ? { color: COLORS.tabBarTintActive }
-                    : { color: 'red' },
-                ]}
+              <View
+                style={{
+                  maxWidth: '30%',
+                  flexShrink: 1,
+                }}
               >
-                {item.price > 0 && '+'}{' '}
-                {
-                  formatCurrency({
-                    amount: item.price,
-                    code: 'PLN',
-                  })[0]
-                }
-              </Text>
+                <Text
+                  style={[
+                    {
+                      fontWeight: '500',
+                      flexWrap: 'wrap',
+                      textAlign: 'center',
+                      alignSelf: 'flex-end',
+                    },
+                    item.price > 0
+                      ? { color: COLORS.tabBarTintActive }
+                      : { color: 'red' },
+                  ]}
+                >
+                  {item.price > 0 && '+'}{' '}
+                  {
+                    formatCurrency({
+                      amount: item.price,
+                      code: 'PLN',
+                    })[0]
+                  }
+                </Text>
+              </View>
             </Pressable>
           </Link>
         )}

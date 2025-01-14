@@ -1,55 +1,38 @@
 import React, { useEffect, useState } from 'react';
-
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import useFetchMonthChartsData from '@/hooks/useFetchMonthChartsData';
-
+import { StyleSheet } from 'react-native';
 import { IFinanceGroup } from '@/types/types';
-import { useAuth } from '@clerk/clerk-expo';
-import { getFinancesByType } from '@/supabase/supabase.requests';
-import {
-  groupFinancesByDate,
-  transformFinancesFromDB,
-} from '@/utils/finance-groups.utils';
+import { groupFinancesByDate } from '@/utils/finance-groups.utils';
 import GeneralBottomSheetList from '@/components/shared/GeneralBottomSheetList';
 import Loader from '@/components/shared/Loader';
 import { FlashList } from '@shopify/flash-list';
 import FinanceItem from '@/components/shared/FinanceItem';
 import EmptyLabel from '@/components/ui/EmptyLabel';
+import useFetchFinancesByType from '@/hooks/useFetchFinancesByType';
 
 const CategoriesBottomSheetList = ({ category }: { category: string }) => {
-  const { bottom } = useSafeAreaInsets();
-
-  const { userId, getToken } = useAuth();
-
   const [groups, setGroups] = useState<IFinanceGroup[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { fetchItems } = useFetchFinancesByType(category);
+
+  const fetchData = async () => {
+    setLoading(true);
+    const finances = await fetchItems();
+    if (finances) {
+      setGroups(groupFinancesByDate(finances, []));
+    }
+    setTimeout(() => setLoading(false), 300);
+  };
 
   useEffect(() => {
-    const fetchItems = async () => {
-      const token = await getToken({ template: 'supabase' });
-
-      if (!token || !userId) return;
-
-      const finances = await getFinancesByType({
-        userId,
-        token,
-        type: category,
-      });
-
-      const transformedFinances = transformFinancesFromDB(finances);
-
-      setGroups((existingGroups) => [
-        ...groupFinancesByDate(transformedFinances, existingGroups),
-      ]);
-    };
-
-    fetchItems();
+    fetchData();
   }, [category]);
+
   return (
     <GeneralBottomSheetList>
+      {loading && <Loader style={styles.loader} />}
+
       <FlashList
-        estimatedItemSize={100}
+        estimatedItemSize={20}
         data={groups}
         contentContainerStyle={{
           paddingBottom: 75,
@@ -59,14 +42,6 @@ const CategoriesBottomSheetList = ({ category }: { category: string }) => {
         onEndReachedThreshold={0.5}
         renderItem={({ item }) => <FinanceItem {...item} />}
         ListEmptyComponent={<EmptyLabel />}
-        // refreshing={listLoading}
-        // onScroll={() => {
-        //   bottomSheetRef.current?.expand();
-        // }}
-        // onEndReached={() => {
-        //   handleLoadMore();
-        // }}
-        // onRefresh={refreshFinances}
       />
     </GeneralBottomSheetList>
   );
@@ -75,9 +50,12 @@ const CategoriesBottomSheetList = ({ category }: { category: string }) => {
 export default CategoriesBottomSheetList;
 
 const styles = StyleSheet.create({
-  chartContainer: {
-    flex: 1,
-    marginBottom: 16,
-    gap: 20,
+  loader: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    top: 0,
+    zIndex: 10,
+    backgroundColor: 'white',
   },
 });
