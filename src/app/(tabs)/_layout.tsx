@@ -11,8 +11,9 @@ import { BlurView } from 'expo-blur';
 
 import { DefaultTheme } from '@react-navigation/native';
 import Loader from '@/components/shared/Loader';
+import { ProfileEditProvider } from '@/contexts/ProfileEditContext';
 
-const Layout = () => {
+const TabsLayout = () => {
   const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
 
@@ -112,6 +113,14 @@ const Layout = () => {
         }}
       />
     </Tabs>
+  );
+};
+
+const Layout = () => {
+  return (
+    <ProfileEditProvider>
+      <TabsLayout />
+    </ProfileEditProvider>
   );
 };
 
