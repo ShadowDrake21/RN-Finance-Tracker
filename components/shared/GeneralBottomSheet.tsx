@@ -12,7 +12,7 @@ type GeneralBottomSheetProps = {
 const GeneralBottomSheet = ({
   children,
   bottomSheetRef,
-  snapPoints = ['60%', '85%'],
+  snapPoints = ['87%'],
   containerStyle = {},
   pointIndex = 1,
 }: PropsWithChildren & GeneralBottomSheetProps) => {

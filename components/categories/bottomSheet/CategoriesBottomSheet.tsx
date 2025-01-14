@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
 import BottomSheet from '@gorhom/bottom-sheet';
 import GeneralBottomSheet from '@/components/shared/GeneralBottomSheet';
-import CategoriesBottomSheetView from './CategoriesBottomSheetView';
+import GeneralBottomSheetView from '@/components/shared/GeneralBottomSheetView';
+import CategoriesBottomSheetList from './CategoriesBottomSheetList';
 
 const CategoriesBottomSheet = ({ category }: { category: string }) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -12,7 +13,9 @@ const CategoriesBottomSheet = ({ category }: { category: string }) => {
       snapPoints={['87%']}
       pointIndex={0}
     >
-      <CategoriesBottomSheetView category={category} />
+      <GeneralBottomSheetView>
+        <CategoriesBottomSheetList category={category} />
+      </GeneralBottomSheetView>
     </GeneralBottomSheet>
   );
 };

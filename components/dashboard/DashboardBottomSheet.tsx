@@ -9,6 +9,7 @@ const DashboardBottomSheet = () => {
   return (
     <GeneralBottomSheet
       bottomSheetRef={bottomSheetRef}
+      snapPoints={['60%', '85%']}
       containerStyle={{ paddingBottom: 75 }}
     >
       <DashboardBottomSheetView bottomSheetRef={bottomSheetRef} />
