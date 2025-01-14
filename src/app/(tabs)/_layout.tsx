@@ -98,6 +98,7 @@ const Layout = () => {
             <AntDesign name="appstore1" size={size} color={color} />
           ),
           tabBarLabel: 'Categories',
+          headerShown: false,
         }}
       />
       <Tabs.Screen

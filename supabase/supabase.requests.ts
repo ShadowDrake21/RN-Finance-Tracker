@@ -207,23 +207,6 @@ export const updateFinance = async ({
   finance: FinanceFormType;
 }) => {
   const supabase = await supabaseClient(token);
-  // const updatedImage =
-  //   finance.image && finance.image.includes('data:image/jpeg;base64,')
-  //     ? finance.prevImage
-  //       ? await updateImage({
-  //           token,
-  //           file: finance.image.replace('data:image/jpeg;base64,', ''),
-  //           imagePath: finance.prevImage,
-  //         })
-  //       : await uploadImage({
-  //           userId,
-  //           token,
-  //           file: finance.image.replace('data:image/jpeg;base64,', ''),
-  //         })
-  //     : null;
-
-  // TODO: sometimes there is no info on editing
-
   let updatedImage = null;
   if (finance.image && finance.image.includes('data:image/jpeg;base64,')) {
     if (finance.prevImage) {
@@ -361,4 +344,36 @@ export const getFinanceSumByYear = async ({
   console.log('sumForYear', sumForYear);
 
   return sumForYear;
+};
+
+export const getFinancesByType = async ({
+  userId,
+  token,
+  type,
+  selection = '*',
+  offset,
+  limit,
+}: {
+  userId: string;
+  token: string;
+  type: string;
+  selection?: string;
+  offset?: number;
+  limit?: number;
+}) => {
+  const supabase = await supabaseClient(token);
+
+  const { data: finances, error } = await supabase
+    .from('finances')
+    .select(selection)
+    .eq('icon_type', type)
+    .eq('user_id', userId);
+  // .range(offset, offset + limit - 1);
+
+  if (error) {
+    console.error('Error fetching finances:', error);
+    return [];
+  }
+
+  return finances;
 };

@@ -1,10 +1,22 @@
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleProp,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from 'react-native';
 import React from 'react';
 import { COLORS } from '@/constants/colors';
 
-const Loader = () => {
+const Loader = ({ style }: { style?: StyleProp<ViewStyle> }) => {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <View
+      style={[
+        { flex: 1, alignItems: 'center', justifyContent: 'center' },
+        style,
+      ]}
+    >
       <ActivityIndicator size="large" color={COLORS.primary} />
     </View>
   );

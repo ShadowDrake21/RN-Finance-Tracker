@@ -1,4 +1,5 @@
 import { MonthScrollItem } from '@/types/types';
+import { parse } from 'date-fns';
 
 export const compareDashboardDates = (
   selectedMonthId: string,
@@ -34,4 +35,12 @@ export const generateMonthData = (creationDate: Date): MonthScrollItem[] => {
   }
 
   return monthData;
+};
+
+export const sortDates = (a: string, b: string) => {
+  const dateFormat = 'dd-MM-yyyy';
+  const dateA = parse(a, dateFormat, new Date());
+  const dateB = parse(b, dateFormat, new Date());
+
+  return dateA.getTime() - dateB.getTime();
 };

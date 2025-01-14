@@ -1,4 +1,5 @@
 import { Currency, Finances, IFinanceGroup } from '@/types/types';
+import { sortDates } from './date.utils';
 
 export const uniqueGroups = (grouped: IFinanceGroup[]) => {
   return grouped.reduce((acc, group) => {
@@ -38,9 +39,7 @@ export const groupFinancesByDate = (
     return acc;
   }, {} as Record<string, IFinanceGroup>);
 
-  return Object.values(grouped).sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  return Object.values(grouped).sort((a, b) => sortDates(a.date, b.date) * -1);
 };
 
 export const updateGroupedFinances = (

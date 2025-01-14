@@ -9,35 +9,6 @@ const ChartsBottomSheetView = ({ year }: { year: number }) => {
 
   const [monthsIds, setMonthsIds] = useState<string[]>([]);
 
-  const getMonths = () => {
-    if (!user?.createdAt) return;
-
-    const createdDate = new Date(user.createdAt);
-
-    if (
-      createdDate.getFullYear() === year &&
-      createdDate.getFullYear() !== new Date().getFullYear()
-    ) {
-      const createdMonth = createdDate.getMonth();
-      const months = Array.from({ length: 12 - createdMonth }, (_, i) => {
-        return new Date(createdDate.setMonth(createdMonth + i))
-          .toLocaleString('default', { month: 'numeric', year: 'numeric' })
-          .replace('/', '-');
-      });
-
-      setMonthsIds(months);
-    } else if (new Date().getFullYear() === year) {
-      const currentMonth = new Date().getMonth();
-      const months = Array.from({ length: currentMonth + 1 }, (_, i) => {
-        return new Date(new Date().setMonth(i))
-          .toLocaleString('default', { month: 'numeric', year: 'numeric' })
-          .replace('/', '-');
-      });
-
-      setMonthsIds(months);
-    }
-  };
-
   useEffect(() => {
     if (!user?.createdAt) return;
 
