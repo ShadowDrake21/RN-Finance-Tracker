@@ -1,12 +1,7 @@
 import React from 'react';
 import { PieSliceData } from 'victory-native';
 import inter from 'assets/inter-medium.ttf';
-import {
-  Group,
-  Text as SkText,
-  SkFont,
-  useFont,
-} from '@shopify/react-native-skia';
+import { Group, Text as SkText, useFont } from '@shopify/react-native-skia';
 
 export const PieChartCustomLabel = ({
   slice,

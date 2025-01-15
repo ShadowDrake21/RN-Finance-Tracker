@@ -3,16 +3,10 @@ import { Finances } from '@/types/types';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import SwipeableFinanceAction from './SwipeableFinanceAction';
-
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { COLORS } from '@/constants/colors';
-import { EXPENSES_ICONS } from '@/constants/icons/expense_icons';
-import { INCOME_ICONS } from '@/constants/icons/income_icons';
-import { formatCurrency } from 'react-native-format-currency';
-import { Link } from 'expo-router';
 import { useEffect } from 'react';
 import usePulseAnimation from '@/hooks/usePulseAnimation';
 import AnimatedMessage from '@/components/ui/AnimatedMessage';
+import FinanceItemActionLink from './FinanceItemActionLink';
 
 const FinanceItemAction = (item: Finances) => {
   const [category, name] = item.icon_type.split('/');
@@ -49,61 +43,7 @@ const FinanceItemAction = (item: Finances) => {
         {loading ? (
           <AnimatedMessage animatedStyle={animatedStyle} text="Deleting..." />
         ) : (
-          <Link href={`/finance-info/${item.id}`} asChild>
-            <Pressable key={item.id} style={styles.activityItemInnerContainer}>
-              <View style={styles.activityItemBody}>
-                <Image
-                  source={
-                    item.type === 'expense'
-                      ? EXPENSES_ICONS[category][name]
-                      : INCOME_ICONS[category][name]
-                  }
-                  style={styles.icon}
-                />
-                <View style={{ maxWidth: '70%' }}>
-                  <Text
-                    style={styles.nameText}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {item.name}
-                  </Text>
-
-                  <Text style={styles.typeText}>
-                    {item.icon_type.replace(/_/g, ' ').replace(/\//g, ' / ')}
-                  </Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  maxWidth: '30%',
-                  flexShrink: 1,
-                }}
-              >
-                <Text
-                  style={[
-                    {
-                      fontWeight: '500',
-                      flexWrap: 'wrap',
-                      textAlign: 'center',
-                      alignSelf: 'flex-end',
-                    },
-                    item.price > 0
-                      ? { color: COLORS.tabBarTintActive }
-                      : { color: 'red' },
-                  ]}
-                >
-                  {item.price > 0 && '+'}{' '}
-                  {
-                    formatCurrency({
-                      amount: item.price,
-                      code: 'PLN',
-                    })[0]
-                  }
-                </Text>
-              </View>
-            </Pressable>
-          </Link>
+          <FinanceItemActionLink item={item} category={category} name={name} />
         )}
       </ReanimatedSwipeable>
     </GestureHandlerRootView>
@@ -111,23 +51,3 @@ const FinanceItemAction = (item: Finances) => {
 };
 
 export default FinanceItemAction;
-
-const styles = StyleSheet.create({
-  activityItemInnerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-    backgroundColor: 'white',
-  },
-  activityItemBody: { flexDirection: 'row', alignItems: 'center', gap: 15 },
-  icon: { width: 50, height: 50 },
-  nameText: { fontWeight: '500', fontSize: 18 },
-  typeText: {
-    fontSize: 12,
-    color: COLORS.darkGray,
-    textTransform: 'capitalize',
-    width: '100%',
-  },
-});

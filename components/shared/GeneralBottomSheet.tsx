@@ -1,13 +1,7 @@
-import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
-import React, { PropsWithChildren, RefObject } from 'react';
+import { StyleSheet } from 'react-native';
+import React, { PropsWithChildren } from 'react';
 import BottomSheet from '@gorhom/bottom-sheet';
-
-type GeneralBottomSheetProps = {
-  bottomSheetRef: RefObject<BottomSheet>;
-  snapPoints?: (number | string)[];
-  containerStyle?: StyleProp<ViewStyle>;
-  pointIndex?: number;
-};
+import { GeneralBottomSheetProps } from '@/types/types';
 
 const GeneralBottomSheet = ({
   children,
@@ -16,8 +10,6 @@ const GeneralBottomSheet = ({
   containerStyle = {},
   pointIndex = 1,
 }: PropsWithChildren & GeneralBottomSheetProps) => {
-  console.log('pointIndex', pointIndex);
-
   return (
     <BottomSheet
       ref={bottomSheetRef}

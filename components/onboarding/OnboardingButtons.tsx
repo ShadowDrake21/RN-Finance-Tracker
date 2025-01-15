@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import { COLORS } from '@/constants/colors';
 import { onboardingItems } from '@/static/onboarding.static';
@@ -15,18 +15,24 @@ const OnboardingButtons = ({
 }) => {
   const { bottom } = useSafeAreaInsets();
 
+  const onSkip = () => {
+    if (carouselRef.current && !isLastItem) {
+      carouselRef.current?.scrollToIndex({
+        index: onboardingItems.length - 1,
+        animated: true,
+      });
+    }
+  };
+
+  const onNext = () => {
+    carouselRef.current && carouselRef.current?.scrollToNext();
+  };
+
   return (
     <View style={[styles.controlsContainer, { bottom: bottom }]}>
       <OnboardingButton
         btnProps={{
-          onPress: () => {
-            if (carouselRef.current && !isLastItem) {
-              carouselRef.current?.scrollToIndex({
-                index: onboardingItems.length - 1,
-                animated: true,
-              });
-            }
-          },
+          onPress: onSkip,
           style: isLastItem ? { opacity: 0 } : {},
         }}
         labelProps={{ style: styles.controlBtn }}
@@ -36,9 +42,7 @@ const OnboardingButtons = ({
 
       <OnboardingButton
         btnProps={{
-          onPress: () => {
-            carouselRef.current && carouselRef.current?.scrollToNext();
-          },
+          onPress: onNext,
           style: isLastItem ? { opacity: 0 } : {},
         }}
         labelProps={{ style: [styles.controlBtn, { color: COLORS.primary }] }}

@@ -14,16 +14,7 @@ const SumInput = ({ style }: { style?: StyleProp<ViewStyle> }) => {
   } = useFinanceForm();
 
   return (
-    <View
-      style={[
-        {
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-around',
-        },
-        style,
-      ]}
-    >
+    <View style={[styles.container, style]}>
       <CurrencyInput
         value={sum}
         onChangeValue={(value) => setField('sum', value ?? 0)}
@@ -71,8 +62,9 @@ export default SumInput;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
-    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
   },
   dropdown: {
     height: 50,

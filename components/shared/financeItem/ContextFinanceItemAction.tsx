@@ -3,7 +3,6 @@ import usePulseAnimation from '@/hooks/usePulseAnimation';
 import { Finances } from '@/types/types';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import Animated from 'react-native-reanimated';
 import * as ContextMenu from 'zeego/context-menu';
 import FinanceItemAction from './FinanceItemAction';
 import AnimatedMessage from '@/components/ui/AnimatedMessage';

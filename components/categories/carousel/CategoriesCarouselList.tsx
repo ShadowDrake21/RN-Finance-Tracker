@@ -1,11 +1,8 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { expensesItems } from '@/static/expenses.static';
-import { incomeItems } from '@/static/income.static';
 import { FinanceCategory } from '@/types/types';
-import { FlashList } from '@shopify/flash-list';
 import CategoriesCarouselItem from './CategoriesCarouselItem';
-import { COLORS } from '@/constants/colors';
+import CategoriesCarouselListHeader from './CategoriesCarouselListHeader';
 
 const CategoriesCarouselList = ({ items }: { items: FinanceCategory[] }) => {
   const [type, setType] = useState<'expense' | 'income'>('expense');
@@ -22,21 +19,10 @@ const CategoriesCarouselList = ({ items }: { items: FinanceCategory[] }) => {
         keyExtractor={(item) => item.name}
         onEndReachedThreshold={0.5}
         renderItem={({ item }) => <CategoriesCarouselItem category={item} />}
-        ListHeaderComponent={
-          <Text
-            style={{
-              paddingBottom: 15,
-              textAlign: 'center',
-              fontSize: 18,
-              fontWeight: '800',
-              color: COLORS.extraDarkPrimary,
-              textTransform: 'uppercase',
-            }}
-          >
-            {type}
-          </Text>
+        ListHeaderComponent={<CategoriesCarouselListHeader type={type} />}
+        ListEmptyComponent={
+          <Text style={{ fontWeight: '700', alignSelf: 'center' }}>Empty</Text>
         }
-        ListEmptyComponent={<Text>Empty</Text>}
       />
       <Text></Text>
     </View>
@@ -44,5 +30,3 @@ const CategoriesCarouselList = ({ items }: { items: FinanceCategory[] }) => {
 };
 
 export default CategoriesCarouselList;
-
-const styles = StyleSheet.create({});

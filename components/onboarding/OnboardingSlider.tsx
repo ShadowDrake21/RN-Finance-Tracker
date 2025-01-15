@@ -32,36 +32,38 @@ const OnboardingSlider = ({
     }, 300);
   };
 
+  const handleOnIndexChanged = (index: number, total: number): void => {
+    const page = index + 1;
+    if (page === total && !isLastItem) {
+      setIsLastItem(true);
+    } else {
+      setIsLastItem(false);
+    }
+  };
+
+  const handleRenderDots = (index: number, total: number) => {
+    if (isLastItem) {
+      return (
+        <OnboardingSliderLastItemBtn bottom={bottom} onPress={skipToAuth} />
+      );
+    } else {
+      return (
+        <CustomCarouselDots
+          total={total}
+          index={index}
+          addStyles={{ bottom }}
+        />
+      );
+    }
+  };
+
   return (
     <CustomCarousel
       carouselProps={{
         ref: carouselRef,
-        onIndexChanged: ({ index, total }): void => {
-          const page = index + 1;
-          if (page === total && !isLastItem) {
-            setIsLastItem(true);
-          } else {
-            setIsLastItem(false);
-          }
-        },
-        renderDots: ({ index, total }) => {
-          if (isLastItem) {
-            return (
-              <OnboardingSliderLastItemBtn
-                bottom={bottom}
-                onPress={skipToAuth}
-              />
-            );
-          } else {
-            return (
-              <CustomCarouselDots
-                total={total}
-                index={index}
-                addStyles={{ bottom }}
-              />
-            );
-          }
-        },
+        onIndexChanged: ({ index, total }): void =>
+          handleOnIndexChanged(index, total),
+        renderDots: ({ index, total }) => handleRenderDots(index, total),
       }}
     >
       {onboardingItems.map((item, index) => (

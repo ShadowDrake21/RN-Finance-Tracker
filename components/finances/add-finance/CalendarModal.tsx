@@ -5,7 +5,7 @@ import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS } from '@/constants/colors';
 import { useFinanceForm } from '@/contexts/FinanceFormContext';
-import { useAuth, useUser } from '@clerk/clerk-expo';
+import { useUser } from '@clerk/clerk-expo';
 
 const INITIAL_DATE = new Date().toISOString();
 

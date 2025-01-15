@@ -1,9 +1,8 @@
-import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
 import React from 'react';
 import { Pie, PolarChart } from 'victory-native';
 import { PieChartCustomLabel } from './charts/PieChartCustomLabel';
 import { PieChartData } from '@/types/types';
-import { SkFont } from '@shopify/react-native-skia';
 
 const CustomPolarChart = ({
   data,
@@ -56,5 +55,3 @@ const CustomPolarChart = ({
 };
 
 export default CustomPolarChart;
-
-const styles = StyleSheet.create({});

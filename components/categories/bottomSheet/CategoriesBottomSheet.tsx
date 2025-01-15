@@ -8,11 +8,7 @@ const CategoriesBottomSheet = ({ category }: { category: string }) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   return (
-    <GeneralBottomSheet
-      bottomSheetRef={bottomSheetRef}
-      snapPoints={['87%']}
-      pointIndex={0}
-    >
+    <GeneralBottomSheet bottomSheetRef={bottomSheetRef} pointIndex={0}>
       <GeneralBottomSheetView>
         <CategoriesBottomSheetList category={category} />
       </GeneralBottomSheetView>

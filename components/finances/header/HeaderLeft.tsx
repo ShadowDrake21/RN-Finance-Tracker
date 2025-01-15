@@ -1,7 +1,6 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect } from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
 import { useFinanceForm } from '@/contexts/FinanceFormContext';
-import useHeaderActions from '../add-finance/hooks/useHeaderActions';
 import { COLORS } from '@/constants/colors';
 import { useRouter } from 'expo-router';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -14,18 +13,13 @@ const HeaderLeft = ({
   loading: boolean;
 }) => {
   const router = useRouter();
-  // const { loading, onLeaveWithUnsavedChanges } = useHeaderActions();
   const { isFormDirty } = useFinanceForm();
 
   return (
     <TouchableOpacity
       onPress={isFormDirty() ? leaveWithUnsavedChanges : router.back}
       style={[
-        {
-          padding: 5,
-          backgroundColor: COLORS.primary,
-          borderRadius: '50%',
-        },
+        styles.container,
         loading && { backgroundColor: COLORS.disabled },
       ]}
       disabled={loading}
@@ -37,4 +31,10 @@ const HeaderLeft = ({
 
 export default HeaderLeft;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    padding: 5,
+    borderRadius: '50%',
+    backgroundColor: COLORS.primary,
+  },
+});

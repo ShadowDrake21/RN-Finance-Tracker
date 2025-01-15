@@ -1,6 +1,6 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import React from 'react';
-import Animated, {
+import {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -31,11 +31,7 @@ const ReloadBtn = ({
     <AnimatedPressable
       onPress={() => handleReload()}
       style={[
-        {
-          padding: 5,
-          backgroundColor: COLORS.primary,
-          borderRadius: '50%',
-        },
+        styles.container,
         loading && { backgroundColor: COLORS.disabled },
         animatedStyles,
       ]}
@@ -48,4 +44,10 @@ const ReloadBtn = ({
 
 export default ReloadBtn;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    padding: 5,
+    backgroundColor: COLORS.primary,
+    borderRadius: '50%',
+  },
+});

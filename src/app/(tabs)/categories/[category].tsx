@@ -1,18 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import React from 'react';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import ScreenWrapper from '@/components/shared/ScreenWrapper';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import CategoriesCarousel from '@/components/categories/carousel/CategoriesCarousel';
 import { customCapitalize } from '@/utils/helpers.utils';
-import { Finances, IFinanceGroup } from '@/types/types';
-import { getFinancesByType } from '@/supabase/supabase.requests';
-import { useAuth } from '@clerk/clerk-expo';
-import {
-  groupFinancesByDate,
-  transformFinancesFromDB,
-} from '@/utils/finance-groups.utils';
 import CategoriesBottomSheet from '@/components/categories/bottomSheet/CategoriesBottomSheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -27,7 +19,7 @@ const Page = () => {
       <Stack.Screen
         options={{
           headerTransparent: true,
-          headerTitle: `${customCapitalize(typeName)}: ${customCapitalize(
+          headerTitle: `${customCapitalize(categoryName)}: ${customCapitalize(
             typeName
           )}`,
           headerTitleStyle: { fontWeight: '800', fontSize: 18 },

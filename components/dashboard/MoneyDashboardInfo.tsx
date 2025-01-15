@@ -1,16 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { COLORS } from '@/constants/colors';
-import { MonthScrollItem } from '@/types/types';
+import { MoneyDashboardInfoProps, MonthScrollItem } from '@/types/types';
 import { useFinanceStore } from '@/store/useFinanceStore';
 import { memo } from 'react';
-
-type MoneyDashboardInfoProps = {
-  selectedMonth: MonthScrollItem;
-  expenseBalance: number;
-  incomeBalance: number;
-  formatedBalance: string;
-};
 
 const MoneyDashboardInfo = ({
   selectedMonth,

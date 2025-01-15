@@ -27,9 +27,6 @@ const ChartsBottomSheetView = ({ year }: { year: number }) => {
 
   return (
     <GeneralBottomSheetView>
-      {/* (
-      <CustomActivityIndicator size="large" style={{ marginVertical: 20 }} />
-      ) */}
       <ChartsBottomSheetList monthsIds={monthsIds} year={year} />
     </GeneralBottomSheetView>
   );

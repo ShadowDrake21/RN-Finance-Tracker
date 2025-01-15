@@ -2,7 +2,6 @@ import { useFinanceForm } from '@/contexts/FinanceFormContext';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-
 import { useAuth } from '@clerk/clerk-expo';
 import { addFinance, updateFinance } from '@/supabase/supabase.requests';
 import { useFinanceStore } from '@/store/useFinanceStore';
@@ -16,10 +15,6 @@ const useHeaderActions = () => {
   const [loading, setLoading] = useState(false);
   const { addFinance: addFinanceToStore, updateFinance: updateFinanceInStore } =
     useFinanceStore();
-
-  useEffect(() => {
-    console.log('loading header actions', loading);
-  }, [loading]);
 
   const handleAddFinance = async () => {
     if (!userId) return;

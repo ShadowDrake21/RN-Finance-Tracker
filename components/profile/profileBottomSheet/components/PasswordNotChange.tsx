@@ -1,4 +1,3 @@
-import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import CustomButton from '@/components/ui/CustomButton';
 import { COLORS } from '@/constants/colors';
@@ -15,5 +14,3 @@ const PasswordNotChange = ({ onPress }: { onPress: () => void }) => {
 };
 
 export default PasswordNotChange;
-
-const styles = StyleSheet.create({});

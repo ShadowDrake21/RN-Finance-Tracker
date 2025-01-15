@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import React, { useRef } from 'react';
 import CustomCarousel from '../../shared/CustomCarousel';
 import { expensesItems } from '@/static/expenses.static';
@@ -17,7 +17,6 @@ const CategoriesCarousel = ({ bottom }: { bottom: number }) => {
         carouselProps={{
           ref: carouselRef,
           bounces: false,
-
           renderDots: ({ index, total }) => (
             <CustomCarouselDots
               total={total}
@@ -36,5 +35,3 @@ const CategoriesCarousel = ({ bottom }: { bottom: number }) => {
 };
 
 export default CategoriesCarousel;
-
-const styles = StyleSheet.create({});

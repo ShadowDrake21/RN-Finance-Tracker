@@ -1,4 +1,4 @@
-import React, { memo, RefObject, useEffect } from 'react';
+import React, { memo, RefObject } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { IFinanceGroup } from '@/types/types';
@@ -10,14 +10,10 @@ const DashboardBottomSheetList = ({
   bottomSheetRef,
   groups,
   listLoading,
-}: // handleLoadMore,
-// refreshFinances,
-{
+}: {
   bottomSheetRef: RefObject<BottomSheet>;
   groups: IFinanceGroup[];
   listLoading: boolean;
-  // handleLoadMore: () => void;
-  // refreshFinances: () => Promise<void>;
 }) => {
   return (
     <GeneralBottomSheetList>
@@ -36,10 +32,6 @@ const DashboardBottomSheetList = ({
         onScroll={() => {
           bottomSheetRef.current?.expand();
         }}
-        // onEndReached={() => {
-        //   handleLoadMore();
-        // }}
-        // onRefresh={refreshFinances}
       />
     </GeneralBottomSheetList>
   );

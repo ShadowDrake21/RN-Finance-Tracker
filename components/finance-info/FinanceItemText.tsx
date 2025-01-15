@@ -1,10 +1,10 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import { format } from 'date-fns';
 import { EXPENSES_ICONS } from '@/constants/icons/expense_icons';
 import { INCOME_ICONS } from '@/constants/icons/income_icons';
 import { Finances } from '@/types/types';
 import { getIconPathParts } from '@/utils/helpers.utils';
+import FinanceItemTextContent from './FinanceItemTextContent';
 
 const FinanceItemText = ({ finance }: { finance: Finances }) => {
   const iconParts = getIconPathParts(finance.icon_type);
@@ -19,38 +19,7 @@ const FinanceItemText = ({ finance }: { finance: Finances }) => {
         }
         style={styles.topImage}
       />
-      <View style={styles.topTextContainer}>
-        <Text
-          style={[
-            styles.topTextPrice,
-            { color: finance.type === 'expense' ? 'red' : 'green' },
-          ]}
-        >
-          {finance.price} {finance.currency.label}
-        </Text>
-
-        <Text ellipsizeMode="middle" style={styles.topTextItem}>
-          Name: <Text style={{ fontWeight: '700' }}>{finance.name}</Text>
-        </Text>
-        <Text style={styles.topTextItem}>
-          Type: <Text style={{ fontWeight: '700' }}>{finance.type}</Text>
-        </Text>
-        <Text style={styles.topTextItem}>
-          Subtype:{' '}
-          <Text style={{ fontWeight: '700' }}>
-            {finance.icon_type.replace(/_/g, ' ').replace(/\//g, ' / ')}
-          </Text>
-        </Text>
-        <Text style={styles.topTextItem}>
-          Date:{' '}
-          <Text style={{ fontWeight: '700' }}>
-            {format(
-              new Date(finance.date).toISOString().split('T')[0],
-              'E, d MMMM yyyy'
-            )}
-          </Text>
-        </Text>
-      </View>
+      <FinanceItemTextContent finance={finance} />
     </View>
   );
 };

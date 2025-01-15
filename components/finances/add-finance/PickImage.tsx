@@ -17,11 +17,11 @@ import usePickImage from '@/hooks/usePickImage';
 
 const PickImage = () => {
   const {
-    financeForm: { id, image, action },
+    financeForm: { image, action },
     setField,
   } = useFinanceForm();
 
-  const { userId, getToken } = useAuth();
+  const { getToken } = useAuth();
   const [validImage, setValidImage] = useState('');
 
   const fadeAnim = useSharedValue(1);

@@ -1,11 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import CustomTextInput from '@/components/ui/CustomTextInput';
 import CustomButton from '@/components/ui/CustomButton';
 import { COLORS } from '@/constants/colors';
 import useUpdateUser from '@/hooks/useUpdateUser';
 import { useProfileEdit } from '@/contexts/ProfileEditContext';
-import { useUser } from '@clerk/clerk-expo';
 
 const PasswordChange = () => {
   const { password, setPassword, setIsPasswordChange } = useProfileEdit();

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import React, { PropsWithChildren } from 'react';
 
 const GeneralBottomSheetList = ({ children }: PropsWithChildren) => {
@@ -14,5 +14,3 @@ const GeneralBottomSheetList = ({ children }: PropsWithChildren) => {
 };
 
 export default GeneralBottomSheetList;
-
-const styles = StyleSheet.create({});

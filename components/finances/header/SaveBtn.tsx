@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 import React, { useEffect } from 'react';
 import { COLORS } from '@/constants/colors';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -30,11 +30,7 @@ const SaveBtn = ({
   return (
     <AnimatedTouchableOpacity
       style={[
-        {
-          padding: 5,
-          backgroundColor: COLORS.extraDarkPrimary,
-          borderRadius: '50%',
-        },
+        styles.container,
         loading && { backgroundColor: COLORS.lightGray },
         animatedStyles,
       ]}
@@ -48,4 +44,10 @@ const SaveBtn = ({
 
 export default SaveBtn;
 
-// const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    padding: 5,
+    backgroundColor: COLORS.extraDarkPrimary,
+    borderRadius: '50%',
+  },
+});

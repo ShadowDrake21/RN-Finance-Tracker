@@ -1,8 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import React from 'react';
 import ReloadBtn from './ReloadBtn';
 import SaveBtn from './SaveBtn';
-import useHeaderActions from '../add-finance/hooks/useHeaderActions';
 import { useFinanceForm } from '@/contexts/FinanceFormContext';
 
 const HeaderRight = ({

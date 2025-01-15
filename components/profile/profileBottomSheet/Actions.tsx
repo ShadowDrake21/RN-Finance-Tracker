@@ -1,5 +1,4 @@
 import React from 'react';
-
 import CustomButton from '@/components/ui/CustomButton';
 import { COLORS } from '@/constants/colors';
 import useDeleteUser from '@/hooks/useDeleteUser';

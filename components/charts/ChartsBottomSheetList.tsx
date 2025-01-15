@@ -1,11 +1,10 @@
 import React from 'react';
 import GeneralBottomSheetList from '../shared/GeneralBottomSheetList';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ChartsBottomSheetListItem from './ChartsBottomSheetListItem';
-import ChartsBottomSheetListTitle from './ChartsBottomSheetListTitle';
 import useFetchMonthChartsData from '@/hooks/useFetchMonthChartsData';
 import Loader from '../shared/Loader';
+import ChartsBottomSheetListContent from './ChartsBottomSheetListContent';
 
 const ChartsBottomSheetList = ({
   year,
@@ -25,25 +24,12 @@ const ChartsBottomSheetList = ({
             <Loader />
           ) : (
             data.map(({ monthId, data }) => (
-              <View key={monthId} style={styles.chartContainer}>
-                <ChartsBottomSheetListTitle monthId={monthId} year={year} />
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                  }}
-                >
-                  <ChartsBottomSheetListItem
-                    data={data.income}
-                    label="Income"
-                  />
-
-                  <ChartsBottomSheetListItem
-                    data={data.expense}
-                    label="Expense"
-                  />
-                </View>
-              </View>
+              <ChartsBottomSheetListContent
+                key={monthId}
+                data={data}
+                monthId={monthId}
+                year={year}
+              />
             ))
           )}
         </View>
@@ -53,11 +39,3 @@ const ChartsBottomSheetList = ({
 };
 
 export default ChartsBottomSheetList;
-
-const styles = StyleSheet.create({
-  chartContainer: {
-    flex: 1,
-    marginBottom: 16,
-    gap: 20,
-  },
-});

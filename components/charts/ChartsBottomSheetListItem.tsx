@@ -13,12 +13,16 @@ const ChartsBottomSheetListItem = ({
   return (
     <View style={styles.chartItemContainer}>
       <Text style={styles.chartItemTitle}>{label}</Text>
-      <CustomPolarChart
-        data={data}
-        style={styles.chartItem}
-        isValueVisible={false}
-        noValueLabel=""
-      />
+      {data[0].value === 0 && data[1].value === 0 ? (
+        <Text>No data</Text>
+      ) : (
+        <CustomPolarChart
+          data={data}
+          style={styles.chartItem}
+          isValueVisible={false}
+          noValueLabel=""
+        />
+      )}
     </View>
   );
 };

@@ -2,7 +2,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleProp,
-  StyleSheet,
   ViewStyle,
 } from 'react-native';
 import React, { PropsWithChildren } from 'react';
@@ -27,7 +26,5 @@ const CustomKeyboardAvoidingView = ({
     </KeyboardAvoidingView>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default CustomKeyboardAvoidingView;

@@ -1,11 +1,4 @@
-import {
-  ActivityIndicator,
-  StyleProp,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { ActivityIndicator, StyleProp, View, ViewStyle } from 'react-native';
 import React from 'react';
 import { COLORS } from '@/constants/colors';
 

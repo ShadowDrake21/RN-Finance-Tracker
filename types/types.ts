@@ -1,3 +1,7 @@
+import BottomSheet from '@gorhom/bottom-sheet';
+import { RefObject } from 'react';
+import { StyleProp, ViewStyle } from 'react-native';
+
 export type Currency = {
   label: string;
   value: string;
@@ -116,3 +120,27 @@ export interface ChartsBottomReadyMonthData {
   monthId: string;
   data: ChartsBottomRawMonthData;
 }
+
+export type CalendarAgendaListProps = {
+  items: Finances[];
+  total: number;
+};
+
+export type GeneralBottomSheetProps = {
+  bottomSheetRef: RefObject<BottomSheet>;
+  snapPoints?: (number | string)[];
+  containerStyle?: StyleProp<ViewStyle>;
+  pointIndex?: number;
+};
+
+export type MoneyDashboardInfoProps = {
+  selectedMonth: MonthScrollItem;
+  expenseBalance: number;
+  incomeBalance: number;
+  formatedBalance: string;
+};
+
+export type TypeSwitchProps = {
+  type: 'expense' | 'income';
+  setField: (field: keyof FinanceFormType, value: any) => void;
+};
