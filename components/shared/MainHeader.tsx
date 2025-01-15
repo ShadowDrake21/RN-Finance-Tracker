@@ -12,6 +12,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import * as DropdownMenu from 'zeego/dropdown-menu';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useUser } from '@clerk/clerk-expo';
 
 type MainHeaderProps = {
   top: number;
@@ -27,12 +28,15 @@ const MainHeader = ({
   setWallet,
 }: MainHeaderProps) => {
   const router = useRouter();
+  const { user } = useUser();
   return (
     <View style={[styles.container, { paddingTop: top + 10 }]}>
       <Link href="/profile" asChild>
         <TouchableOpacity style={styles.userBtn}>
           <Image
-            source={require('@/assets/images/user-mockup.png')}
+            source={{
+              uri: user?.imageUrl,
+            }}
             style={{
               width: 40,
               height: 40,

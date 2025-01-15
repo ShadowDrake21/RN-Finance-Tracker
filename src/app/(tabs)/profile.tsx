@@ -1,6 +1,6 @@
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
-import { useAuth } from '@clerk/clerk-expo';
+import { useAuth, useUser } from '@clerk/clerk-expo';
 import ScreenWrapper from '@/components/shared/ScreenWrapper';
 import { Stack } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,9 +13,20 @@ import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const Page = () => {
+  const { user } = useUser();
   const headerHeight = useHeaderHeight();
   const { bottom } = useSafeAreaInsets();
-  const { setIsEditing, isEditing, resetField } = useProfileEdit();
+  const { name, setIsEditing, isEditing, resetField, setNameLoading } =
+    useProfileEdit();
+
+  const saveName = async () => {
+    setNameLoading(true);
+    const nameParts = name.split(' ');
+    const firstName = nameParts[0];
+    const lastName = nameParts.slice(1).join(' ');
+    await user?.update({ firstName, lastName });
+    setNameLoading(false);
+  };
 
   return (
     <ScreenWrapper>
@@ -30,7 +41,7 @@ const Page = () => {
                 <TouchableOpacity
                   onPress={() => {
                     setIsEditing((prev) => !prev);
-                    resetField();
+                    resetField('name');
                   }}
                 >
                   <MaterialCommunityIcons
@@ -39,7 +50,12 @@ const Page = () => {
                     color="black"
                   />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setIsEditing((prev) => !prev)}>
+                <TouchableOpacity
+                  onPress={() => {
+                    saveName();
+                    setIsEditing((prev) => !prev);
+                  }}
+                >
                   <Entypo name="save" size={24} color="black" />
                 </TouchableOpacity>
               </View>
@@ -50,20 +66,10 @@ const Page = () => {
             ),
         }}
       />
-      {/* 
-? <View>
-              <TouchableOpacity onPress={() => setIsEditing((prev) => !prev)}>
-              <MaterialCommunityIcons name="cancel" size={24} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setIsEditing((prev) => !prev)}>
-                <Entypo name="save" size={24} color="black" />
-                </TouchableOpacity>
-                :  */}
-
       <View
         style={{
           paddingTop: headerHeight + 10,
-          paddingBottom: bottom + 0,
+          paddingBottom: bottom + 10,
           flex: 1,
           paddingHorizontal: 20,
         }}

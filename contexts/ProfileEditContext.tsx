@@ -1,20 +1,24 @@
 import { useUser } from '@clerk/clerk-expo';
 import { createContext, useContext, useState } from 'react';
-import { Control, useForm, UseFormReset } from 'react-hook-form';
+import {
+  Control,
+  useForm,
+  UseFormHandleSubmit,
+  UseFormReset,
+} from 'react-hook-form';
 
 type ProfileEditContextType = {
-  control: Control<
-    {
-      name: string;
-      password: string;
-    },
-    any
-  >;
-  resetField: () => void;
+  name: string;
+  setName: React.Dispatch<React.SetStateAction<string>>;
+  password: string;
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
+  resetField: (field: 'name' | 'password') => void;
   isEditing: boolean;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   isPasswordChange: boolean;
   setIsPasswordChange: React.Dispatch<React.SetStateAction<boolean>>;
+  nameLoading: boolean;
+  setNameLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ProfileEditContext = createContext<ProfileEditContextType | undefined>(
@@ -29,34 +33,33 @@ export const ProfileEditProvider = ({
   const { user } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [isPasswordChange, setIsPasswordChange] = useState(false);
-  const {
-    control,
-    reset,
-    handleSubmit,
-    getValues,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: user?.fullName!,
-      password: '',
-    },
-  });
+  const [name, setName] = useState(user?.fullName || '');
+  const [password, setPassword] = useState('');
+  const [nameLoading, setNameLoading] = useState(false);
 
-  const onReset = () => {
-    reset({
-      name: user?.fullName!,
-    });
+  const onReset = (field: 'name' | 'password') => {
+    if (field === 'name') {
+      setName('');
+    }
+    if (field === 'password') {
+      setPassword('');
+    }
   };
 
   return (
     <ProfileEditContext.Provider
       value={{
-        control,
+        name,
+        setName,
+        password,
+        setPassword,
         resetField: onReset,
         isEditing,
         setIsEditing,
         isPasswordChange,
         setIsPasswordChange,
+        nameLoading,
+        setNameLoading,
       }}
     >
       {children}

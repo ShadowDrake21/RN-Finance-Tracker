@@ -25,14 +25,27 @@ import CustomButton from '../ui/CustomButton';
 import { useRouter } from 'expo-router';
 import Entypo from '@expo/vector-icons/Entypo';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Loader from '../shared/Loader';
+import CustomKeyboardAvoidingView from '../shared/CustomKeyboardAvoidingView';
+import { CustomAlert } from '@/utils/helpers.utils';
 
 const ProfileBottomSheetList = () => {
   const { bottom } = useSafeAreaInsets();
   const { user } = useUser();
   const { signOut } = useAuth();
-  const { control, isEditing, isPasswordChange, setIsPasswordChange } =
-    useProfileEdit();
+  const {
+    name,
+    setName,
+    password,
+    setPassword,
+    isEditing,
+    isPasswordChange,
+    setIsPasswordChange,
+    nameLoading,
+    resetField,
+  } = useProfileEdit();
 
+  const [imageLoading, setImageLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
 
   const pickImage = async () => {
@@ -54,8 +67,12 @@ const ProfileBottomSheetList = () => {
     setSelectedImage('');
   };
 
-  const saveSelection = () => {
+  const saveSelection = async () => {
     console.log('Save image');
+    setImageLoading(true);
+    await user?.setProfileImage({ file: selectedImage });
+    setSelectedImage('');
+    setImageLoading(false);
   };
 
   const onDeleteProfile = () => {
@@ -70,53 +87,95 @@ const ProfileBottomSheetList = () => {
           isPreferred: true,
         },
         {
-          text: 'OK',
-          onPress: () => console.log('OK Pressed'),
+          text: 'Yes, I am sure',
+          onPress: deleteProfile,
           style: 'destructive',
         },
       ]
     );
   };
 
+  const deleteProfile = async () => {
+    try {
+      await user?.delete();
+    } catch (error) {
+      CustomAlert({ title: 'Error', message: error.message });
+    }
+  };
+
+  const onChangePassword = () => {
+    Alert.prompt(
+      'Current Password',
+      'Please enter your current password',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {
+            resetField('password');
+            setIsPasswordChange(false);
+          },
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          style: 'destructive',
+          onPress: (currentPassword) => {
+            changePassword(currentPassword);
+          },
+        },
+      ],
+      'secure-text'
+    );
+  };
+
+  const changePassword = async (currentPassword: string | undefined) => {
+    try {
+      await user?.updatePassword({ currentPassword, newPassword: password });
+      CustomAlert({
+        title: 'Password changed!',
+        message: 'From now on, use your new password to sign in.',
+      });
+    } catch (error) {
+      CustomAlert({ title: 'Error', message: error.message });
+    } finally {
+      resetField('password');
+      setIsPasswordChange(false);
+    }
+  };
+
   return (
     <GeneralBottomSheetList>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ paddingBottom: bottom + 50 }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              height: 60,
-            }}
-          >
-            {isEditing ? (
-              <Controller
-                control={control}
-                name="name"
-                render={({ field: { onChange, value, onBlur } }) => (
-                  <CustomTextInput
-                    placeholder="Email"
-                    onChangeText={onChange}
-                    value={value}
-                    onBlur={onBlur}
-                    propStyles={{ marginBottom: 10, flex: 1 }}
-                  />
-                )}
-              />
-            ) : (
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: '700',
-                  textAlign: 'center',
-                  paddingBottom: 20,
-                }}
-              >
-                {user?.fullName}
-              </Text>
-            )}
-          </View>
-          {user?.hasImage && (
+      <CustomKeyboardAvoidingView offset={150}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={{ paddingBottom: bottom + 50 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                height: 60,
+              }}
+            >
+              {isEditing ? (
+                <CustomTextInput
+                  placeholder="Name"
+                  onChangeText={setName}
+                  value={name}
+                  propStyles={{ marginBottom: 10, flex: 1 }}
+                />
+              ) : (
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: '700',
+                    textAlign: 'center',
+                    paddingBottom: 20,
+                  }}
+                >
+                  {nameLoading ? 'Saving...' : user?.fullName}
+                </Text>
+              )}
+            </View>
+
             <TouchableOpacity
               onPress={pickImage}
               style={{ marginBottom: 15, position: 'relative' }}
@@ -140,97 +199,107 @@ const ProfileBottomSheetList = () => {
                   />
                 </View>
               )}
+              {imageLoading && (
+                <Loader
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'rgba(255,255,255,0.7)',
+                    zIndex: 20,
+                  }}
+                />
+              )}
               <Image
                 source={{
                   uri:
                     selectedImage && selectedImage.length > 0
                       ? selectedImage
-                      : user.imageUrl,
+                      : user?.hasImage
+                      ? user.imageUrl
+                      : 'https://www.vocaleurope.eu/wp-content/uploads/no-image.jpg',
                 }}
                 style={{ width: '100%', aspectRatio: 1, borderRadius: 15 }}
               />
             </TouchableOpacity>
-          )}
-          {selectedImage && (
-            <View
-              style={{
-                width: '100%',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                gap: 15,
-                paddingBottom: 20,
-              }}
-            >
-              <TouchableOpacity
-                onPress={cancelSelection}
+
+            {selectedImage && (
+              <View
                 style={{
-                  flex: 1,
-                  borderWidth: 2,
-                  borderColor: 'darkred',
-                  backgroundColor: '#ff7f7f',
-                  padding: 10,
-                  borderRadius: 10,
+                  width: '100%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  gap: 15,
+                  paddingBottom: 20,
                 }}
               >
-                <Text style={{ textAlign: 'center', color: '#7f0000' }}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={saveSelection}
-                style={{
-                  flex: 1,
-                  borderWidth: 2,
-                  borderColor: COLORS.primary,
-                  backgroundColor: COLORS.lightPrimary,
-                  padding: 10,
-                  borderRadius: 10,
-                }}
-              >
-                <Text
+                <TouchableOpacity
+                  onPress={cancelSelection}
                   style={{
-                    textAlign: 'center',
-                    color: COLORS.extraDarkPrimary,
+                    flex: 1,
+                    borderWidth: 2,
+                    borderColor: 'darkred',
+                    backgroundColor: '#ff7f7f',
+                    padding: 10,
+                    borderRadius: 10,
                   }}
                 >
-                  Save
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          <Text style={{ paddingBottom: 10 }}>
-            Email: {user?.emailAddresses[0].emailAddress}
-          </Text>
-          <Text style={{ paddingBottom: 10 }}>
-            Last Sign In:{' '}
-            {user?.lastSignInAt
-              ? format(user?.lastSignInAt, "dd/MM/yyyy 'at' HH:mm")
-              : 'No data'}
-          </Text>
+                  <Text style={{ textAlign: 'center', color: '#7f0000' }}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={saveSelection}
+                  style={{
+                    flex: 1,
+                    borderWidth: 2,
+                    borderColor: COLORS.primary,
+                    backgroundColor: COLORS.lightPrimary,
+                    padding: 10,
+                    borderRadius: 10,
+                  }}
+                >
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      color: COLORS.extraDarkPrimary,
+                    }}
+                  >
+                    Save
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            <Text style={{ paddingBottom: 10 }}>
+              Email: {user?.emailAddresses[0].emailAddress}
+            </Text>
+            <Text style={{ paddingBottom: 10 }}>
+              Last Sign In:{' '}
+              {user?.lastSignInAt
+                ? format(user?.lastSignInAt, "dd/MM/yyyy 'at' HH:mm")
+                : 'No data'}
+            </Text>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 10,
-            }}
-          >
-            {isPasswordChange ? (
-              <Controller
-                control={control}
-                name="password"
-                render={({ field: { onChange, value, onBlur } }) => (
+            {user?.externalAccounts.length === 0 && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginBottom: 10,
+                }}
+              >
+                {isPasswordChange ? (
                   <View
                     style={{
                       flexDirection: 'row',
+                      alignItems: 'center',
                       gap: 10,
                     }}
                   >
                     <CustomTextInput
                       placeholder="Password"
-                      onChangeText={onChange}
-                      value={value}
-                      onBlur={onBlur}
+                      onChangeText={setPassword}
+                      value={password}
                       secureTextEntry={true}
                       propStyles={{ flex: 1 }}
                     />
@@ -239,7 +308,7 @@ const ProfileBottomSheetList = () => {
                         width: 100,
                         backgroundColor: COLORS.darkPrimary,
                       }}
-                      onPress={() => setIsPasswordChange(false)}
+                      onPress={onChangePassword}
                     >
                       Save
                     </CustomButton>
@@ -250,26 +319,26 @@ const ProfileBottomSheetList = () => {
                       Cancel
                     </CustomButton>
                   </View>
+                ) : (
+                  <CustomButton
+                    style={{ backgroundColor: COLORS.mainTint }}
+                    onPress={() => setIsPasswordChange(true)}
+                  >
+                    Change Password
+                  </CustomButton>
                 )}
-              />
-            ) : (
-              <CustomButton
-                style={{ backgroundColor: COLORS.mainTint }}
-                onPress={() => setIsPasswordChange(true)}
-              >
-                Change Password
-              </CustomButton>
+              </View>
             )}
+            <CustomButton
+              style={{ marginBottom: 10, backgroundColor: COLORS.selected }}
+              onPress={() => onDeleteProfile()}
+            >
+              Delete Profile
+            </CustomButton>
+            <CustomButton onPress={() => signOut()}>Sign Out</CustomButton>
           </View>
-          <CustomButton
-            style={{ marginBottom: 10, backgroundColor: COLORS.selected }}
-            onPress={() => onDeleteProfile()}
-          >
-            Delete Profile
-          </CustomButton>
-          <CustomButton onPress={() => signOut()}>Sign Out</CustomButton>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </CustomKeyboardAvoidingView>
     </GeneralBottomSheetList>
   );
 };

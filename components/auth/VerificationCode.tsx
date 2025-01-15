@@ -10,8 +10,8 @@ import { STYLES } from '@/constants/styles';
 import CustomButton from '../ui/CustomButton';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CustomKeyboardAvoidingView from '../shared/CustomKeyboardAvoidingView';
-import LottieAnimation from '../ui/LottieAnimation';
 import VerificationCell from './verification-components/VerificationCell';
+import LottieView from 'lottie-react-native';
 
 const CELL_COUNT = 6;
 
@@ -48,7 +48,13 @@ const VerificationCode = ({
       offset={80}
       style={[STYLES.authKeyboardAvoidingView, { paddingBottom: bottom }]}
     >
-      <LottieAnimation localPath="@/assets/animations/letter.lottie" />
+      <LottieView
+        source={require('@/assets/animations/letter.lottie')}
+        autoPlay
+        loop
+        speed={0.5}
+        style={{ width: 200, height: 200 }}
+      />
       <Text style={[STYLES.authSubtitle, { textAlign: 'center' }]}>
         We've sent a verification code to your email address.
       </Text>
