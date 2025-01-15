@@ -1,11 +1,5 @@
 import { useUser } from '@clerk/clerk-expo';
 import { createContext, useContext, useState } from 'react';
-import {
-  Control,
-  useForm,
-  UseFormHandleSubmit,
-  UseFormReset,
-} from 'react-hook-form';
 
 type ProfileEditContextType = {
   name: string;
@@ -19,6 +13,13 @@ type ProfileEditContextType = {
   setIsPasswordChange: React.Dispatch<React.SetStateAction<boolean>>;
   nameLoading: boolean;
   setNameLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  saveName: () => Promise<void>;
+  imageLoading: boolean;
+  setImageLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedImage: string;
+  setSelectedImage: React.Dispatch<React.SetStateAction<string>>;
+  saveSelection: () => Promise<void>;
+  cancelSelection: () => void;
 };
 
 const ProfileEditContext = createContext<ProfileEditContextType | undefined>(
@@ -36,6 +37,8 @@ export const ProfileEditProvider = ({
   const [name, setName] = useState(user?.fullName || '');
   const [password, setPassword] = useState('');
   const [nameLoading, setNameLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string>('');
 
   const onReset = (field: 'name' | 'password') => {
     if (field === 'name') {
@@ -44,6 +47,27 @@ export const ProfileEditProvider = ({
     if (field === 'password') {
       setPassword('');
     }
+  };
+
+  const saveName = async () => {
+    setNameLoading(true);
+    const nameParts = name.split(' ');
+    const firstName = nameParts[0];
+    const lastName = nameParts.slice(1).join(' ');
+    await user?.update({ firstName, lastName });
+    setNameLoading(false);
+  };
+
+  const saveSelection = async () => {
+    console.log('Save image');
+    setImageLoading(true);
+    await user?.setProfileImage({ file: selectedImage });
+    setSelectedImage('');
+    setImageLoading(false);
+  };
+
+  const cancelSelection = () => {
+    setSelectedImage('');
   };
 
   return (
@@ -60,6 +84,13 @@ export const ProfileEditProvider = ({
         setIsPasswordChange,
         nameLoading,
         setNameLoading,
+        saveName,
+        imageLoading,
+        setImageLoading,
+        selectedImage,
+        setSelectedImage,
+        saveSelection,
+        cancelSelection,
       }}
     >
       {children}

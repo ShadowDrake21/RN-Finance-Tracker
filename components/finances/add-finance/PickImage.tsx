@@ -13,6 +13,7 @@ import { useFinanceForm } from '@/contexts/FinanceFormContext';
 import { downloadImage } from '@/supabase/supabase.storage';
 import { useAuth } from '@clerk/clerk-expo';
 import FinanceImage from '@/components/shared/FinanceImage';
+import usePickImage from '@/hooks/usePickImage';
 
 const PickImage = () => {
   const {
@@ -30,17 +31,12 @@ const PickImage = () => {
     };
   });
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-      base64: true,
-    });
+  const { pickImage } = usePickImage();
 
-    if (!result.canceled) {
-      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+  const onPickImage = async () => {
+    const base64Image = await pickImage();
+
+    if (base64Image) {
       setField('prevImage', image);
       setField('image', base64Image);
       setValidImage(base64Image);
@@ -75,7 +71,11 @@ const PickImage = () => {
 
   return (
     <View style={image && { gap: 20, paddingBottom: 40 }}>
-      <AddFinanceButton onPress={pickImage} text="Pick a photo" icon="camera" />
+      <AddFinanceButton
+        onPress={onPickImage}
+        text="Pick a photo"
+        icon="camera"
+      />
 
       {/* TODO: Loader while image loads */}
       {validImage && (
